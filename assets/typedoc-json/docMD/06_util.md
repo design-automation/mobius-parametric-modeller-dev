@@ -1,5 +1,18 @@
 # UTIL    
 
+## WriteData  
+* **Description:** Writes data into chrome local file system.  
+* **Parameters:**  
+  * *data_name:* The name to be saved in the file system (file extension should be included).  
+  * *model_data:* The data to be saved (can be the url to the file).
+  
+  
+## ReadData  
+* **Description:** Retrieve data from the chrome local file system.  
+* **Parameters:**  
+  * *data_name:* The name to be saved in the file system (file extension should be included).  
+* **Returns:** the data.  
+  
 ## ImportData  
 * **Description:** Imports data into the model.
 In order to get the model data from a file, you need to define the File or URL parameter
@@ -25,13 +38,40 @@ This will result in a popup in your browser, asking you to save the filel.
     Exports all the data in the model as an OBJ.
   
   
+## ParamInfo  
+* **Description:** Returns a text summary of the contents of this model  
+* **Parameters:**  
+* **Returns:** Text that summarises what is in the model.  
+  
 ## ModelInfo  
 * **Description:** Returns a text summary of the contents of this model  
 * **Parameters:**  
 * **Returns:** Text that summarises what is in the model, click print to see this text.  
   
+## ModelCompare  
+* **Description:** Compare this model to the data from another GI model.  
+* **Parameters:**  
+  * *gi_model_data:* undefined  
+* **Returns:** Text that summarises the comparison between this model and the the GI model.  
+  
 ## ModelCheck  
-* **Description:** Check tje internal consistency of the model.  
+* **Description:** Check the internal consistency of the model.  
 * **Parameters:**  
 * **Returns:** Text that summarises what is in the model, click print to see this text.  
+  
+## saveResource  
+* **Description:** Functions for saving and loading resources to file system.  
+* **Parameters:**  
+  * *name:* undefined  
+  * *file:* undefined  
+  
+## saveToFS  
+* **Description:** undefined  
+* **Parameters:**  
+  * *fs:* undefined  
+  
+## loadResource  
+* **Description:** undefined  
+* **Parameters:**  
+  * *filecode:* undefined  
   

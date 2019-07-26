@@ -23,7 +23,7 @@ export const _parameterTypes = {
 
     return: '_Output.Return',
 
-    urlFunctions: ['util.ImportData']
+    urlFunctions: ['util.ImportData', 'util.ModelCompare']
 };
 
 export const _varString = `
@@ -79,6 +79,7 @@ intersect = __modules__._calc.intersect;
 project = __modules__._calc.project;
 range = __modules__._list.range;
 isList = __modules__._list.isList;
+len = __modules__._list.listLen;
 listLen = __modules__._list.listLen;
 listCount = __modules__._list.listCount;
 listCopy = __modules__._list.listCopy;
@@ -120,4 +121,6 @@ degToRad = __modules__._conversion.degToRad;
 rand = __modules__._rand.rand;
 randInt = __modules__._rand.randInt;
 randPick = __modules__._rand.randPick;
+setattr = __modules__._model.__setAttrib__;
+getattr = __modules__._model.__getAttrib__;
 `;
