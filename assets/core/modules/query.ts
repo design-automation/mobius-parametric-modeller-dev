@@ -11,7 +11,8 @@
  */
 
 import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, TQuery, EEntType, ESort, TEntTypeIdx } from '@libs/geo-info/common';
+import { TId, TQuery, EEntType, ESort, TEntTypeIdx, IExpr, IExprQuery,
+    EExprEntType, EQueryOperatorTypes, EExprOperator } from '@libs/geo-info/common';
 import { idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj } from './_check_args';
 
@@ -84,6 +85,137 @@ function _convertSelectToEEntTypeStr(select: _EQuerySelect): EEntType|EEntType[]
             ];
         default:
             throw new Error('Query select parameter not recognised.');
+    }
+}
+
+function _exprGetEntType(select: string): EEntType {
+    switch (select) {
+        case EExprEntType.POSI:
+            return EEntType.POSI;
+        case EExprEntType.VERT:
+            return EEntType.VERT;
+        case EExprEntType.EDGE:
+            return EEntType.EDGE;
+        case EExprEntType.WIRE:
+            return EEntType.WIRE;
+        case EExprEntType.FACE:
+            return EEntType.FACE;
+        case EExprEntType.POINT:
+            return EEntType.POINT;
+        case EExprEntType.PLINE:
+            return EEntType.PLINE;
+        case EExprEntType.PGON:
+            return EEntType.PGON;
+        case EExprEntType.COLL:
+            return EEntType.COLL;
+        default:
+            throw new Error('Query entity type not recognised.');
+    }
+}
+function _exprGetQueryOperator(select: string): EQueryOperatorTypes {
+    switch (select) {
+        case EExprOperator.IS_EQUAL:
+            return EQueryOperatorTypes.IS_EQUAL;
+        case EExprOperator.IS_NOT_EQUAL:
+            return EQueryOperatorTypes.IS_NOT_EQUAL;
+        case EExprOperator.IS_GREATER_OR_EQUAL:
+            return EQueryOperatorTypes.IS_GREATER_OR_EQUAL;
+        case EExprOperator.IS_LESS_OR_EQUAL:
+            return EQueryOperatorTypes.IS_LESS_OR_EQUAL;
+        case EExprOperator.IS_GREATER:
+            return EQueryOperatorTypes.IS_GREATER;
+        case EExprOperator.IS_LESS:
+            return EQueryOperatorTypes.IS_LESS;
+        default:
+            throw new Error('Query operator type not recognised.');
+    }
+}
+// ================================================================================================
+/**
+ * Returns a list of entities based on a query expression.
+ * The result will always be a list of entities, even if there is only one entity.
+ * In a case where you want only one entity, remember to get the first item in the list.
+ * ~
+ * The query expression can use the following format: #@name == value,
+ * where 'name' is the attribute name, and 'value' is the attribute value that you are searching for.
+ * ~
+ * If the attribute value is a string, then in must be in quotes, as follows: #@name == 'str_value'.
+ * ~
+ * If the attribute value is a number, then any comparison operator can be used: ==, !=, >, >=, <, =<.
+ * ~
+ * @param __model__
+ * @param entities List of entities to be searched. If 'null' (without quotes), all entities in the model will be searched.
+ * @param expr Query expression.
+ * @returns Entities, a list of entities that match the type specified in 'select' and the conditions specified in 'query_expr'.
+ * @example positions = query.Get(positions, polyline1, #@xyz[2]>10)
+ * @example_info Returns a list of positions that are part of polyline1 where the z-coordinate is more than 10.
+ * @example positions = query.Get(positions, null, #@xyz[2]>10)
+ * @example_info Returns a list of positions in the model where the z-coordinate is more than 10.
+ * @example positions = query.Get(positions, polyline1, null)
+ * @example_info Returns a list of all of the positions that are part of polyline1.
+ * @example polylines = query.Get(polylines, position1, null)
+ * @example_info Returns a list of all of the polylines that use position1.
+ * @example collections = query.Get(collections, null, #@type=="floors")
+ * @example_info Returns a list of all the collections that have an attribute called "type" with a value "floors".
+ */
+export function Get2(__model__: GIModel, entities: TId|TId[], expr: IExpr): TId[]|TId[][] {
+    if (isEmptyArr(entities)) { return []; }
+    // --- Error Check ---
+    let ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] = null;
+    if (entities !== null && entities !== undefined) {
+        ents_arr = checkIDs('query.Get', 'entities', entities,
+            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list], null) as TEntTypeIdx|TEntTypeIdx[];
+    }
+    // --- Error Check ---
+    // convert IExpr to IExprQuery
+    const expr_query: IExprQuery = {
+        ent_type: _exprGetEntType(expr.ent_type1),
+        attrib_name: expr.attrib_name1,
+        attrib_index: expr.attrib_index1,
+        operator: _exprGetQueryOperator(expr.operator),
+        value: expr.value
+    };
+    // check if the query if valid // TODO add more checks
+    if (expr_query.ent_type === undefined) {
+        throw new Error('Query expression must define an entity type.');
+    }
+    // if ents_arr is null, then get all entities in the model of type expr_query.ent_type
+    if (ents_arr === null) {
+        ents_arr = ents_arr as TEntTypeIdx[];
+        const ents_i: number[] = __model__.geom.query.getEnts(expr_query.ent_type, false);
+        ents_arr = ents_i.map(ent_i => [expr_query.ent_type, ent_i]) as TEntTypeIdx[];
+    }
+    // make sure that the ents_arr is at least depth 2
+    const depth: number = getArrDepth(ents_arr);
+    if (depth === 1) { ents_arr = [ents_arr] as TEntTypeIdx[]; }
+    ents_arr = ents_arr as TEntTypeIdx[]|TEntTypeIdx[][];
+    // do the query
+    const found_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][] = _get2(__model__, ents_arr, expr_query);
+    // return the result
+    return idsMake(found_ents_arr) as TId[]|TId[][];
+}
+function _get2(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][], expr_query: IExprQuery): TEntTypeIdx[]|TEntTypeIdx[][] {
+    if (ents_arr.length === 0) { return []; }
+    // do the query
+    const depth: number = getArrDepth(ents_arr);
+    if (depth === 2) {
+        ents_arr = ents_arr as TEntTypeIdx[];
+        // get the list of entities
+        const found_ents_i: number[] = [];
+        for (const ent_arr of ents_arr) {
+            found_ents_i.push(...__model__.geom.query.navAnyToAny(ent_arr[0], expr_query.ent_type, ent_arr[1]));
+        }
+        // check if there is a query
+        if ( expr_query.operator === undefined ) {
+            return found_ents_i.map( entity_i => [expr_query.ent_type, entity_i]) as TEntTypeIdx[];
+        }
+        // do the query on the list of entities
+        const query_result: number[] = __model__.attribs.query.queryAttribs2(expr_query, found_ents_i);
+        if (query_result.length === 0) { return []; }
+        return query_result.map( entity_i => [expr_query.ent_type, entity_i]) as TEntTypeIdx[];
+    } else { // depth === 3
+        ents_arr = ents_arr as TEntTypeIdx[][];
+        return ents_arr.map(ents_arr_item => _get2(__model__, ents_arr_item, expr_query)) as TEntTypeIdx[][];
     }
 }
 // ================================================================================================

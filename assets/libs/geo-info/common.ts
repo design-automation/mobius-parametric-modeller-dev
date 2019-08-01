@@ -34,6 +34,63 @@ export type TColor = [number, number, number]; // TODO replace with Txyz
 export type TNormal = [number, number, number]; // TODO replace with xyz
 export type TTexture = [number, number];
 
+export interface IExpr {
+    ent_type1: string;
+    attrib_name1?: string;
+    attrib_index1?: number;
+    ent_type2?: string;
+    attrib_name2?: string;
+    attrib_index2?: number;
+    operator?: string;
+    value?: TAttribDataTypes;
+}
+
+export interface IExprQuery {
+    ent_type: EEntType;
+    attrib_name?: string;
+    attrib_index?: number;
+    operator?: EQueryOperatorTypes;
+    value?: TAttribDataTypes;
+}
+
+export interface IExprSort {
+    ent_type: EEntType;
+    attrib_name: string;
+    attrib_index?: number;
+}
+
+export interface IExprPush {
+    ent_type1: EEntType;
+    attrib_name1: string;
+    attrib_index1?: number;
+    ent_type2: EEntType;
+    attrib_name2: string;
+    attrib_index2?: number;
+}
+
+export enum EExprEntType {
+    POSI =   'ps',
+    VERT =   '_v',
+    EDGE =   '_e',
+    WIRE =   '_w',
+    FACE =   '_f',
+    POINT =  'pt',
+    PLINE =  'pl',
+    PGON =   'pg',
+    COLL =   'co'
+}
+
+export enum EExprOperator {
+    IS_EQUAL =              '==',
+    IS_NOT_EQUAL =          '!=',
+    IS_GREATER_OR_EQUAL =   '>=',
+    IS_LESS_OR_EQUAL =      '<=',
+    IS_GREATER =            '>',
+    IS_LESS =               '<',
+    EQUAL =                 '=',
+    PUSH =                  '>>'
+}
+
 // Types of entities
 export enum EEntType {
     POSI,
