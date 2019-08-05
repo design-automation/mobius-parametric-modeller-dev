@@ -32,35 +32,39 @@ export enum _EIODataFormat {
     GEOJSON = 'geojson'
 }
 export enum _EIODataSource {
-    DEFAULT = 'default',
-    FILESYS = 'from file system'
+    DEFAULT = 'From URL',
+    FILESYS = 'From Local Storage'
 }
 export enum _EIODataTarget {
-    DEFAULT = 'download file',
-    FILESYS = 'save to file system'
+    DEFAULT = 'Save to Hard Disk',
+    FILESYS = 'Save to Local Storage'
 }
 /**
- * Writes data into chrome local file system.
+ * Read data from a Url or from local storage.
  *
- * @param model_data The data to be saved (can be the url to the file).
+ * @param data The data to be read (from URL or from Local Storage).
+ * @returns the data.
+ */
+export function ReadData(__model__: GIModel, data: string): string {
+    return data;
+}
+/**
+ * Save data to the hard disk or to the local storage.
+ *
+ * @param data The data to be saved (can be the url to the file).
  * @param file_name The name to be saved in the file system (file extension should be included).
+ * @param data_target Enum, where the data is to be exported to.
  * @returns whether the data is successfully saved.
  */
-export function WriteData(__model__: GIModel, model_data: string, file_name: string): Boolean {
+export function WriteData(__model__: GIModel, data: string, file_name: string, data_target: _EIODataTarget): Boolean {
     try {
-        return saveResource(model_data, file_name);
+        if (data_target === _EIODataTarget.DEFAULT) {
+            return download(data, file_name);
+        }
+        return saveResource(data, file_name);
     } catch (ex) {
         return false;
     }
-}
-/**
- * Retrieve data from the chrome local file system.
- *
- * @param data_name The name to be saved in the file system (file extension should be included).
- * @returns the data.
- */
-export function ReadData(__model__: GIModel, data_name: string): string {
-    return data_name;
 }
 /**
  * Imports data into the model.
@@ -111,7 +115,7 @@ export enum _EIOExportDataFormat {
 }
 /**
  * Export data from the model as a file.
- * This will result in a popup in your browser, asking you to save the filel.
+ * This will result in a popup in your browser, asking you to save the file.
  * @param __model__
  * @param filename Name of the file as a string.
  * @param data_format Enum, the file format.
@@ -120,7 +124,9 @@ export enum _EIOExportDataFormat {
  * @example util.ExportData ('my_model.obj', obj)
  * @example_info Exports all the data in the model as an OBJ.
  */
-export function ExportData(__model__: GIModel, filename: string, data_format: _EIOExportDataFormat, data_target: _EIODataTarget): boolean {
+export function ExportData(__model__: GIModel, entities: TId|TId[]|TId[][],
+        filename: string, data_format: _EIOExportDataFormat, data_target: _EIODataTarget): boolean {
+    // TODO implement export of entities
     switch (data_format) {
         case _EIOExportDataFormat.GI:
             let gi_data: string = JSON.stringify(__model__.getData());
