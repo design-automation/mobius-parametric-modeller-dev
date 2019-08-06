@@ -13,7 +13,7 @@
         "nodes": [
             {
                 "name": "Start",
-                "id": "node_6pg5scuyq2h",
+                "id": "node_2tjmojcwzg3",
                 "position": {
                     "x": 5350,
                     "y": 5000
@@ -67,7 +67,7 @@
                                 },
                                 "parentNode": {
                                     "name": "Node",
-                                    "id": "node_0ac2xzkzitid",
+                                    "id": "node_6n0s0uej567",
                                     "position": {
                                         "x": 5350,
                                         "y": 5200
@@ -99,18 +99,12 @@
                                                 {
                                                     "name": "item",
                                                     "value": "num",
-                                                    "invalidVar": false,
-                                                    "jsValue": "num_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "list",
-                                                    "value": "range(0, 100)",
-                                                    "default": [],
-                                                    "jsValue": "range(0, 100)",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "range ( 0 , 100 )",
+                                                    "default": []
                                                 }
                                             ],
                                             "children": [
@@ -139,21 +133,16 @@
                                                         {
                                                             "name": "var_name",
                                                             "value": "comment",
-                                                            "invalidVar": false,
-                                                            "jsValue": "comment_",
-                                                            "linked": false
+                                                            "invalidVar": false
                                                         },
                                                         {
                                                             "name": "value",
-                                                            "value": "This means for each number ( 'num' ) in the list of numbers from the list[0 , 1 , 2 , ... , 99]. 'num' is an arbitrary variable chosen; anything else may be used in place.",
-                                                            "invalidVar": "Error: Variable followed by another variable/number/string \nat: ... This means for each number ( 'num' ) in the list of numbers from the list [ 0 , 1 , 2 , . . . , 99 ] . 'num' is an arbitrary variable chosen ; anything else may be used in place .",
-                                                            "linked": false
+                                                            "value": "This means for each number ( 'num' ) in the list of numbers from the list[0 , 1 , 2 , ... , 99]. 'num' is an arbitrary variable chosen; anything else may be used in place."
                                                         }
                                                     ],
                                                     "selected": false,
                                                     "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~procedure~1",
-                                                    "hasError": false,
-                                                    "variable": "comment"
+                                                    "hasError": false
                                                 },
                                                 {
                                                     "type": 8,
@@ -169,31 +158,21 @@
                                                         {
                                                             "name": "var_name",
                                                             "invalidVar": false,
-                                                            "value": "new_positions",
-                                                            "jsValue": "new_positions_",
-                                                            "linked": false
+                                                            "value": "new_positions"
                                                         },
                                                         {
                                                             "name": "__model__",
-                                                            "default": 0,
-                                                            "linked": false
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "coords",
                                                             "default": 0,
-                                                            "value": "[num, 0, 0]",
-                                                            "jsValue": "[num_, 0, 0]",
-                                                            "usedVars": [
-                                                                "num"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "[num , 0 , 0]"
                                                         }
                                                     ],
                                                     "selected": false,
                                                     "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~procedure~1",
-                                                    "hasError": false,
-                                                    "variable": "new_positions"
+                                                    "hasError": false
                                                 },
                                                 {
                                                     "type": 0,
@@ -205,26 +184,20 @@
                                                         {
                                                             "name": "var_name",
                                                             "value": "comment",
-                                                            "invalidVar": false,
-                                                            "jsValue": "comment_",
-                                                            "linked": false
+                                                            "invalidVar": false
                                                         },
                                                         {
                                                             "name": "value",
-                                                            "value": "Positions are made in the order when num = 0 , position's xyz is[0 , 0 , 0]; when num = 1 , position's xyz is[1 , 0 , 0]... and so on.",
-                                                            "invalidVar": "Error: \"=\" not acceptable.",
-                                                            "linked": false
+                                                            "value": "Positions are made in the order when num = 0 , position's xyz is[0 , 0 , 0]; when num = 1 , position's xyz is[1 , 0 , 0]... and so on."
                                                         }
                                                     ],
                                                     "selected": false,
                                                     "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~procedure~1",
-                                                    "hasError": false,
-                                                    "variable": "comment"
+                                                    "hasError": false
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "num"
+                                            "hasError": false
                                         }
                                     ],
                                     "state": {
@@ -249,7 +222,7 @@
                                                     },
                                                     "parentNode": {
                                                         "name": "End",
-                                                        "id": "node_l1w7zaqcm5s",
+                                                        "id": "node_oa5zb87atr",
                                                         "position": {
                                                             "x": 5350,
                                                             "y": 5400
@@ -283,14 +256,12 @@
                                                                     {
                                                                         "name": "__model__",
                                                                         "value": "",
-                                                                        "default": 0,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "value",
                                                                         "value": "",
-                                                                        "default": 0,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "print": false,
@@ -312,8 +283,7 @@
                                                             },
                                                             "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode"
                                                         },
-                                                        "hasError": false,
-                                                        "hasExecuted": true
+                                                        "hasError": false
                                                     }
                                                 },
                                                 "selected": false
@@ -322,11 +292,9 @@
                                         "meta": {
                                             "mode": 0
                                         },
-                                        "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode",
-                                        "model": null
+                                        "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode"
                                     },
-                                    "hasError": false,
-                                    "hasExecuted": true
+                                    "hasError": false
                                 }
                             },
                             "selected": false
@@ -335,11 +303,9 @@
                     "meta": {
                         "mode": 0
                     },
-                    "parentNode": "~flowchart~nodes~0",
-                    "model": null
+                    "parentNode": "~flowchart~nodes~0"
                 },
-                "hasError": false,
-                "hasExecuted": true
+                "hasError": false
             },
             "~flowchart~nodes~0~output~edges~0~target~parentNode",
             "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode"
@@ -349,10 +315,9 @@
             "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0"
         ],
         "functions": [],
-        "ordered": true,
-        "id": "78c83372-7c00-b712-063f-b3be2a2509e9",
-        "last_updated": "2019-08-06T04:43:56.232Z"
+        "ordered": true
     },
+    "last_updated": "2019-01-27T06:35:35.751Z",
     "version": 1,
-    "settings": "{\"normals\":{\"show\":false,\"size\":5},\"axes\":{\"show\":true,\"size\":50},\"grid\":{\"show\":true,\"size\":500},\"positions\":{\"show\":true,\"size\":0.5},\"tjs_summary\":{\"show\":false},\"gi_summary\":{\"show\":false},\"wireframe\":{\"show\":false},\"camera\":{\"pos\":{\"x\":-80,\"y\":-80,\"z\":80},\"pos_x\":-80,\"pos_y\":-80,\"pos_z\":80,\"target\":{\"x\":49.5,\"y\":0,\"z\":0}},\"colors\":{\"viewer_bg\":\"#E6E6E6\",\"position\":\"#000000\",\"position_s\":\"#0033FF\",\"vertex_s\":\"#FFCC00\",\"face_f\":\"#FFFFFF\",\"face_f_s\":\"#4949BD\",\"face_b\":\"#DDDDDD\",\"face_b_s\":\"#00006D\"},\"ambient_light\":{\"show\":true,\"color\":\"#FFFFFF\",\"intensity\":0.5},\"hemisphere_light\":{\"show\":true,\"helper\":false,\"skyColor\":\"#FFFFFF\",\"groundColor\":\"#FFFFFF\",\"intensity\":0.5},\"directional_light\":{\"show\":false,\"helper\":false,\"color\":\"#FFFFFF\",\"intensity\":1,\"shadow\":true,\"shadowSize\":4,\"azimuth\":90,\"altitude\":45,\"distance\":10000},\"ground\":{\"show\":false,\"width\":1000,\"length\":1000,\"height\":-0.5,\"color\":\"#FFFFFF\",\"shininess\":0},\"select\":{\"selector\":{\"id\":5,\"name\":\"Faces\"},\"tab\":\"0\"},\"version\":\"0.4.38\"}"
+    "settings": {}
 }

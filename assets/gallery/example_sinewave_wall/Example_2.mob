@@ -13,7 +13,7 @@
         "nodes": [
             {
                 "name": "Start",
-                "id": "node_fs29o18afv",
+                "id": "node_upheqbr4u6s",
                 "position": {
                     "x": 5350,
                     "y": 5000
@@ -38,18 +38,14 @@
                                 "name": "const_name",
                                 "value": "num_sq_x",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "num_sq_x_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
                                 "default": "10",
                                 "step": "1",
                                 "min": "2",
-                                "max": "20",
-                                "value": "10",
-                                "linked": false
+                                "max": "20"
                             }
                         ],
                         "selected": false,
@@ -72,18 +68,14 @@
                                 "name": "const_name",
                                 "value": "num_sq_y",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "num_sq_y_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
                                 "default": "15",
                                 "step": "1",
                                 "min": "2",
-                                "max": "20",
-                                "value": "15",
-                                "linked": false
+                                "max": "20"
                             }
                         ],
                         "selected": false,
@@ -106,18 +98,11 @@
                                 "name": "const_name",
                                 "value": "sq_size",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "sq_size_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
-                                "default": "10",
-                                "value": "10",
-                                "jsValue": "10",
-                                "usedVars": [],
-                                "invalidVar": false,
-                                "linked": false
+                                "default": "10"
                             }
                         ],
                         "selected": false,
@@ -140,18 +125,11 @@
                                 "name": "const_name",
                                 "value": "increase_factor",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "increase_factor_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
-                                "default": "10",
-                                "value": "10",
-                                "jsValue": "10",
-                                "usedVars": [],
-                                "invalidVar": false,
-                                "linked": false
+                                "default": "10"
                             }
                         ],
                         "selected": false,
@@ -174,18 +152,11 @@
                                 "name": "const_name",
                                 "value": "decrease_factor",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "decrease_factor_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
-                                "default": "0.2",
-                                "value": "0.2",
-                                "jsValue": "0.2",
-                                "usedVars": [],
-                                "invalidVar": false,
-                                "linked": false
+                                "default": "0.2"
                             }
                         ],
                         "selected": false,
@@ -208,18 +179,14 @@
                                 "name": "const_name",
                                 "value": "wave_shift",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "wave_shift_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
                                 "default": 45,
                                 "step": "15",
                                 "min": "-180",
-                                "max": "180",
-                                "value": 45,
-                                "linked": false
+                                "max": "180"
                             }
                         ],
                         "selected": false,
@@ -257,7 +224,7 @@
                                 },
                                 "parentNode": {
                                     "name": "1. Grid of squares",
-                                    "id": "node_9j8l13ksle7",
+                                    "id": "node_729yli718xm",
                                     "position": {
                                         "x": 5350,
                                         "y": 5147.541015625
@@ -293,62 +260,35 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "grid",
-                                                    "invalidVar": false,
-                                                    "jsValue": "grid_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "origin",
                                                     "value": "XY",
-                                                    "default": 0,
-                                                    "jsValue": "XY",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "size",
-                                                    "value": "[num_sq_x * sq_size, num_sq_y * sq_size]",
-                                                    "default": 0,
-                                                    "jsValue": "[num_sq_x_ * sq_size_, num_sq_y_ * sq_size_]",
-                                                    "usedVars": [
-                                                        "sq_size",
-                                                        "num_sq_y",
-                                                        "num_sq_x"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "[num_sq_x * sq_size , num_sq_y * sq_size]",
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "num_positions",
-                                                    "value": "[num_sq_x + 1, num_sq_y + 1]",
-                                                    "default": 0,
-                                                    "jsValue": "[num_sq_x_ + 1, num_sq_y_ + 1]",
-                                                    "usedVars": [
-                                                        "num_sq_y",
-                                                        "num_sq_x"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "[num_sq_x + 1 , num_sq_y + 1]",
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "method",
                                                     "value": "'squares'",
-                                                    "default": 0,
-                                                    "jsValue": "'squares'",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "grid"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 8,
@@ -364,39 +304,25 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "pls",
-                                                    "invalidVar": false,
-                                                    "jsValue": "pls_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "positions",
                                                     "value": "grid",
-                                                    "default": 0,
-                                                    "jsValue": "grid_",
-                                                    "usedVars": [
-                                                        "grid"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "close",
                                                     "value": "'close'",
-                                                    "default": 0,
-                                                    "jsValue": "'close'",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "pls"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 8,
@@ -410,37 +336,21 @@
                                             "argCount": 4,
                                             "args": [
                                                 {
-                                                    "name": "__none__",
-                                                    "linked": false
+                                                    "name": "__none__"
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "entities",
                                                     "value": "pls",
-                                                    "default": 0,
-                                                    "jsValue": "pls_",
-                                                    "usedVars": [
-                                                        "pls"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "vector",
-                                                    "value": "[num_sq_x * sq_size / 2, num_sq_y * sq_size / 2, 0]",
-                                                    "default": 0,
-                                                    "jsValue": "[num_sq_x_ * sq_size_ / 2, num_sq_y_ * sq_size_ / 2, 0]",
-                                                    "usedVars": [
-                                                        "sq_size",
-                                                        "num_sq_y",
-                                                        "num_sq_x"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "[num_sq_x * sq_size / 2 , num_sq_y * sq_size / 2 , 0]",
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
@@ -469,7 +379,7 @@
                                                     },
                                                     "parentNode": {
                                                         "name": "2. Move by shifted sin/ cos/sin+cos wave",
-                                                        "id": "node_7eoj7z92khu",
+                                                        "id": "node_1l2eskucb2c",
                                                         "position": {
                                                             "x": 5350.02099609375,
                                                             "y": 5296.05810546875
@@ -500,37 +410,35 @@
                                                                     "module": "query",
                                                                     "name": "Get"
                                                                 },
-                                                                "argCount": 4,
+                                                                "argCount": 5,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
                                                                         "value": "pls",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "pls_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
-                                                                        "name": "ent_type_enum",
-                                                                        "linked": false,
-                                                                        "value": "'pl'",
-                                                                        "jsValue": "'pl'"
+                                                                        "name": "select",
+                                                                        "value": "'polylines'",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
                                                                         "value": "null",
-                                                                        "jsValue": "null",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
+                                                                    },
+                                                                    {
+                                                                        "name": "query_expr",
+                                                                        "value": "null",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "pls"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 4,
@@ -542,20 +450,12 @@
                                                                     {
                                                                         "name": "item",
                                                                         "value": "pl",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "pl_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "list",
                                                                         "value": "pls",
-                                                                        "default": [],
-                                                                        "jsValue": "pls_",
-                                                                        "usedVars": [
-                                                                            "pls"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": []
                                                                     }
                                                                 ],
                                                                 "children": [
@@ -589,30 +489,20 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "value": "unweld",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "unweld_",
-                                                                                "linked": false
+                                                                                "invalidVar": false
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_",
-                                                                                "usedVars": [
-                                                                                    "pl"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "unweld"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -629,30 +519,20 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "value": "centre_xyz",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "centre_xyz_",
-                                                                                "linked": false
+                                                                                "invalidVar": false
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_",
-                                                                                "usedVars": [
-                                                                                    "pl"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "centre_xyz"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 9,
@@ -668,69 +548,37 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "invalidVar": false,
-                                                                                "value": "z_displ_sin_x",
-                                                                                "jsValue": "z_displ_sin_x_",
-                                                                                "linked": false
+                                                                                "value": "z_displ_sin_x"
                                                                             },
                                                                             {
                                                                                 "name": "sine_or_cosine",
                                                                                 "type": 0,
-                                                                                "value": "0",
-                                                                                "jsValue": "0",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "0"
                                                                             },
                                                                             {
                                                                                 "name": "dist_from_grid_origin",
                                                                                 "type": 0,
-                                                                                "value": "centre_xyz[0]",
-                                                                                "jsValue": "centre_xyz_.slice(0)[0]",
-                                                                                "usedVars": [
-                                                                                    "centre_xyz"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "centre_xyz[0]"
                                                                             },
                                                                             {
                                                                                 "name": "dist_max_grid",
                                                                                 "type": 0,
-                                                                                "value": "num_sq_x * sq_size",
-                                                                                "jsValue": "num_sq_x_ * sq_size_",
-                                                                                "usedVars": [
-                                                                                    "sq_size",
-                                                                                    "num_sq_x"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "num_sq_x * sq_size"
                                                                             },
                                                                             {
                                                                                 "name": "scale_factor",
                                                                                 "type": 0,
-                                                                                "value": "increase_factor",
-                                                                                "jsValue": "increase_factor_",
-                                                                                "usedVars": [
-                                                                                    "increase_factor"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "increase_factor"
                                                                             },
                                                                             {
                                                                                 "name": "wave_shift",
                                                                                 "type": 0,
-                                                                                "value": "degToRad(wave_shift)",
-                                                                                "jsValue": "degToRad(wave_shift_)",
-                                                                                "usedVars": [
-                                                                                    "wave_shift"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "degToRad ( wave_shift )"
                                                                             }
                                                                         ],
                                                                         "selected": false,
                                                                         "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode~procedure~2",
-                                                                        "hasError": false,
-                                                                        "variable": "z_displ_sin_x"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 9,
@@ -746,69 +594,37 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "invalidVar": false,
-                                                                                "value": "z_displ_cos_x",
-                                                                                "jsValue": "z_displ_cos_x_",
-                                                                                "linked": false
+                                                                                "value": "z_displ_cos_x"
                                                                             },
                                                                             {
                                                                                 "name": "sine_or_cosine",
                                                                                 "type": 0,
-                                                                                "value": "1",
-                                                                                "jsValue": "1",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "1"
                                                                             },
                                                                             {
                                                                                 "name": "dist_from_grid_origin",
                                                                                 "type": 0,
-                                                                                "value": "centre_xyz[0]",
-                                                                                "jsValue": "centre_xyz_.slice(0)[0]",
-                                                                                "usedVars": [
-                                                                                    "centre_xyz"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "centre_xyz[0]"
                                                                             },
                                                                             {
                                                                                 "name": "dist_max_grid",
                                                                                 "type": 0,
-                                                                                "value": "num_sq_x * sq_size",
-                                                                                "jsValue": "num_sq_x_ * sq_size_",
-                                                                                "usedVars": [
-                                                                                    "sq_size",
-                                                                                    "num_sq_x"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "num_sq_x * sq_size"
                                                                             },
                                                                             {
                                                                                 "name": "scale_factor",
                                                                                 "type": 0,
-                                                                                "value": "increase_factor",
-                                                                                "jsValue": "increase_factor_",
-                                                                                "usedVars": [
-                                                                                    "increase_factor"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "increase_factor"
                                                                             },
                                                                             {
                                                                                 "name": "wave_shift",
                                                                                 "type": 0,
-                                                                                "value": "degToRad(wave_shift)",
-                                                                                "jsValue": "degToRad(wave_shift_)",
-                                                                                "usedVars": [
-                                                                                    "wave_shift"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "degToRad ( wave_shift )"
                                                                             }
                                                                         ],
                                                                         "selected": false,
                                                                         "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode~procedure~2",
-                                                                        "hasError": false,
-                                                                        "variable": "z_displ_cos_x"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 9,
@@ -824,69 +640,37 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "invalidVar": false,
-                                                                                "value": "z_displ_sin_y",
-                                                                                "jsValue": "z_displ_sin_y_",
-                                                                                "linked": false
+                                                                                "value": "z_displ_sin_y"
                                                                             },
                                                                             {
                                                                                 "name": "sine_or_cosine",
                                                                                 "type": 0,
-                                                                                "value": "0",
-                                                                                "jsValue": "0",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "0"
                                                                             },
                                                                             {
                                                                                 "name": "dist_from_grid_origin",
                                                                                 "type": 0,
-                                                                                "value": "centre_xyz[1]",
-                                                                                "jsValue": "centre_xyz_.slice(1)[0]",
-                                                                                "usedVars": [
-                                                                                    "centre_xyz"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "centre_xyz[1]"
                                                                             },
                                                                             {
                                                                                 "name": "dist_max_grid",
                                                                                 "type": 0,
-                                                                                "value": "num_sq_y * sq_size",
-                                                                                "jsValue": "num_sq_y_ * sq_size_",
-                                                                                "usedVars": [
-                                                                                    "sq_size",
-                                                                                    "num_sq_y"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "num_sq_y * sq_size"
                                                                             },
                                                                             {
                                                                                 "name": "scale_factor",
                                                                                 "type": 0,
-                                                                                "value": "increase_factor",
-                                                                                "jsValue": "increase_factor_",
-                                                                                "usedVars": [
-                                                                                    "increase_factor"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "increase_factor"
                                                                             },
                                                                             {
                                                                                 "name": "wave_shift",
                                                                                 "type": 0,
-                                                                                "value": "degToRad(wave_shift)",
-                                                                                "jsValue": "degToRad(wave_shift_)",
-                                                                                "usedVars": [
-                                                                                    "wave_shift"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "degToRad ( wave_shift )"
                                                                             }
                                                                         ],
                                                                         "selected": false,
                                                                         "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode~procedure~2",
-                                                                        "hasError": false,
-                                                                        "variable": "z_displ_sin_y"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 9,
@@ -902,69 +686,37 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "invalidVar": false,
-                                                                                "value": "z_displ_cos_y",
-                                                                                "jsValue": "z_displ_cos_y_",
-                                                                                "linked": false
+                                                                                "value": "z_displ_cos_y"
                                                                             },
                                                                             {
                                                                                 "name": "sine_or_cosine",
                                                                                 "type": 0,
-                                                                                "value": "1",
-                                                                                "jsValue": "1",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "1"
                                                                             },
                                                                             {
                                                                                 "name": "dist_from_grid_origin",
                                                                                 "type": 0,
-                                                                                "value": "centre_xyz[1]",
-                                                                                "jsValue": "centre_xyz_.slice(1)[0]",
-                                                                                "usedVars": [
-                                                                                    "centre_xyz"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "centre_xyz[1]"
                                                                             },
                                                                             {
                                                                                 "name": "dist_max_grid",
                                                                                 "type": 0,
-                                                                                "value": "num_sq_y * sq_size",
-                                                                                "jsValue": "num_sq_y_ * sq_size_",
-                                                                                "usedVars": [
-                                                                                    "sq_size",
-                                                                                    "num_sq_y"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "num_sq_y * sq_size"
                                                                             },
                                                                             {
                                                                                 "name": "scale_factor",
                                                                                 "type": 0,
-                                                                                "value": "increase_factor",
-                                                                                "jsValue": "increase_factor_",
-                                                                                "usedVars": [
-                                                                                    "increase_factor"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "increase_factor"
                                                                             },
                                                                             {
                                                                                 "name": "wave_shift",
                                                                                 "type": 0,
-                                                                                "value": "degToRad(wave_shift)",
-                                                                                "jsValue": "degToRad(wave_shift_)",
-                                                                                "usedVars": [
-                                                                                    "wave_shift"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "degToRad ( wave_shift )"
                                                                             }
                                                                         ],
                                                                         "selected": false,
                                                                         "parent": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode~procedure~2",
-                                                                        "hasError": false,
-                                                                        "variable": "z_displ_cos_y"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -979,36 +731,21 @@
                                                                         "argCount": 4,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_",
-                                                                                "usedVars": [
-                                                                                    "pl"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "vector",
-                                                                                "value": "[0, 0, z_displ_sin_x + z_displ_cos_y]",
-                                                                                "default": 0,
-                                                                                "jsValue": "[0, 0, z_displ_sin_x_ + z_displ_cos_y_]",
-                                                                                "usedVars": [
-                                                                                    "z_displ_sin_x",
-                                                                                    "z_displ_cos_y"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "[0 , 0 , z_displ_sin_x + z_displ_cos_y]",
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -1016,8 +753,7 @@
                                                                     }
                                                                 ],
                                                                 "hasError": false,
-                                                                "selected": false,
-                                                                "variable": "pl"
+                                                                "selected": false
                                                             },
                                                             {
                                                                 "type": 8,
@@ -1028,55 +764,30 @@
                                                                     "module": "util",
                                                                     "name": "ExportData"
                                                                 },
-                                                                "argCount": 6,
+                                                                "argCount": 4,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
                                                                         "value": "exported",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "exported_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "linked": false
-                                                                    },
-                                                                    {
-                                                                        "name": "entities",
-                                                                        "linked": false,
-                                                                        "value": "null",
-                                                                        "jsValue": "null",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "filename",
                                                                         "value": "\"example_2_result\"",
-                                                                        "jsValue": "\"example_2_result\"",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "data_format",
                                                                         "value": "'gi'",
-                                                                        "jsValue": "'gi'",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
-                                                                    },
-                                                                    {
-                                                                        "name": "data_target",
-                                                                        "value": "'Save to Hard Disk'",
-                                                                        "jsValue": "'Save to Hard Disk'",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "exported"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "state": {
@@ -1101,7 +812,7 @@
                                                                         },
                                                                         "parentNode": {
                                                                             "name": "End",
-                                                                            "id": "node_2ly102mqvrq",
+                                                                            "id": "node_l9ry3cncd3q",
                                                                             "position": {
                                                                                 "x": 5349.7265625,
                                                                                 "y": 5472.67822265625
@@ -1135,14 +846,12 @@
                                                                                         {
                                                                                             "name": "__model__",
                                                                                             "value": "",
-                                                                                            "default": 0,
-                                                                                            "linked": false
+                                                                                            "default": 0
                                                                                         },
                                                                                         {
                                                                                             "name": "value",
                                                                                             "value": "",
-                                                                                            "default": 0,
-                                                                                            "linked": false
+                                                                                            "default": 0
                                                                                         }
                                                                                     ],
                                                                                     "print": false,
@@ -1174,8 +883,7 @@
                                                             "meta": {
                                                                 "mode": 0
                                                             },
-                                                            "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode",
-                                                            "model": null
+                                                            "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode"
                                                         },
                                                         "hasExecuted": true,
                                                         "hasError": false
@@ -1187,8 +895,7 @@
                                         "meta": {
                                             "mode": 0
                                         },
-                                        "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode",
-                                        "model": null
+                                        "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode"
                                     },
                                     "hasError": false,
                                     "hasExecuted": true
@@ -1200,8 +907,7 @@
                     "meta": {
                         "mode": 0
                     },
-                    "parentNode": "~flowchart~nodes~0",
-                    "model": null
+                    "parentNode": "~flowchart~nodes~0"
                 },
                 "hasError": false,
                 "hasExecuted": true
@@ -1246,18 +952,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "sine_or_cosine",
-                                            "default": 0,
-                                            "jsValue": "sine_or_cosine_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "value": "0",
-                                            "default": "0",
-                                            "jsValue": "0",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": "0"
                                         }
                                     ],
                                     "selected": false,
@@ -1279,18 +979,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "dist_from_grid_origin",
-                                            "default": 0,
-                                            "jsValue": "dist_from_grid_origin_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "default": "1",
-                                            "value": "1",
-                                            "jsValue": "1",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "value": "1"
                                         }
                                     ],
                                     "selected": false,
@@ -1312,18 +1006,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "dist_max_grid",
-                                            "default": 0,
-                                            "jsValue": "dist_max_grid_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "default": "1",
-                                            "value": "1",
-                                            "jsValue": "1",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "value": "1"
                                         }
                                     ],
                                     "selected": false,
@@ -1345,18 +1033,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "scale_factor",
-                                            "default": 0,
-                                            "jsValue": "scale_factor_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "default": "1",
-                                            "value": "1",
-                                            "jsValue": "1",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "value": "1"
                                         }
                                     ],
                                     "selected": false,
@@ -1378,18 +1060,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "wave_shift",
-                                            "default": 0,
-                                            "jsValue": "wave_shift_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "default": 0,
-                                            "value": "0",
-                                            "jsValue": "0",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "value": "0"
                                         }
                                     ],
                                     "selected": false,
@@ -1461,23 +1137,15 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "scaled_shifted_wave",
-                                                                "invalidVar": false,
-                                                                "jsValue": "scaled_shifted_wave_",
-                                                                "linked": false
+                                                                "value": "scaled_shifted_wave"
                                                             },
                                                             {
                                                                 "name": "value",
-                                                                "value": "0",
-                                                                "jsValue": "0",
-                                                                "usedVars": [],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "0"
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "scaled_shifted_wave"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 1,
@@ -1488,13 +1156,7 @@
                                                         "args": [
                                                             {
                                                                 "name": "condition",
-                                                                "value": "sine_or_cosine == 0",
-                                                                "jsValue": "sine_or_cosine_ == 0",
-                                                                "usedVars": [
-                                                                    "sine_or_cosine"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "sine_or_cosine == 0"
                                                             }
                                                         ],
                                                         "children": [
@@ -1523,26 +1185,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "t_param",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "t_param_",
-                                                                        "linked": false
+                                                                        "value": "t_param"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "dist_from_grid_origin / dist_max_grid",
-                                                                        "jsValue": "dist_from_grid_origin_ / dist_max_grid_",
-                                                                        "usedVars": [
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "dist_from_grid_origin / dist_max_grid"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "t_param"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 0,
@@ -1554,26 +1205,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "sin_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "sin_wave_",
-                                                                        "linked": false
+                                                                        "value": "sin_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "sin(dist_from_grid_origin / dist_max_grid * 2 * PI)",
-                                                                        "jsValue": "sin(dist_from_grid_origin_ / dist_max_grid_ * 2 * PI)",
-                                                                        "usedVars": [
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "sin ( dist_from_grid_origin / dist_max_grid * 2 * PI )"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "sin_wave"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 0,
@@ -1585,27 +1225,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "shifted_sin_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "shifted_sin_wave_",
-                                                                        "linked": false
+                                                                        "value": "shifted_sin_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "sin(dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift)",
-                                                                        "jsValue": "sin(dist_from_grid_origin_ / dist_max_grid_ * 2 * PI + wave_shift_)",
-                                                                        "usedVars": [
-                                                                            "wave_shift",
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "sin ( dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift )"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "shifted_sin_wave"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 0,
@@ -1617,28 +1245,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "scaled_shifted_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "scaled_shifted_wave_",
-                                                                        "linked": false
+                                                                        "value": "scaled_shifted_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "sin(dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift) * scale_factor",
-                                                                        "jsValue": "sin(dist_from_grid_origin_ / dist_max_grid_ * 2 * PI + wave_shift_) * scale_factor_",
-                                                                        "usedVars": [
-                                                                            "wave_shift",
-                                                                            "scale_factor",
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "sin ( dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift ) * scale_factor"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "scaled_shifted_wave"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "selected": false,
@@ -1653,13 +1268,7 @@
                                                         "args": [
                                                             {
                                                                 "name": "condition",
-                                                                "value": "sine_or_cosine == 1",
-                                                                "jsValue": "sine_or_cosine_ == 1",
-                                                                "usedVars": [
-                                                                    "sine_or_cosine"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "sine_or_cosine == 1"
                                                             }
                                                         ],
                                                         "children": [
@@ -1688,26 +1297,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "t_param",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "t_param_",
-                                                                        "linked": false
+                                                                        "value": "t_param"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "dist_from_grid_origin / dist_max_grid",
-                                                                        "jsValue": "dist_from_grid_origin_ / dist_max_grid_",
-                                                                        "usedVars": [
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "dist_from_grid_origin / dist_max_grid"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "t_param"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 0,
@@ -1719,26 +1317,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "cos_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "cos_wave_",
-                                                                        "linked": false
+                                                                        "value": "cos_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "cos(dist_from_grid_origin / dist_max_grid * 2 * PI)",
-                                                                        "jsValue": "cos(dist_from_grid_origin_ / dist_max_grid_ * 2 * PI)",
-                                                                        "usedVars": [
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "cos ( dist_from_grid_origin / dist_max_grid * 2 * PI )"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "cos_wave"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 0,
@@ -1750,27 +1337,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "shifted_cos_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "shifted_cos_wave_",
-                                                                        "linked": false
+                                                                        "value": "shifted_cos_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "cos(dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift)",
-                                                                        "jsValue": "cos(dist_from_grid_origin_ / dist_max_grid_ * 2 * PI + wave_shift_)",
-                                                                        "usedVars": [
-                                                                            "wave_shift",
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "cos ( dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift )"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "shifted_cos_wave"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 0,
@@ -1782,28 +1357,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "scaled_shifted_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "scaled_shifted_wave_",
-                                                                        "linked": false
+                                                                        "value": "scaled_shifted_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "cos(dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift) * scale_factor",
-                                                                        "jsValue": "cos(dist_from_grid_origin_ / dist_max_grid_ * 2 * PI + wave_shift_) * scale_factor_",
-                                                                        "usedVars": [
-                                                                            "wave_shift",
-                                                                            "scale_factor",
-                                                                            "dist_max_grid",
-                                                                            "dist_from_grid_origin"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "cos ( dist_from_grid_origin / dist_max_grid * 2 * PI + wave_shift ) * scale_factor"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "scaled_shifted_wave"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "selected": false,
@@ -1842,23 +1404,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "scaled_shifted_wave",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "scaled_shifted_wave_",
-                                                                        "linked": false
+                                                                        "value": "scaled_shifted_wave"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "\"You need to specify 0 for sin wave or 1 for cos wave in the first argument.\"",
-                                                                        "jsValue": "\"You need to specify 0 for sin wave or 1 for cos wave in the first argument.\"",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "\"You need to specify 0 for sin wave or 1 for cos wave in the first argument.\""
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "scaled_shifted_wave"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "hasError": false,
@@ -1875,16 +1429,12 @@
                                                         "args": [
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "value",
                                                                 "value": "scaled_shifted_wave",
-                                                                "default": 0,
-                                                                "jsValue": "scaled_shifted_wave_",
-                                                                "invalidVar": "Error: Invalid vars: scaled_shifted_wave",
-                                                                "linked": false
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "print": false,
@@ -1984,10 +1534,8 @@
                 "argCount": 5
             }
         ],
-        "ordered": true,
-        "id": "cd54e06b-53f6-5dd4-1db5-dce659d8b84f",
-        "last_updated": "2019-08-06T04:29:40.187Z"
+        "ordered": true
     },
-    "version": 1,
-    "settings": "{\"normals\":{\"show\":false,\"size\":5},\"axes\":{\"show\":true,\"size\":50},\"grid\":{\"show\":true,\"size\":500},\"positions\":{\"show\":true,\"size\":0.5},\"tjs_summary\":{\"show\":false},\"gi_summary\":{\"show\":false},\"wireframe\":{\"show\":false},\"camera\":{\"pos\":{\"x\":-80,\"y\":-80,\"z\":80},\"pos_x\":-80,\"pos_y\":-80,\"pos_z\":80,\"target\":{\"x\":18.25,\"y\":10,\"z\":0}},\"colors\":{\"viewer_bg\":\"#E6E6E6\",\"position\":\"#000000\",\"position_s\":\"#0033FF\",\"vertex_s\":\"#FFCC00\",\"face_f\":\"#FFFFFF\",\"face_f_s\":\"#4949BD\",\"face_b\":\"#DDDDDD\",\"face_b_s\":\"#00006D\"},\"ambient_light\":{\"show\":true,\"color\":\"#FFFFFF\",\"intensity\":0.5},\"hemisphere_light\":{\"show\":true,\"helper\":false,\"skyColor\":\"#FFFFFF\",\"groundColor\":\"#FFFFFF\",\"intensity\":0.5},\"directional_light\":{\"show\":false,\"helper\":false,\"color\":\"#FFFFFF\",\"intensity\":1,\"shadow\":true,\"shadowSize\":4,\"azimuth\":90,\"altitude\":45,\"distance\":10000},\"ground\":{\"show\":false,\"width\":1000,\"length\":1000,\"height\":-0.5,\"color\":\"#FFFFFF\",\"shininess\":0},\"select\":{\"selector\":{\"id\":5,\"name\":\"Faces\"},\"tab\":\"0\"},\"version\":\"0.4.38\"}"
+    "last_updated": "2019-01-15T01:41:47.722Z",
+    "version": 1
 }

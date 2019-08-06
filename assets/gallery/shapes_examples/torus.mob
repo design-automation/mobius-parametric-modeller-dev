@@ -13,7 +13,7 @@
         "nodes": [
             {
                 "name": "Start",
-                "id": "node_49ozrtyymeo",
+                "id": "node_n28wyb8pifl",
                 "position": {
                     "x": 5350,
                     "y": 5000
@@ -52,18 +52,15 @@
                                 "name": "const_name",
                                 "value": "segments",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "segments_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
-                                "value": 6,
+                                "value": 10,
                                 "default": 4,
                                 "step": "1",
                                 "min": "4",
-                                "max": "12",
-                                "linked": false
+                                "max": "12"
                             }
                         ],
                         "selected": false,
@@ -86,18 +83,15 @@
                                 "name": "const_name",
                                 "value": "slices",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "slices_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
-                                "value": 7,
+                                "value": 11,
                                 "default": 4,
                                 "step": "1",
                                 "min": "4",
-                                "max": "12",
-                                "linked": false
+                                "max": "12"
                             }
                         ],
                         "selected": false,
@@ -135,7 +129,7 @@
                                 },
                                 "parentNode": {
                                     "name": "make torus",
-                                    "id": "node_2l2n0gbmadu",
+                                    "id": "node_tgw9c4898w",
                                     "position": {
                                         "x": 5350,
                                         "y": 5200
@@ -171,57 +165,35 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "cir",
-                                                    "invalidVar": false,
-                                                    "jsValue": "cir_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "origin",
                                                     "value": "YZ",
-                                                    "default": 0,
-                                                    "jsValue": "YZ",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "radius",
                                                     "value": "20",
-                                                    "default": 0,
-                                                    "jsValue": "20",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "num_positions",
                                                     "value": "segments",
-                                                    "default": 0,
-                                                    "jsValue": "segments_",
-                                                    "usedVars": [
-                                                        "segments"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "arc_angle",
                                                     "value": "null",
-                                                    "default": 0,
-                                                    "jsValue": "null",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "cir"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 8,
@@ -235,33 +207,21 @@
                                             "argCount": 4,
                                             "args": [
                                                 {
-                                                    "name": "__none__",
-                                                    "linked": false
+                                                    "name": "__none__"
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "entities",
                                                     "value": "cir",
-                                                    "default": 0,
-                                                    "jsValue": "cir_",
-                                                    "usedVars": [
-                                                        "cir"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "vector",
-                                                    "value": "[0, 50, 0]",
-                                                    "default": 0,
-                                                    "jsValue": "[0, 50, 0]",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "[0 , 50 , 0]",
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
@@ -281,39 +241,25 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "cir_pl",
-                                                    "invalidVar": false,
-                                                    "jsValue": "cir_pl_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "positions",
                                                     "value": "cir",
-                                                    "default": 0,
-                                                    "jsValue": "cir_",
-                                                    "usedVars": [
-                                                        "cir"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "close",
                                                     "value": "'close'",
-                                                    "default": 0,
-                                                    "jsValue": "'close'",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "cir_pl"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 0,
@@ -325,22 +271,15 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "circs",
-                                                    "invalidVar": false,
-                                                    "jsValue": "circs_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "value",
-                                                    "value": "[]",
-                                                    "jsValue": "[]",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "[]"
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "circs"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 0,
@@ -352,24 +291,15 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "num",
-                                                    "invalidVar": false,
-                                                    "jsValue": "num_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "value",
-                                                    "value": "slices",
-                                                    "jsValue": "slices_",
-                                                    "usedVars": [
-                                                        "slices"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "slices"
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "num"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 4,
@@ -381,20 +311,12 @@
                                                 {
                                                     "name": "item",
                                                     "value": "i",
-                                                    "invalidVar": false,
-                                                    "jsValue": "i_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "list",
-                                                    "value": "range(0, num)",
-                                                    "default": [],
-                                                    "jsValue": "range(0, num_)",
-                                                    "usedVars": [
-                                                        "num"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "range ( 0 , num )",
+                                                    "default": []
                                                 }
                                             ],
                                             "children": [
@@ -428,39 +350,25 @@
                                                         {
                                                             "name": "var_name",
                                                             "value": "cir_pl2",
-                                                            "invalidVar": false,
-                                                            "jsValue": "cir_pl2_",
-                                                            "linked": false
+                                                            "invalidVar": false
                                                         },
                                                         {
                                                             "name": "__model__",
-                                                            "default": 0,
-                                                            "linked": false
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "entities",
                                                             "value": "cir_pl",
-                                                            "default": 0,
-                                                            "jsValue": "cir_pl_",
-                                                            "usedVars": [
-                                                                "cir_pl"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "copy_attributes",
                                                             "value": "'no_attributes'",
-                                                            "default": 0,
-                                                            "jsValue": "'no_attributes'",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "default": 0
                                                         }
                                                     ],
                                                     "selected": false,
-                                                    "hasError": false,
-                                                    "variable": "cir_pl2"
+                                                    "hasError": false
                                                 },
                                                 {
                                                     "type": 8,
@@ -475,54 +383,31 @@
                                                     "argCount": 6,
                                                     "args": [
                                                         {
-                                                            "name": "__none__",
-                                                            "linked": false
+                                                            "name": "__none__"
                                                         },
                                                         {
                                                             "name": "__model__",
-                                                            "default": 0,
-                                                            "linked": false
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "entities",
                                                             "value": "cir_pl2",
-                                                            "default": 0,
-                                                            "jsValue": "cir_pl2_",
-                                                            "usedVars": [
-                                                                "cir_pl2"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "origin",
                                                             "value": "XY",
-                                                            "default": 0,
-                                                            "jsValue": "XY",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "axis",
-                                                            "value": "[0, 0, 1]",
-                                                            "default": 0,
-                                                            "jsValue": "[0, 0, 1]",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "[0 , 0 , 1]",
+                                                            "default": 0
                                                         },
                                                         {
                                                             "name": "angle",
-                                                            "value": "(2 * PI / num) * i",
-                                                            "default": 0,
-                                                            "jsValue": "(2 * PI / num_) * i_",
-                                                            "usedVars": [
-                                                                "num",
-                                                                "i"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "( 2 * PI / num ) * i",
+                                                            "default": 0
                                                         }
                                                     ],
                                                     "selected": false,
@@ -541,39 +426,22 @@
                                                     "argCount": 4,
                                                     "args": [
                                                         {
-                                                            "name": "__none__",
-                                                            "linked": false
+                                                            "name": "__none__"
                                                         },
                                                         {
                                                             "name": "list",
                                                             "default": 0,
-                                                            "value": "circs",
-                                                            "jsValue": "circs_",
-                                                            "usedVars": [
-                                                                "circs"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "circs"
                                                         },
                                                         {
                                                             "name": "value",
                                                             "default": 0,
-                                                            "value": "cir_pl2",
-                                                            "jsValue": "cir_pl2_",
-                                                            "usedVars": [
-                                                                "cir_pl2"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "cir_pl2"
                                                         },
                                                         {
                                                             "name": "method",
                                                             "default": 0,
-                                                            "value": "'to_end'",
-                                                            "jsValue": "'to_end'",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "'to_end'"
                                                         }
                                                     ],
                                                     "selected": false,
@@ -581,8 +449,7 @@
                                                 }
                                             ],
                                             "hasError": false,
-                                            "selected": false,
-                                            "variable": "i"
+                                            "selected": false
                                         },
                                         {
                                             "type": 8,
@@ -597,49 +464,30 @@
                                             "args": [
                                                 {
                                                     "name": "var_name",
-                                                    "value": "skin",
-                                                    "invalidVar": false,
-                                                    "jsValue": "skin_",
-                                                    "linked": false
+                                                    "value": "skin"
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "entities",
                                                     "default": 0,
-                                                    "value": "circs",
-                                                    "jsValue": "circs_",
-                                                    "usedVars": [
-                                                        "circs"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "circs"
                                                 },
                                                 {
                                                     "name": "divisions",
                                                     "default": 0,
-                                                    "value": "1",
-                                                    "jsValue": "1",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "1"
                                                 },
                                                 {
                                                     "name": "method",
                                                     "default": 0,
-                                                    "value": "'closed_quads'",
-                                                    "jsValue": "'closed_quads'",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "'closed_quads'"
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "skin"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 8,
@@ -653,24 +501,16 @@
                                             "argCount": 3,
                                             "args": [
                                                 {
-                                                    "name": "__none__",
-                                                    "linked": false
+                                                    "name": "__none__"
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "entities",
                                                     "value": "skin",
-                                                    "default": 0,
-                                                    "jsValue": "skin_",
-                                                    "usedVars": [
-                                                        "skin"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
@@ -699,7 +539,7 @@
                                                     },
                                                     "parentNode": {
                                                         "name": "cut holes",
-                                                        "id": "node_a7vssrm49w",
+                                                        "id": "node_122oqw1vx58",
                                                         "position": {
                                                             "x": 5349.091796875,
                                                             "y": 5402.365234375
@@ -730,37 +570,35 @@
                                                                     "module": "query",
                                                                     "name": "Get"
                                                                 },
-                                                                "argCount": 4,
+                                                                "argCount": 5,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
                                                                         "value": "pgons",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "pgons_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
-                                                                        "name": "ent_type_enum",
-                                                                        "linked": false,
-                                                                        "value": "'pg'",
-                                                                        "jsValue": "'pg'"
+                                                                        "name": "select",
+                                                                        "value": "'polygons'",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
                                                                         "value": "null",
-                                                                        "jsValue": "null",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
+                                                                    },
+                                                                    {
+                                                                        "name": "query_expr",
+                                                                        "value": "null",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "pgons"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 4,
@@ -772,20 +610,12 @@
                                                                     {
                                                                         "name": "item",
                                                                         "value": "pgon",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "pgon_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "list",
                                                                         "value": "pgons",
-                                                                        "default": [],
-                                                                        "jsValue": "pgons_",
-                                                                        "usedVars": [
-                                                                            "pgons"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": []
                                                                     }
                                                                 ],
                                                                 "children": [
@@ -819,39 +649,25 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "value": "pgon_cp",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "pgon_cp_",
-                                                                                "linked": false
+                                                                                "invalidVar": false
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pgon",
-                                                                                "default": 0,
-                                                                                "jsValue": "pgon_",
-                                                                                "usedVars": [
-                                                                                    "pgon"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "copy_attributes",
                                                                                 "value": "'no_attributes'",
-                                                                                "default": 0,
-                                                                                "jsValue": "'no_attributes'",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "pgon_cp"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -868,30 +684,20 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "value": "plane",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "plane_",
-                                                                                "linked": false
+                                                                                "invalidVar": false
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pgon_cp",
-                                                                                "default": 0,
-                                                                                "jsValue": "pgon_cp_",
-                                                                                "usedVars": [
-                                                                                    "pgon_cp"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "plane"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -906,44 +712,26 @@
                                                                         "argCount": 5,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pgon_cp",
-                                                                                "default": 0,
-                                                                                "jsValue": "pgon_cp_",
-                                                                                "usedVars": [
-                                                                                    "pgon_cp"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "origin",
                                                                                 "value": "plane",
-                                                                                "default": 0,
-                                                                                "jsValue": "plane_",
-                                                                                "usedVars": [
-                                                                                    "plane"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "scale",
                                                                                 "value": "0.7",
-                                                                                "default": 0,
-                                                                                "jsValue": "0.7",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -959,39 +747,35 @@
                                                                             "module": "query",
                                                                             "name": "Get"
                                                                         },
-                                                                        "argCount": 4,
+                                                                        "argCount": 5,
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "value": "posis",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "posis_",
-                                                                                "linked": false
+                                                                                "invalidVar": false
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
-                                                                                "name": "ent_type_enum",
-                                                                                "linked": false,
-                                                                                "value": "'ps'",
-                                                                                "jsValue": "'ps'"
+                                                                                "name": "select",
+                                                                                "value": "'positions'",
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pgon_cp",
-                                                                                "jsValue": "pgon_cp_",
-                                                                                "usedVars": [
-                                                                                    "pgon_cp"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
+                                                                            },
+                                                                            {
+                                                                                "name": "query_expr",
+                                                                                "value": "null",
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "posis"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -1008,41 +792,25 @@
                                                                             {
                                                                                 "name": "var_name",
                                                                                 "value": "wires",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "wires_",
-                                                                                "linked": false
+                                                                                "invalidVar": false
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "face",
                                                                                 "value": "pgon",
-                                                                                "default": 0,
-                                                                                "jsValue": "pgon_",
-                                                                                "usedVars": [
-                                                                                    "pgon"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "positions",
                                                                                 "value": "posis",
-                                                                                "default": 0,
-                                                                                "jsValue": "posis_",
-                                                                                "usedVars": [
-                                                                                    "posis"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "wires"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -1057,33 +825,21 @@
                                                                         "argCount": 4,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pgon_cp",
-                                                                                "default": 0,
-                                                                                "jsValue": "pgon_cp_",
-                                                                                "usedVars": [
-                                                                                    "pgon_cp"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "del_unused_posis",
                                                                                 "value": "'del_unused_posis'",
-                                                                                "default": 0,
-                                                                                "jsValue": "'del_unused_posis'",
-                                                                                "usedVars": [],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -1091,8 +847,7 @@
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "pgon"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "state": {
@@ -1117,7 +872,7 @@
                                                                         },
                                                                         "parentNode": {
                                                                             "name": "End",
-                                                                            "id": "node_omxbu4ha1ll",
+                                                                            "id": "node_7ld8kff6yr9",
                                                                             "position": {
                                                                                 "x": 5349.2265625,
                                                                                 "y": 5597.05908203125
@@ -1151,14 +906,12 @@
                                                                                         {
                                                                                             "name": "__model__",
                                                                                             "value": "",
-                                                                                            "default": 0,
-                                                                                            "linked": false
+                                                                                            "default": 0
                                                                                         },
                                                                                         {
                                                                                             "name": "value",
                                                                                             "value": "",
-                                                                                            "default": 0,
-                                                                                            "linked": false
+                                                                                            "default": 0
                                                                                         }
                                                                                     ],
                                                                                     "print": false,
@@ -1190,8 +943,7 @@
                                                             "meta": {
                                                                 "mode": 0
                                                             },
-                                                            "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode",
-                                                            "model": null
+                                                            "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode"
                                                         },
                                                         "hasExecuted": true,
                                                         "hasError": false
@@ -1203,8 +955,7 @@
                                         "meta": {
                                             "mode": 0
                                         },
-                                        "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode",
-                                        "model": null
+                                        "parentNode": "~flowchart~nodes~0~output~edges~0~target~parentNode"
                                     },
                                     "hasError": false,
                                     "hasExecuted": true
@@ -1216,8 +967,7 @@
                     "meta": {
                         "mode": 0
                     },
-                    "parentNode": "~flowchart~nodes~0",
-                    "model": null
+                    "parentNode": "~flowchart~nodes~0"
                 },
                 "hasError": false,
                 "hasExecuted": true
@@ -1232,10 +982,9 @@
             "~flowchart~nodes~0~output~edges~0~target~parentNode~output~edges~0~target~parentNode~output~edges~0"
         ],
         "functions": [],
-        "ordered": true,
-        "id": "3c1aa92d-50c2-b952-ca90-9e2f3084f4eb",
-        "last_updated": "2019-08-06T05:01:43.262Z"
+        "ordered": true
     },
+    "last_updated": "2019-02-13T00:04:30.537Z",
     "version": 1,
-    "settings": "{\"normals\":{\"show\":false,\"size\":5},\"axes\":{\"show\":true,\"size\":50},\"grid\":{\"show\":true,\"size\":500},\"positions\":{\"show\":true,\"size\":0.5},\"tjs_summary\":{\"show\":false},\"gi_summary\":{\"show\":false},\"wireframe\":{\"show\":false},\"camera\":{\"pos\":{\"x\":-80,\"y\":-80,\"z\":80},\"pos_x\":-80,\"pos_y\":-80,\"pos_z\":80,\"target\":{\"x\":0,\"y\":0,\"z\":0}},\"colors\":{\"viewer_bg\":\"#E6E6E6\",\"position\":\"#000000\",\"position_s\":\"#0033FF\",\"vertex_s\":\"#FFCC00\",\"face_f\":\"#FFFFFF\",\"face_f_s\":\"#4949BD\",\"face_b\":\"#DDDDDD\",\"face_b_s\":\"#00006D\"},\"ambient_light\":{\"show\":true,\"color\":\"#FFFFFF\",\"intensity\":0.5},\"hemisphere_light\":{\"show\":true,\"helper\":false,\"skyColor\":\"#FFFFFF\",\"groundColor\":\"#FFFFFF\",\"intensity\":0.5},\"directional_light\":{\"show\":false,\"helper\":false,\"color\":\"#FFFFFF\",\"intensity\":1,\"shadow\":true,\"shadowSize\":4,\"azimuth\":90,\"altitude\":45,\"distance\":10000},\"ground\":{\"show\":false,\"width\":1000,\"length\":1000,\"height\":-0.5,\"color\":\"#FFFFFF\",\"shininess\":0},\"select\":{\"selector\":{\"id\":5,\"name\":\"Faces\"},\"tab\":\"0\"},\"version\":\"0.4.38\"}"
+    "settings": {}
 }

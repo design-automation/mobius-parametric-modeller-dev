@@ -13,7 +13,7 @@
         "nodes": [
             {
                 "name": "Start",
-                "id": "node_qcfyfpqfii",
+                "id": "node_l55k6grick",
                 "position": {
                     "x": 5350,
                     "y": 5000
@@ -52,21 +52,17 @@
                                 "name": "const_name",
                                 "value": "wave_model",
                                 "default": 0,
-                                "invalidVar": false,
-                                "jsValue": "wave_model_",
-                                "linked": false
+                                "invalidVar": false
                             },
                             {
                                 "name": "__input__",
                                 "default": {
                                     "name": "example_2_result.txt"
-                                },
-                                "value": "~flowchart~nodes~0~procedure~1~args~1~default",
-                                "linked": false
+                                }
                             }
                         ],
                         "selected": false,
-                        "hasError": true
+                        "hasError": false
                     }
                 ],
                 "state": {
@@ -100,7 +96,7 @@
                                 },
                                 "parentNode": {
                                     "name": "1. Import data & extrude boxes",
-                                    "id": "node_gic1gfbn4jq",
+                                    "id": "node_y7wdenokqm",
                                     "position": {
                                         "x": 5350,
                                         "y": 5147.31201171875
@@ -136,39 +132,25 @@
                                                 {
                                                     "name": "var_name",
                                                     "value": "wave",
-                                                    "invalidVar": false,
-                                                    "jsValue": "wave_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "default": 0,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "model_data",
                                                     "value": "wave_model",
-                                                    "default": 0,
-                                                    "jsValue": "wave_model_",
-                                                    "usedVars": [
-                                                        "wave_model"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "data_format",
                                                     "value": "'gi'",
-                                                    "default": 0,
-                                                    "jsValue": "'gi'",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "wave"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 8,
@@ -179,37 +161,35 @@
                                                 "module": "query",
                                                 "name": "Get"
                                             },
-                                            "argCount": 4,
+                                            "argCount": 5,
                                             "args": [
                                                 {
                                                     "name": "var_name",
                                                     "value": "pls",
-                                                    "invalidVar": false,
-                                                    "jsValue": "pls_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "__model__",
-                                                    "linked": false
+                                                    "default": 0
                                                 },
                                                 {
-                                                    "name": "ent_type_enum",
-                                                    "linked": false,
-                                                    "value": "'pl'",
-                                                    "jsValue": "'pl'"
+                                                    "name": "select",
+                                                    "value": "'polylines'",
+                                                    "default": 0
                                                 },
                                                 {
                                                     "name": "entities",
                                                     "value": "null",
-                                                    "jsValue": "null",
-                                                    "usedVars": [],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": 0
+                                                },
+                                                {
+                                                    "name": "query_expr",
+                                                    "value": "null",
+                                                    "default": 0
                                                 }
                                             ],
                                             "selected": false,
-                                            "hasError": false,
-                                            "variable": "pls"
+                                            "hasError": false
                                         },
                                         {
                                             "type": 4,
@@ -221,20 +201,12 @@
                                                 {
                                                     "name": "item",
                                                     "value": "pl",
-                                                    "invalidVar": false,
-                                                    "jsValue": "pl_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "list",
                                                     "value": "pls",
-                                                    "default": [],
-                                                    "jsValue": "pls_",
-                                                    "usedVars": [
-                                                        "pls"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "default": []
                                                 }
                                             ],
                                             "children": [
@@ -268,57 +240,35 @@
                                                         {
                                                             "name": "var_name",
                                                             "value": "extrusion",
-                                                            "invalidVar": false,
-                                                            "jsValue": "extrusion_",
-                                                            "linked": false
+                                                            "invalidVar": false
                                                         },
                                                         {
                                                             "name": "polyline",
                                                             "value": "pl",
-                                                            "type": 0,
-                                                            "jsValue": "pl_",
-                                                            "usedVars": [
-                                                                "pl"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "type": 0
                                                         },
                                                         {
                                                             "name": "extru_dist",
                                                             "value": "10",
-                                                            "type": 0,
-                                                            "jsValue": "10",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "type": 0
                                                         },
                                                         {
                                                             "name": "scale_factor_xy",
-                                                            "value": "[0.7, 0.5]",
-                                                            "type": 0,
-                                                            "jsValue": "[0.7, 0.5]",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "[0.7 , 0.5]",
+                                                            "type": 0
                                                         },
                                                         {
                                                             "name": "material_thickness",
                                                             "value": "1",
-                                                            "type": 0,
-                                                            "jsValue": "1",
-                                                            "usedVars": [],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "type": 0
                                                         }
                                                     ],
                                                     "selected": false,
-                                                    "hasError": false,
-                                                    "variable": "extrusion"
+                                                    "hasError": false
                                                 }
                                             ],
                                             "hasError": false,
-                                            "selected": false,
-                                            "variable": "pl"
+                                            "selected": false
                                         },
                                         {
                                             "type": 4,
@@ -330,20 +280,12 @@
                                                 {
                                                     "name": "item",
                                                     "value": "i",
-                                                    "invalidVar": false,
-                                                    "jsValue": "i_",
-                                                    "linked": false
+                                                    "invalidVar": false
                                                 },
                                                 {
                                                     "name": "list",
-                                                    "value": "range(0, length(pls))",
-                                                    "default": [],
-                                                    "jsValue": "range(0, length(pls_))",
-                                                    "usedVars": [
-                                                        "pls"
-                                                    ],
-                                                    "invalidVar": false,
-                                                    "linked": false
+                                                    "value": "range ( 0 , length ( pls ) )",
+                                                    "default": []
                                                 }
                                             ],
                                             "children": [
@@ -372,13 +314,7 @@
                                                     "args": [
                                                         {
                                                             "name": "condition",
-                                                            "value": "floor(i / 10) % 2 == 0 && i % 2 == 1 || floor(i / 10) % 2 == 1 && i % 2 == 0",
-                                                            "jsValue": "floor(i_ / 10) % 2 == 0 && i_ % 2 == 1 || floor(i_ / 10) % 2 == 1 && i_ % 2 == 0",
-                                                            "usedVars": [
-                                                                "i"
-                                                            ],
-                                                            "invalidVar": false,
-                                                            "linked": false
+                                                            "value": "floor ( i / 10 ) % 2 == 0&&i % 2 == 1||floor ( i / 10 ) % 2 == 1&&i % 2 == 0"
                                                         }
                                                     ],
                                                     "children": [
@@ -412,61 +348,38 @@
                                                                 {
                                                                     "name": "var_name",
                                                                     "value": "extrusion",
-                                                                    "invalidVar": false,
-                                                                    "jsValue": "extrusion_",
-                                                                    "linked": false
+                                                                    "invalidVar": false
                                                                 },
                                                                 {
                                                                     "name": "polyline",
                                                                     "value": "pls[i]",
-                                                                    "type": 0,
-                                                                    "jsValue": "pls_.slice(i_)[0]",
-                                                                    "usedVars": [
-                                                                        "pls",
-                                                                        "i"
-                                                                    ],
-                                                                    "invalidVar": false,
-                                                                    "linked": false
+                                                                    "type": 0
                                                                 },
                                                                 {
                                                                     "name": "extru_dist",
                                                                     "value": "10",
-                                                                    "type": 0,
-                                                                    "jsValue": "10",
-                                                                    "usedVars": [],
-                                                                    "invalidVar": false,
-                                                                    "linked": false
+                                                                    "type": 0
                                                                 },
                                                                 {
                                                                     "name": "scale_factor_xy",
-                                                                    "value": "[0.7, 0.5]",
-                                                                    "type": 0,
-                                                                    "jsValue": "[0.7, 0.5]",
-                                                                    "usedVars": [],
-                                                                    "invalidVar": false,
-                                                                    "linked": false
+                                                                    "value": "[0.7 , 0.5]",
+                                                                    "type": 0
                                                                 },
                                                                 {
                                                                     "name": "material_thickness",
                                                                     "value": "1",
-                                                                    "type": 0,
-                                                                    "jsValue": "1",
-                                                                    "usedVars": [],
-                                                                    "invalidVar": false,
-                                                                    "linked": false
+                                                                    "type": 0
                                                                 }
                                                             ],
                                                             "selected": false,
-                                                            "hasError": false,
-                                                            "variable": "extrusion"
+                                                            "hasError": false
                                                         }
                                                     ],
                                                     "hasError": false
                                                 }
                                             ],
                                             "hasError": false,
-                                            "selected": false,
-                                            "variable": "i"
+                                            "selected": false
                                         }
                                     ],
                                     "state": {
@@ -491,7 +404,7 @@
                                                     },
                                                     "parentNode": {
                                                         "name": "2. Rotate model from horizontal to vertical",
-                                                        "id": "node_owptuub64bl",
+                                                        "id": "node_0nnzo4idhhwl",
                                                         "position": {
                                                             "x": 5350.1953125,
                                                             "y": 5298.984375
@@ -522,37 +435,35 @@
                                                                     "module": "query",
                                                                     "name": "Get"
                                                                 },
-                                                                "argCount": 4,
+                                                                "argCount": 5,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
                                                                         "value": "pls",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "pls_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
-                                                                        "name": "ent_type_enum",
-                                                                        "linked": false,
-                                                                        "value": "'pl'",
-                                                                        "jsValue": "'pl'"
+                                                                        "name": "select",
+                                                                        "value": "'polylines'",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
                                                                         "value": "null",
-                                                                        "jsValue": "null",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
+                                                                    },
+                                                                    {
+                                                                        "name": "query_expr",
+                                                                        "value": "null",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "pls"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 8,
@@ -563,37 +474,35 @@
                                                                     "module": "query",
                                                                     "name": "Get"
                                                                 },
-                                                                "argCount": 4,
+                                                                "argCount": 5,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
                                                                         "value": "pgs",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "pgs_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
-                                                                        "name": "ent_type_enum",
-                                                                        "linked": false,
-                                                                        "value": "'pg'",
-                                                                        "jsValue": "'pg'"
+                                                                        "name": "select",
+                                                                        "value": "'polygons'",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
                                                                         "value": "null",
-                                                                        "jsValue": "null",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
+                                                                    },
+                                                                    {
+                                                                        "name": "query_expr",
+                                                                        "value": "null",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "pgs"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 8,
@@ -602,41 +511,28 @@
                                                                 "print": false,
                                                                 "meta": {
                                                                     "module": "list",
-                                                                    "name": "_Concat"
+                                                                    "name": "Concat"
                                                                 },
                                                                 "argCount": 3,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
                                                                         "value": "whole_model",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "whole_model_",
-                                                                        "linked": false
+                                                                        "invalidVar": false
                                                                     },
                                                                     {
                                                                         "name": "list1",
                                                                         "value": "pls",
-                                                                        "jsValue": "pls_",
-                                                                        "usedVars": [
-                                                                            "pls"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "list2",
                                                                         "value": "pgs",
-                                                                        "jsValue": "pgs_",
-                                                                        "usedVars": [
-                                                                            "pgs"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "whole_model"
+                                                                "hasError": false
                                                             },
                                                             {
                                                                 "type": 8,
@@ -650,51 +546,31 @@
                                                                 "argCount": 6,
                                                                 "args": [
                                                                     {
-                                                                        "name": "__none__",
-                                                                        "linked": false
+                                                                        "name": "__none__"
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "default": 0,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
                                                                         "value": "whole_model",
-                                                                        "default": 0,
-                                                                        "jsValue": "whole_model_",
-                                                                        "usedVars": [
-                                                                            "whole_model"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "origin",
-                                                                        "value": "[0, 0, 0]",
-                                                                        "default": 0,
-                                                                        "jsValue": "[0, 0, 0]",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "[0 , 0 , 0]",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "axis",
-                                                                        "value": "[0, 1, 0]",
-                                                                        "default": 0,
-                                                                        "jsValue": "[0, 1, 0]",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "[0 , 1 , 0]",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "angle",
-                                                                        "value": "-PI / 2",
-                                                                        "default": 0,
-                                                                        "jsValue": "-PI / 2",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "- PI / 2",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
@@ -723,7 +599,7 @@
                                                                         },
                                                                         "parentNode": {
                                                                             "name": "End",
-                                                                            "id": "node_klf1thoc3de",
+                                                                            "id": "node_w48q4lfof6s",
                                                                             "position": {
                                                                                 "x": 5350,
                                                                                 "y": 5447.31201171875
@@ -757,14 +633,12 @@
                                                                                         {
                                                                                             "name": "__model__",
                                                                                             "value": "",
-                                                                                            "default": 0,
-                                                                                            "linked": false
+                                                                                            "default": 0
                                                                                         },
                                                                                         {
                                                                                             "name": "value",
                                                                                             "value": "",
-                                                                                            "default": 0,
-                                                                                            "linked": false
+                                                                                            "default": 0
                                                                                         }
                                                                                     ],
                                                                                     "print": false,
@@ -822,7 +696,7 @@
                     },
                     "parentNode": "~flowchart~nodes~0"
                 },
-                "hasError": true,
+                "hasError": false,
                 "hasExecuted": true
             },
             "~flowchart~nodes~0~output~edges~0~target~parentNode",
@@ -863,37 +737,25 @@
                                         {
                                             "name": "var_name",
                                             "value": "r",
-                                            "invalidVar": false,
-                                            "jsValue": "r_",
-                                            "linked": false
+                                            "invalidVar": false
                                         },
                                         {
                                             "name": "__model__",
-                                            "default": 0,
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "origin",
                                             "value": "XY",
-                                            "default": 0,
-                                            "jsValue": "XY",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "size",
                                             "value": "10",
-                                            "default": 0,
-                                            "jsValue": "10",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": 0
                                         }
                                     ],
                                     "selected": false,
-                                    "hasError": false,
-                                    "variable": "r"
+                                    "hasError": false
                                 },
                                 {
                                     "type": 8,
@@ -908,40 +770,25 @@
                                     "args": [
                                         {
                                             "name": "var_name",
-                                            "value": "pl1",
-                                            "invalidVar": false,
-                                            "jsValue": "pl1_",
-                                            "linked": false
+                                            "value": "pl1"
                                         },
                                         {
                                             "name": "__model__",
-                                            "default": 0,
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "positions",
                                             "value": "r",
-                                            "default": 0,
-                                            "jsValue": "r_",
-                                            "usedVars": [
-                                                "r"
-                                            ],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "close",
                                             "value": "'close'",
-                                            "default": 0,
-                                            "jsValue": "'close'",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": 0
                                         }
                                     ],
                                     "selected": false,
-                                    "hasError": false,
-                                    "variable": "pl1"
+                                    "hasError": false
                                 },
                                 {
                                     "type": 10,
@@ -959,20 +806,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "polyline",
-                                            "default": 0,
-                                            "jsValue": "polyline_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "value": "pl1",
-                                            "default": 0,
-                                            "jsValue": "pl1_",
-                                            "usedVars": [
-                                                "pl1"
-                                            ],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": 0
                                         }
                                     ],
                                     "selected": false,
@@ -994,18 +833,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "extru_dist",
-                                            "default": 0,
-                                            "jsValue": "extru_dist_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "default": "1",
-                                            "value": "1",
-                                            "jsValue": "1",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "value": "10"
                                         }
                                     ],
                                     "selected": false,
@@ -1027,18 +860,12 @@
                                         {
                                             "name": "const_name",
                                             "value": "scale_factor_xy",
-                                            "default": 0,
-                                            "jsValue": "scale_factor_xy_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
                                             "default": "[1,1]",
-                                            "value": "[1, 1]",
-                                            "jsValue": "[1, 1]",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "value": "[0.6,0.4]"
                                         }
                                     ],
                                     "selected": false,
@@ -1060,18 +887,11 @@
                                         {
                                             "name": "const_name",
                                             "value": "material_thickness",
-                                            "default": 0,
-                                            "jsValue": "material_thickness_",
-                                            "linked": false
+                                            "default": 0
                                         },
                                         {
                                             "name": "__input__",
-                                            "default": "1",
-                                            "value": "1",
-                                            "jsValue": "1",
-                                            "usedVars": [],
-                                            "invalidVar": false,
-                                            "linked": false
+                                            "default": "1"
                                         }
                                     ],
                                     "selected": false,
@@ -1147,40 +967,25 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "polyline2",
-                                                                "invalidVar": false,
-                                                                "jsValue": "polyline2_",
-                                                                "linked": false
+                                                                "value": "polyline2"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "entities",
                                                                 "value": "polyline",
-                                                                "default": 0,
-                                                                "jsValue": "polyline_",
-                                                                "usedVars": [
-                                                                    "polyline"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "copy_attributes",
                                                                 "value": "'no_attributes'",
-                                                                "default": 0,
-                                                                "jsValue": "'no_attributes'",
-                                                                "usedVars": [],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "polyline2"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1195,31 +1000,20 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "cen",
-                                                                "invalidVar": false,
-                                                                "jsValue": "cen_",
-                                                                "linked": false
+                                                                "value": "cen"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "entities",
                                                                 "value": "polyline2",
-                                                                "default": 0,
-                                                                "jsValue": "polyline2_",
-                                                                "usedVars": [
-                                                                    "polyline2"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "cen"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1233,46 +1027,26 @@
                                                         "argCount": 5,
                                                         "args": [
                                                             {
-                                                                "name": "__none__",
-                                                                "linked": false
+                                                                "name": "__none__"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "entities",
                                                                 "value": "polyline2",
-                                                                "default": 0,
-                                                                "jsValue": "polyline2_",
-                                                                "usedVars": [
-                                                                    "polyline2"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "origin",
                                                                 "value": "cen",
-                                                                "default": 0,
-                                                                "jsValue": "cen_",
-                                                                "usedVars": [
-                                                                    "cen"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "scale",
-                                                                "value": "[scale_factor_xy[0], scale_factor_xy[1], 0]",
-                                                                "default": 0,
-                                                                "jsValue": "[scale_factor_xy_.slice(0)[0], scale_factor_xy_.slice(1)[0], 0]",
-                                                                "usedVars": [
-                                                                    "scale_factor_xy"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "[scale_factor_xy[0] , scale_factor_xy[1] , 0]",
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
@@ -1287,37 +1061,34 @@
                                                             "module": "query",
                                                             "name": "Get"
                                                         },
-                                                        "argCount": 4,
+                                                        "argCount": 5,
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "pl1_edges",
-                                                                "invalidVar": false,
-                                                                "jsValue": "pl1_edges_",
-                                                                "linked": false
+                                                                "value": "pl1_edges"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
-                                                                "name": "ent_type_enum",
-                                                                "linked": false
+                                                                "name": "select",
+                                                                "value": "'edges'",
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "entities",
                                                                 "value": "polyline",
-                                                                "jsValue": "polyline_",
-                                                                "usedVars": [
-                                                                    "polyline"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
+                                                            },
+                                                            {
+                                                                "name": "query_expr",
+                                                                "value": "null",
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "pl1_edges"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1328,37 +1099,34 @@
                                                             "module": "query",
                                                             "name": "Get"
                                                         },
-                                                        "argCount": 4,
+                                                        "argCount": 5,
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "pl2_edges",
-                                                                "invalidVar": false,
-                                                                "jsValue": "pl2_edges_",
-                                                                "linked": false
+                                                                "value": "pl2_edges"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
-                                                                "name": "ent_type_enum",
-                                                                "linked": false
+                                                                "name": "select",
+                                                                "value": "'edges'",
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "entities",
                                                                 "value": "polyline2",
-                                                                "jsValue": "polyline2_",
-                                                                "usedVars": [
-                                                                    "polyline2"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
+                                                            },
+                                                            {
+                                                                "name": "query_expr",
+                                                                "value": "null",
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "pl2_edges"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1373,31 +1141,20 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "length_side1a",
-                                                                "invalidVar": false,
-                                                                "jsValue": "length_side1a_",
-                                                                "linked": false
+                                                                "value": "length_side1a"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "lines",
                                                                 "value": "pl1_edges[0]",
-                                                                "default": 0,
-                                                                "jsValue": "pl1_edges_.slice(0)[0]",
-                                                                "usedVars": [
-                                                                    "pl1_edges"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "length_side1a"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1412,31 +1169,20 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "length_side1b",
-                                                                "invalidVar": false,
-                                                                "jsValue": "length_side1b_",
-                                                                "linked": false
+                                                                "value": "length_side1b"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "lines",
                                                                 "default": 0,
-                                                                "value": "pl1_edges[1]",
-                                                                "jsValue": "pl1_edges_.slice(1)[0]",
-                                                                "usedVars": [
-                                                                    "pl1_edges"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "pl1_edges[1]"
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "length_side1b"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1451,31 +1197,20 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "length_side2a",
-                                                                "invalidVar": false,
-                                                                "jsValue": "length_side2a_",
-                                                                "linked": false
+                                                                "value": "length_side2a"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "lines",
                                                                 "value": "pl2_edges[0]",
-                                                                "default": 0,
-                                                                "jsValue": "pl2_edges_.slice(0)[0]",
-                                                                "usedVars": [
-                                                                    "pl2_edges"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "default": 0
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "length_side2a"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1490,31 +1225,20 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "length_side2b",
-                                                                "invalidVar": false,
-                                                                "jsValue": "length_side2b_",
-                                                                "linked": false
+                                                                "value": "length_side2b"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "lines",
                                                                 "default": 0,
-                                                                "value": "pl2_edges[1]",
-                                                                "jsValue": "pl2_edges_.slice(1)[0]",
-                                                                "usedVars": [
-                                                                    "pl2_edges"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "pl2_edges[1]"
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "length_side2b"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 0,
@@ -1525,28 +1249,15 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "max_thk",
-                                                                "invalidVar": false,
-                                                                "jsValue": "max_thk_",
-                                                                "linked": false
+                                                                "value": "max_thk"
                                                             },
                                                             {
                                                                 "name": "value",
-                                                                "value": "min(length_side1a, length_side1b, length_side2a, length_side2b) / 2",
-                                                                "jsValue": "min(length_side1a_, length_side1b_, length_side2a_, length_side2b_) / 2",
-                                                                "usedVars": [
-                                                                    "length_side1a",
-                                                                    "length_side1b",
-                                                                    "length_side2a",
-                                                                    "length_side2b"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "min ( length_side1a , length_side1b , length_side2a , length_side2b ) / 2"
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "max_thk"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 8,
@@ -1561,41 +1272,25 @@
                                                         "args": [
                                                             {
                                                                 "name": "var_name",
-                                                                "value": "pl_inner",
-                                                                "invalidVar": false,
-                                                                "jsValue": "pl_inner_",
-                                                                "linked": false
+                                                                "value": "pl_inner"
                                                             },
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "entities",
                                                                 "default": 0,
-                                                                "value": "[polyline, polyline2]",
-                                                                "jsValue": "[polyline_, polyline2_]",
-                                                                "usedVars": [
-                                                                    "polyline",
-                                                                    "polyline2"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "[polyline , polyline2]"
                                                             },
                                                             {
                                                                 "name": "copy_attributes",
                                                                 "default": 0,
-                                                                "value": "'no_attributes'",
-                                                                "jsValue": "'no_attributes'",
-                                                                "usedVars": [],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "'no_attributes'"
                                                             }
                                                         ],
                                                         "selected": false,
-                                                        "hasError": false,
-                                                        "variable": "pl_inner"
+                                                        "hasError": false
                                                     },
                                                     {
                                                         "type": 1,
@@ -1606,14 +1301,7 @@
                                                         "args": [
                                                             {
                                                                 "name": "condition",
-                                                                "value": "material_thickness >= max_thk",
-                                                                "jsValue": "material_thickness_ >= max_thk_",
-                                                                "usedVars": [
-                                                                    "material_thickness",
-                                                                    "max_thk"
-                                                                ],
-                                                                "invalidVar": false,
-                                                                "linked": false
+                                                                "value": "material_thickness >= max_thk"
                                                             }
                                                         ],
                                                         "children": [
@@ -1642,25 +1330,15 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "lofted",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "lofted_",
-                                                                        "linked": false
+                                                                        "value": "lofted"
                                                                     },
                                                                     {
                                                                         "name": "value",
-                                                                        "value": "\"Error: For the specified scale factor and polyline , your material thickness should be less than \" + max_thk",
-                                                                        "jsValue": "\"Error: For the specified scale factor and polyline , your material thickness should be less than \" + max_thk_",
-                                                                        "usedVars": [
-                                                                            "max_thk"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "\"Error: For the specified scale factor and polyline , your material thickness should be less than \" + max_thk"
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "lofted"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "hasError": false,
@@ -1699,15 +1377,7 @@
                                                                 "args": [
                                                                     {
                                                                         "name": "condition",
-                                                                        "value": "length_side2a / length_side1a == scale_factor_xy[0]",
-                                                                        "jsValue": "length_side2a_ / length_side1a_ == scale_factor_xy_.slice(0)[0]",
-                                                                        "usedVars": [
-                                                                            "scale_factor_xy",
-                                                                            "length_side1a",
-                                                                            "length_side2a"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "length_side2a / length_side1a == scale_factor_xy[0]"
                                                                     }
                                                                 ],
                                                                 "children": [
@@ -1736,26 +1406,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_x_pl1",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_x_pl1_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_x_pl1"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side1a - 2 * material_thickness) / length_side1a",
-                                                                                "jsValue": "(length_side1a_ - 2 * material_thickness_) / length_side1a_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side1a"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side1a - 2 * material_thickness ) / length_side1a"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_x_pl1"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 0,
@@ -1767,26 +1426,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_y_pl1",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_y_pl1_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_y_pl1"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side1b - 2 * material_thickness) / length_side1b",
-                                                                                "jsValue": "(length_side1b_ - 2 * material_thickness_) / length_side1b_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side1b"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side1b - 2 * material_thickness ) / length_side1b"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_y_pl1"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 0,
@@ -1798,26 +1446,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_x_pl2",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_x_pl2_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_x_pl2"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side2a - 2 * material_thickness) / length_side2a",
-                                                                                "jsValue": "(length_side2a_ - 2 * material_thickness_) / length_side2a_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side2a"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side2a - 2 * material_thickness ) / length_side2a"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_x_pl2"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 0,
@@ -1829,26 +1466,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_y_pl2",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_y_pl2_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_y_pl2"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side2b - 2 * material_thickness) / length_side2b",
-                                                                                "jsValue": "(length_side2b_ - 2 * material_thickness_) / length_side2b_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side2b"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side2b - 2 * material_thickness ) / length_side2b"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_y_pl2"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -1862,47 +1488,26 @@
                                                                         "argCount": 5,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl_inner[0]",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_inner_.slice(0)[0]",
-                                                                                "usedVars": [
-                                                                                    "pl_inner"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "origin",
                                                                                 "value": "cen",
-                                                                                "default": 0,
-                                                                                "jsValue": "cen_",
-                                                                                "usedVars": [
-                                                                                    "cen"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "scale",
-                                                                                "value": "[inner_scale_factor_x_pl1, inner_scale_factor_y_pl1, 0]",
-                                                                                "default": 0,
-                                                                                "jsValue": "[inner_scale_factor_x_pl1_, inner_scale_factor_y_pl1_, 0]",
-                                                                                "usedVars": [
-                                                                                    "inner_scale_factor_x_pl1",
-                                                                                    "inner_scale_factor_y_pl1"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "[inner_scale_factor_x_pl1 , inner_scale_factor_y_pl1 , 0]",
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -1921,47 +1526,26 @@
                                                                         "argCount": 5,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl_inner[1]",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_inner_.slice(1)[0]",
-                                                                                "usedVars": [
-                                                                                    "pl_inner"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "origin",
                                                                                 "value": "cen",
-                                                                                "default": 0,
-                                                                                "jsValue": "cen_",
-                                                                                "usedVars": [
-                                                                                    "cen"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "scale",
-                                                                                "value": "[inner_scale_factor_x_pl2, inner_scale_factor_y_pl2, 0]",
-                                                                                "default": 0,
-                                                                                "jsValue": "[inner_scale_factor_x_pl2_, inner_scale_factor_y_pl2_, 0]",
-                                                                                "usedVars": [
-                                                                                    "inner_scale_factor_x_pl2",
-                                                                                    "inner_scale_factor_y_pl2"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "[inner_scale_factor_x_pl2 , inner_scale_factor_y_pl2 , 0]",
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -2006,26 +1590,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_x_pl1",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_x_pl1_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_x_pl1"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side1b - 2 * material_thickness) / length_side1b",
-                                                                                "jsValue": "(length_side1b_ - 2 * material_thickness_) / length_side1b_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side1b"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side1b - 2 * material_thickness ) / length_side1b"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_x_pl1"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 0,
@@ -2037,26 +1610,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_y_pl1",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_y_pl1_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_y_pl1"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side1a - 2 * material_thickness) / length_side1a",
-                                                                                "jsValue": "(length_side1a_ - 2 * material_thickness_) / length_side1a_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side1a"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side1a - 2 * material_thickness ) / length_side1a"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_y_pl1"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 0,
@@ -2068,26 +1630,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_x_pl2",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_x_pl2_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_x_pl2"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side2b - 2 * material_thickness) / length_side2b",
-                                                                                "jsValue": "(length_side2b_ - 2 * material_thickness_) / length_side2b_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side2b"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side2b - 2 * material_thickness ) / length_side2b"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_x_pl2"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 0,
@@ -2099,26 +1650,15 @@
                                                                         "args": [
                                                                             {
                                                                                 "name": "var_name",
-                                                                                "value": "inner_scale_factor_y_pl2",
-                                                                                "invalidVar": false,
-                                                                                "jsValue": "inner_scale_factor_y_pl2_",
-                                                                                "linked": false
+                                                                                "value": "inner_scale_factor_y_pl2"
                                                                             },
                                                                             {
                                                                                 "name": "value",
-                                                                                "value": "(length_side2a - 2 * material_thickness) / length_side2a",
-                                                                                "jsValue": "(length_side2a_ - 2 * material_thickness_) / length_side2a_",
-                                                                                "usedVars": [
-                                                                                    "material_thickness",
-                                                                                    "length_side2a"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "( length_side2a - 2 * material_thickness ) / length_side2a"
                                                                             }
                                                                         ],
                                                                         "selected": false,
-                                                                        "hasError": false,
-                                                                        "variable": "inner_scale_factor_y_pl2"
+                                                                        "hasError": false
                                                                     },
                                                                     {
                                                                         "type": 8,
@@ -2132,47 +1672,26 @@
                                                                         "argCount": 5,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl_inner[0]",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_inner_.slice(0)[0]",
-                                                                                "usedVars": [
-                                                                                    "pl_inner"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "origin",
                                                                                 "value": "cen",
-                                                                                "default": 0,
-                                                                                "jsValue": "cen_",
-                                                                                "usedVars": [
-                                                                                    "cen"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "scale",
-                                                                                "value": "[inner_scale_factor_x_pl1, inner_scale_factor_y_pl1, 0]",
-                                                                                "default": 0,
-                                                                                "jsValue": "[inner_scale_factor_x_pl1_, inner_scale_factor_y_pl1_, 0]",
-                                                                                "usedVars": [
-                                                                                    "inner_scale_factor_x_pl1",
-                                                                                    "inner_scale_factor_y_pl1"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "[inner_scale_factor_x_pl1 , inner_scale_factor_y_pl1 , 0]",
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -2191,47 +1710,26 @@
                                                                         "argCount": 5,
                                                                         "args": [
                                                                             {
-                                                                                "name": "__none__",
-                                                                                "linked": false
+                                                                                "name": "__none__"
                                                                             },
                                                                             {
                                                                                 "name": "__model__",
-                                                                                "default": 0,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "entities",
                                                                                 "value": "pl_inner[1]",
-                                                                                "default": 0,
-                                                                                "jsValue": "pl_inner_.slice(1)[0]",
-                                                                                "usedVars": [
-                                                                                    "pl_inner"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "origin",
                                                                                 "value": "cen",
-                                                                                "default": 0,
-                                                                                "jsValue": "cen_",
-                                                                                "usedVars": [
-                                                                                    "cen"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "default": 0
                                                                             },
                                                                             {
                                                                                 "name": "scale",
-                                                                                "value": "[inner_scale_factor_x_pl2, inner_scale_factor_y_pl2, 0]",
-                                                                                "default": 0,
-                                                                                "jsValue": "[inner_scale_factor_x_pl2_, inner_scale_factor_y_pl2_, 0]",
-                                                                                "usedVars": [
-                                                                                    "inner_scale_factor_x_pl2",
-                                                                                    "inner_scale_factor_y_pl2"
-                                                                                ],
-                                                                                "invalidVar": false,
-                                                                                "linked": false
+                                                                                "value": "[inner_scale_factor_x_pl2 , inner_scale_factor_y_pl2 , 0]",
+                                                                                "default": 0
                                                                             }
                                                                         ],
                                                                         "selected": false,
@@ -2255,36 +1753,21 @@
                                                                 "argCount": 4,
                                                                 "args": [
                                                                     {
-                                                                        "name": "__none__",
-                                                                        "linked": false
+                                                                        "name": "__none__"
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "default": 0,
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
-                                                                        "value": "[polyline2, pl_inner[1]]",
-                                                                        "default": 0,
-                                                                        "jsValue": "[polyline2_, pl_inner_.slice(1)[0]]",
-                                                                        "usedVars": [
-                                                                            "polyline2",
-                                                                            "pl_inner"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "[polyline2 , pl_inner[1]]",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "vector",
-                                                                        "value": "[0, 0, extru_dist]",
-                                                                        "default": 0,
-                                                                        "jsValue": "[0, 0, extru_dist_]",
-                                                                        "usedVars": [
-                                                                            "extru_dist"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "[0 , 0 , extru_dist]",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
@@ -2300,51 +1783,29 @@
                                                                     "module": "make",
                                                                     "name": "Loft"
                                                                 },
-                                                                "argCount": 5,
+                                                                "argCount": 4,
                                                                 "args": [
                                                                     {
                                                                         "name": "var_name",
-                                                                        "value": "lofted",
-                                                                        "invalidVar": false,
-                                                                        "jsValue": "lofted_",
-                                                                        "linked": false
+                                                                        "value": "lofted"
                                                                     },
                                                                     {
                                                                         "name": "__model__",
-                                                                        "linked": false
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "entities",
-                                                                        "value": "[polyline, pl_inner[0], pl_inner[1], polyline2]",
-                                                                        "jsValue": "[polyline_, pl_inner_.slice(0)[0], pl_inner_.slice(1)[0], polyline2_]",
-                                                                        "usedVars": [
-                                                                            "polyline",
-                                                                            "polyline2",
-                                                                            "pl_inner"
-                                                                        ],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
-                                                                    },
-                                                                    {
-                                                                        "name": "divisions",
-                                                                        "value": "1",
-                                                                        "jsValue": "1",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "[polyline , pl_inner[0] , pl_inner[1] , polyline2]",
+                                                                        "default": 0
                                                                     },
                                                                     {
                                                                         "name": "method",
-                                                                        "value": "'open_quads'",
-                                                                        "jsValue": "'open_quads'",
-                                                                        "usedVars": [],
-                                                                        "invalidVar": false,
-                                                                        "linked": false
+                                                                        "value": "'closed'",
+                                                                        "default": 0
                                                                     }
                                                                 ],
                                                                 "selected": false,
-                                                                "hasError": false,
-                                                                "variable": "lofted"
+                                                                "hasError": false
                                                             }
                                                         ],
                                                         "selected": false,
@@ -2361,16 +1822,12 @@
                                                         "args": [
                                                             {
                                                                 "name": "__model__",
-                                                                "default": 0,
-                                                                "linked": false
+                                                                "default": 0
                                                             },
                                                             {
                                                                 "name": "value",
                                                                 "default": 0,
-                                                                "value": "lofted",
-                                                                "jsValue": "lofted_",
-                                                                "invalidVar": "Error: Invalid vars: lofted",
-                                                                "linked": false
+                                                                "value": "lofted"
                                                             }
                                                         ],
                                                         "print": false,
@@ -2466,10 +1923,8 @@
                 "argCount": 4
             }
         ],
-        "ordered": true,
-        "id": "1df342f3-9676-f0ef-01a7-2917ac324ed4",
-        "last_updated": "2019-08-06T04:30:45.344Z"
+        "ordered": true
     },
-    "version": 1,
-    "settings": "{\"normals\":{\"show\":false,\"size\":5},\"axes\":{\"show\":true,\"size\":50},\"grid\":{\"show\":true,\"size\":500},\"positions\":{\"show\":true,\"size\":0.5},\"tjs_summary\":{\"show\":false},\"gi_summary\":{\"show\":false},\"wireframe\":{\"show\":false},\"camera\":{\"pos\":{\"x\":-80,\"y\":-80,\"z\":80},\"pos_x\":-80,\"pos_y\":-80,\"pos_z\":80,\"target\":{\"x\":18.25,\"y\":10,\"z\":0}},\"colors\":{\"viewer_bg\":\"#E6E6E6\",\"position\":\"#000000\",\"position_s\":\"#0033FF\",\"vertex_s\":\"#FFCC00\",\"face_f\":\"#FFFFFF\",\"face_f_s\":\"#4949BD\",\"face_b\":\"#DDDDDD\",\"face_b_s\":\"#00006D\"},\"ambient_light\":{\"show\":true,\"color\":\"#FFFFFF\",\"intensity\":0.5},\"hemisphere_light\":{\"show\":true,\"helper\":false,\"skyColor\":\"#FFFFFF\",\"groundColor\":\"#FFFFFF\",\"intensity\":0.5},\"directional_light\":{\"show\":false,\"helper\":false,\"color\":\"#FFFFFF\",\"intensity\":1,\"shadow\":true,\"shadowSize\":4,\"azimuth\":90,\"altitude\":45,\"distance\":10000},\"ground\":{\"show\":false,\"width\":1000,\"length\":1000,\"height\":-0.5,\"color\":\"#FFFFFF\",\"shininess\":0},\"select\":{\"selector\":{\"id\":5,\"name\":\"Faces\"},\"tab\":\"0\"},\"version\":\"0.4.38\"}"
+    "last_updated": "2019-01-15T09:32:42.881Z",
+    "version": 1
 }
