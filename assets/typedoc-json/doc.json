@@ -36481,7 +36481,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIAttribsThreejs.ts",
-                                    "line": 166,
+                                    "line": 172,
                                     "character": 22
                                 }
                             ]
@@ -36537,7 +36537,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIAttribsThreejs.ts",
-                                    "line": 212,
+                                    "line": 224,
                                     "character": 21
                                 }
                             ]
