@@ -71,12 +71,10 @@ export class GIModel {
             {percent: number, score: number, total: number, comment: string} {
         // create the result object
         const result: {percent: number, score: number, total: number, comment: any} = {percent: 0, score: 0, total: 0, comment: []};
-        console.log(result);
         // if check_geom_equality, then check we have exact same number of positions, objects, and colletions
         if (check_geom_equality) {
             this.geom.compare(model, result);
         }
-        console.log(result);
         // check that the attributes in this model all exist in the other model
         // at the same time get a map of all attribute names in this model
         const attrib_names: Map<EEntType, string[]> = this.attribs.compare(model, check_attrib_equality, result);
@@ -93,7 +91,6 @@ export class GIModel {
         } else {
             result.comment.push('RESULT: The two models no not match.');
         }
-        console.log(result);
         // calculate percentage score
         result.percent = Math.round( result.score / result.total * 100);
         if (result.percent < 0) { result.percent = 0; }
@@ -200,7 +197,12 @@ export class GIModel {
     // Private methods for fingerprinting
     // ============================================================================
     /**
-     * Compare the data in two models
+     * Compare the data in two models. Check that this model is a subset of the other model.
+     * So if this is being used to check if the model submitted by a student is the correct answer,
+     * then this model is the answer, and teh student model is the other model
+     * This method will check that every entity in this model also exists in the other model.
+     * This means that the student answer (the other model) can conrain additional data and still get
+     * a full score.
      * ~
      * This will return a score, indicating how similar the models are.
      * ~
@@ -285,14 +287,40 @@ export class GIModel {
         if (num_colls_not_found > 0) {
             data_comments.push('Mismatch: ' + num_colls_not_found + ' collections could not be found.');
         }
-        // cpmpare model attributes
-
-        // TODO
-
+        // add a comment if everything matches
+        if (result.score === result.total) {
+            data_comments.push('Match: The model contains all required entities and collections.');
+        }
+        // compare model attributes
+        const this_mod_attrib_names: string[] = this.attribs.query.getAttribNames(EEntType.MOD);
+        for (const this_mod_attrib_name of this_mod_attrib_names) {
+            // increment the total by 1
+            result.total += 1;
+            // check if there is a match
+            if (other_model.attribs.query.hasModelAttrib(this_mod_attrib_name)) {
+                const this_value: TAttribDataTypes = this.attribs.query.getModelAttribVal(this_mod_attrib_name);
+                const other_value: TAttribDataTypes = other_model.attribs.query.getModelAttribVal(this_mod_attrib_name);
+                const this_value_fp: string = this.getAttribValFingerprint(this_value);
+                const other_value_fp: string = this.getAttribValFingerprint(other_value);
+                if (this_value_fp === other_value_fp) {
+                    // correct, so increment the score by 1
+                    result.score += 1;
+                } else {
+                    data_comments.push('Mismatch: the value for model attribute "' + this_mod_attrib_name + '" is incorrect.');
+                }
+            } else {
+                data_comments.push('Mismatch: model attribute "' + this_mod_attrib_name + '" not be found.');
+            }
+        }
+        // add a comment if everything matches
+        if (result.score === result.total) {
+            data_comments.push('Match: The model conatins all required model attributes.');
+        }
         // add a final comment if everything matches
         if (result.score === result.total) {
-            data_comments.push('Match: The model contains all entities and collections.');
+            data_comments.push('Match: Everything matches.');
         }
+        // 
         result.comment.push(data_comments);
     }
     /**

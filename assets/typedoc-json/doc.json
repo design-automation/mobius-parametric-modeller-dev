@@ -34692,7 +34692,7 @@
                                     "kindString": "Call signature",
                                     "flags": {},
                                     "comment": {
-                                        "shortText": "Get an entity attrib indexed value.\n~\nIf the attribute does not exist\n~\nIf the index is out of range, return undefined.\n~"
+                                        "shortText": "Get an entity attrib value in a dictionary.\n~\nIf the attribute does not exist, return undefined.\n~\nIf the key does not exist, return undefined.\n~"
                                     },
                                     "parameters": [
                                         {
@@ -34777,7 +34777,7 @@
                                     "kindString": "Call signature",
                                     "flags": {},
                                     "comment": {
-                                        "shortText": "Get an entity attrib indexed value.\n~\nIf the attribute does not exist\n~\nIf the index is out of range, return undefined.\n~"
+                                        "shortText": "Get an entity attrib value in a list.\n~\nIf the attribute does not exist, return undefined.\n~\nIf the index is out of range, return undefined.\n~"
                                     },
                                     "parameters": [
                                         {
@@ -36560,7 +36560,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 176,
+                                    "line": 174,
                                     "character": 23
                                 }
                             ]
@@ -36594,7 +36594,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 227,
+                                    "line": 225,
                                     "character": 23
                                 }
                             ]
@@ -36628,7 +36628,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 277,
+                                    "line": 275,
                                     "character": 23
                                 }
                             ]
@@ -36662,7 +36662,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 249,
+                                    "line": 247,
                                     "character": 24
                                 }
                             ]
@@ -36699,7 +36699,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 124,
+                                    "line": 122,
                                     "character": 23
                                 }
                             ]
@@ -36733,7 +36733,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 140,
+                                    "line": 138,
                                     "character": 23
                                 }
                             ]
@@ -36767,7 +36767,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 194,
+                                    "line": 192,
                                     "character": 23
                                 }
                             ]
@@ -36804,7 +36804,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIGeom.ts",
-                                    "line": 110,
+                                    "line": 108,
                                     "character": 16
                                 }
                             ]
@@ -36826,7 +36826,7 @@
                                     "kindString": "Call signature",
                                     "flags": {},
                                     "comment": {
-                                        "shortText": "Compares this model and another model.\n~\nThe max total score for this method is equal to 5.\nIt assigns 1 mark for for each entity type:\nposis, points, pline, pgons, and colelctions.\nIn each case, if the number of entities is equal, 1 mark is given.\n~"
+                                        "shortText": "Compares this model and another model.\n~\nThe max total score for this method is equal to 5.\nIt assigns 1 mark for for each entity type:\npoints, pline, pgons, and colelctions.\nIn each case, if the number of entities is equal, 1 mark is given.\n~"
                                     },
                                     "parameters": [
                                         {
@@ -45360,7 +45360,7 @@
                                     "kindString": "Call signature",
                                     "flags": {},
                                     "comment": {
-                                        "shortText": "Compare the data in two models\n~\nThis will return a score, indicating how similar the models are.\n~\nFor the compareData method, total score is equal to number of points, plines, pgons and collections"
+                                        "shortText": "Compare the data in two models. Check that this model is a subset of the other model.\nSo if this is being used to check if the model submitted by a student is the correct answer,\nthen this model is the answer, and teh student model is the other model\nThis method will check that every entity in this model also exists in the other model.\nThis means that the student answer (the other model) can conrain additional data and still get\na full score.\n~\nThis will return a score, indicating how similar the models are.\n~\nFor the compareData method, total score is equal to number of points, plines, pgons and collections"
                                     },
                                     "parameters": [
                                         {
@@ -45401,7 +45401,7 @@
                                                             "sources": [
                                                                 {
                                                                     "fileName": "libs/geo-info/GIModel.ts",
-                                                                    "line": 210,
+                                                                    "line": 212,
                                                                     "character": 58
                                                                 }
                                                             ],
@@ -45424,7 +45424,7 @@
                                                             "sources": [
                                                                 {
                                                                     "fileName": "libs/geo-info/GIModel.ts",
-                                                                    "line": 210,
+                                                                    "line": 212,
                                                                     "character": 26
                                                                 }
                                                             ],
@@ -45444,7 +45444,7 @@
                                                             "sources": [
                                                                 {
                                                                     "fileName": "libs/geo-info/GIModel.ts",
-                                                                    "line": 210,
+                                                                    "line": 212,
                                                                     "character": 41
                                                                 }
                                                             ],
@@ -45468,7 +45468,7 @@
                                                     "sources": [
                                                         {
                                                             "fileName": "libs/geo-info/GIModel.ts",
-                                                            "line": 210,
+                                                            "line": 212,
                                                             "character": 19
                                                         }
                                                     ]
@@ -45510,7 +45510,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 209,
+                                    "line": 211,
                                     "character": 23
                                 }
                             ]
@@ -45557,7 +45557,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 428,
+                                    "line": 456,
                                     "character": 35
                                 }
                             ]
@@ -45650,7 +45650,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 393,
+                                    "line": 421,
                                     "character": 30
                                 }
                             ]
@@ -45735,7 +45735,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 351,
+                                    "line": 379,
                                     "character": 31
                                 }
                             ]
@@ -45854,7 +45854,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 316,
+                                    "line": 344,
                                     "character": 29
                                 }
                             ]
@@ -45942,7 +45942,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 303,
+                                    "line": 331,
                                     "character": 30
                                 }
                             ]
@@ -46024,7 +46024,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 127,
+                                    "line": 124,
                                     "character": 21
                                 }
                             ]
@@ -46058,7 +46058,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 151,
+                                    "line": 148,
                                     "character": 32
                                 }
                             ]
@@ -46092,7 +46092,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 169,
+                                    "line": 166,
                                     "character": 26
                                 }
                             ]
@@ -46126,7 +46126,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 135,
+                                    "line": 132,
                                     "character": 30
                                 }
                             ]
@@ -46241,7 +46241,7 @@
                             "sources": [
                                 {
                                     "fileName": "libs/geo-info/GIModel.ts",
-                                    "line": 194,
+                                    "line": 191,
                                     "character": 26
                                 }
                             ]
