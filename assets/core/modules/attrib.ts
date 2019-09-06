@@ -14,7 +14,7 @@ import { TId, TQuery, EEntType, ESort, TEntTypeIdx,
     EAttribPush, TAttribDataTypes, EEntTypeStr, EAttribDataTypeStrs} from '@libs/geo-info/common';
 import { idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj, checkCommTypes, TypeCheckObj, checkAttribValue, checkAttribName } from './_check_args';
-import { GIAttribMap } from '@assets/libs/geo-info/GIAttribMap';
+import { GIAttribMap } from '@libs/geo-info/GIAttribMap';
 
 // ================================================================================================
 export enum _EEntTypeSel {
@@ -320,7 +320,7 @@ export function Get(__model__: GIModel, entities: TId|TId[]|TId[][],
     checkAttribName(fn_name, attrib);
     // checkCommTypes(fn_name, 'name', name, [TypeCheckObj.isString]);
     if (index !== null && index !== undefined) {
-        checkCommTypes(fn_name, 'index', index, [TypeCheckObj.isNumber]);
+        checkCommTypes(fn_name, 'index', index, [TypeCheckObj.isNumber, TypeCheckObj.isString]);
     }
     // --- Error Check ---
     return _get(__model__, ents_arr, attrib, index);
