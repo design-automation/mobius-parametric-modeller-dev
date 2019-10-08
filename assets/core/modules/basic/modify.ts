@@ -11,10 +11,11 @@
 import { GIModel } from '@libs/geo-info/GIModel';
 import { TId, TPlane, Txyz, EEntType, TEntTypeIdx} from '@libs/geo-info/common';
 import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi } from '@libs/geo-info/id';
-import { vecAdd, vecSum, vecDiv, vecFromTo, vecNorm, vecCross, vecSetLen, vecLen } from '@libs/geom/vectors';
+import { vecAdd, vecSum, vecDiv } from '@libs/geom/vectors';
 import { checkCommTypes, checkIDs, IDcheckObj, TypeCheckObj} from '../_check_args';
 import { rotateMatrix, multMatrix, scaleMatrix, mirrorMatrix, xfromSourceTargetMatrix } from '@libs/geom/matrix';
 import { Matrix4 } from 'three';
+import __ from 'underscore';
 
 // ================================================================================================
 /**
@@ -269,101 +270,6 @@ export function XForm(__model__: GIModel, entities: TId|TId[], from: TPlane, to:
         const old_xyz: Txyz = __model__.attribs.query.getPosiCoords(unique_posi_i);
         const new_xyz: Txyz = multMatrix(old_xyz, matrix);
         __model__.attribs.add.setPosiCoords(unique_posi_i, new_xyz);
-    }
-}
-// ================================================================================================
-/**
- * Offsets wires.
- * 
- * @param __model__
- * @param entities Edges, wires, faces, polylines, polygons, collections.
- * @param dist The distance to offset by, can be either positive or negative
- * @returns void
- * @example modify.Offset(polygon1, 10)
- * @example_info Offsets the wires inside polygon1 by 10 units. Holes will also be offset.
- */
-export function Offset(__model__: GIModel, entities: TId|TId[], dist: number): void {
-    // --- Error Check ---
-    const fn_name = 'modify.Offset';
-    let ents_arr = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                            [EEntType.WIRE, EEntType.FACE, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
-    checkCommTypes(fn_name, 'dist', dist, [TypeCheckObj.isNumber]);
-    // --- Error Check ---
-    // handle geometry type
-    if (!Array.isArray(ents_arr[0])) {
-        ents_arr = [ents_arr] as TEntTypeIdx[];
-    }
-    // get all wires
-    const wires_i: number[] = [];
-    for (const ents of ents_arr) {
-        const [ent_type, index]: [EEntType, number] = ents as TEntTypeIdx;
-        wires_i.push(...__model__.geom.query.navAnyToWire(ent_type, index));
-    }
-    // offset each wire
-    for (const wire_i of wires_i) {
-        const vec_norm: Txyz = __model__.geom.query.getWireNormal(wire_i);
-        const edges_i: number[] = __model__.geom.query.navAnyToWire(EEntType.WIRE, wire_i);
-        const is_closed: boolean = __model__.geom.query.istWireClosed(wire_i);
-        // loop through all edges and collect the required data
-        // the index to the array is the edge_i
-        const perp_vecs: Txyz[] = [];       // index is edge_i
-        const pairs_xyzs: [Txyz, Txyz][] = [];        // index is edge_i
-        const pairs_posis_i: [number, number][] = [];   // index is edge_i
-        const valid_edges_i: number[] = []; // index is i, all edges with len > 0
-        for (const edge_i of edges_i) {
-            const posis_i: [number, number] = __model__.geom.query.navAnyToPosi(EEntType.EDGE, edge_i) as [number, number];
-            const xyzs: [Txyz, Txyz] = posis_i.map(posi_i => __model__.attribs.query.getPosiCoords(posi_i)) as [Txyz, Txyz];
-            const vec: Txyz = vecFromTo(xyzs[0], xyzs[1]);
-            const len: number = vecLen(vec);
-            if (len > 0) {
-                pairs_xyzs[edge_i] = xyzs;
-                pairs_posis_i[edge_i] = posis_i;
-                valid_edges_i.push(edge_i);
-                const perp_vec: Txyz = vecCross(vecNorm(vec), vec_norm);
-                perp_vecs[edge_i] = perp_vec;
-            }
-        }
-        // add edges if this is a closed wire
-        if (is_closed) {
-            const first_edge_i: number = valid_edges_i[0];
-            const last_edge_i: number = valid_edges_i[valid_edges_i.length - 1];
-            valid_edges_i.splice(0, 0, last_edge_i); // add to the start
-            valid_edges_i.push(first_edge_i); // add to the end
-        }
-        // loop through all the valid edges
-        for (let i = 0; i < valid_edges_i.length - 1; i++) {
-            // this edge
-            const this_edge_i: number = valid_edges_i[i];
-            const this_perp_vec: Txyz = perp_vecs[this_edge_i];
-            // get the end xyz of this edge
-            const old_xyz: Txyz = pairs_xyzs[this_edge_i][1];
-            const posi_i: number = pairs_posis_i[this_edge_i][1]; // the end posi of this edge
-            // next edge
-            const next_edge_i: number = valid_edges_i[i + 1];
-            const next_perp_vec: Txyz = perp_vecs[next_edge_i];
-            // get the average of the two perp vecs
-            const offset_vec: Txyz = vecSetLen(vecAdd(this_perp_vec, next_perp_vec), dist);
-            const new_xyz: Txyz = vecAdd(old_xyz, offset_vec);
-            // move the posi
-            __model__.attribs.add.setPosiCoords(posi_i, new_xyz);
-        }
-        // if this is not a closed wire we have to move first and last posis
-        if (!is_closed) {
-            // first posi
-            const first_edge_i: number = valid_edges_i[0];
-            const first_posi_i: number = pairs_posis_i[first_edge_i][0];
-            const first_old_xyz: Txyz = pairs_xyzs[first_edge_i][0];
-            const first_offset_vec: Txyz =  perp_vecs[first_edge_i];
-            const first_new_xyz: Txyz = vecAdd(first_old_xyz, first_offset_vec);
-            __model__.attribs.add.setPosiCoords(first_posi_i, first_new_xyz);
-            // last posi
-            const last_edge_i: number = valid_edges_i[valid_edges_i.length - 1];
-            const last_posi_i: number = pairs_posis_i[last_edge_i][1];
-            const last_old_xyz: Txyz = pairs_xyzs[last_edge_i][0];
-            const last_offset_vec: Txyz =  perp_vecs[last_edge_i];
-            const last_new_xyz: Txyz = vecAdd(last_old_xyz, last_offset_vec);
-            __model__.attribs.add.setPosiCoords(last_posi_i, last_new_xyz);
-        }
     }
 }
 // ================================================================================================
