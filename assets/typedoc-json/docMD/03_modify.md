@@ -147,19 +147,20 @@ in the ring. The first edge will become the last edge.
     If open, polylines are changed to closed; if already closed, nothing happens.
   
   
-## Retriangulate  
-* **Description:** Retriangulate a face or polygon.
+## Remesh  
+* **Description:** Remesh a face or polygon.
 ~
-When a face or polygon is deformed, the thriangles that make up that face will sometimes become incorrect.
-Retriangulation is not performed automatically as it would degrade performance.
-Instead, it is left up to the user to retriangulate only when it is actually required.
+When a face or polygon is deformed, the triangles that make up that face will sometimes become incorrect.
+Remeshing will regenerate the triangulated mesh for the face.
+Remeshing is not performed automatically as it would degrade performance.
+Instead, it is left up to the user to remesh only when it is actually required.
 ~  
 * **Parameters:**  
   * *entities:* Single or list of faces, polygons, collections.  
 * **Returns:** void  
 * **Examples:**  
-  * modify.Retriangulate(polygon1)  
-    Retriangulates the face of the polygon.
+  * modify.Remesh(polygon1)  
+    Remeshs the face of the polygon.
   
   
 ## Delete  
