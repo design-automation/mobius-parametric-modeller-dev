@@ -1,5 +1,11 @@
 # MODIFY    
 
+## getOrigin  
+* **Description:** undefined  
+* **Parameters:**  
+  * *origin:* undefined  
+  * *fn_name:* undefined  
+  
 ## Move  
 * **Description:** Moves entities. The directio and distance if movement is specified as a vector.
 ~
@@ -134,11 +140,26 @@ in the ring. The first edge will become the last edge.
 ## Close  
 * **Description:** Closes polyline(s) if open.  
 * **Parameters:**  
-  * *lines:* Polyline(s).  
+  * *entities:* undefined  
 * **Returns:** void  
 * **Examples:**  
   * modify.Close([polyline1,polyline2,...])  
     If open, polylines are changed to closed; if already closed, nothing happens.
+  
+  
+## Retriangulate  
+* **Description:** Retriangulate a face or polygon.
+~
+When a face or polygon is deformed, the thriangles that make up that face will sometimes become incorrect.
+Retriangulation is not performed automatically as it would degrade performance.
+Instead, it is left up to the user to retriangulate only when it is actually required.
+~  
+* **Parameters:**  
+  * *entities:* Single or list of faces, polygons, collections.  
+* **Returns:** void  
+* **Examples:**  
+  * modify.Retriangulate(polygon1)  
+    Retriangulates the face of the polygon.
   
   
 ## Delete  
