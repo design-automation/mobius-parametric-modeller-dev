@@ -50,6 +50,16 @@ If list of two or three numbers, specifies x y z numbers respectively.
   * *method:* Enum  
 * **Returns:** Entities, a list of 6 positions.  
   
+## Polyhedron  
+* **Description:** Creates positions in a polyhedron pattern. Returns a list of new positions.
+~  
+* **Parameters:**  
+  * *origin:* XYZ coordinates as a list of three numbers.  
+  * *radius:* xxx  
+  * *detail:* xxx  
+  * *method:* Enum  
+* **Returns:** Entities, a list of positions.  
+  
 ## Arc  
 * **Description:** Creates positions in an arc pattern. Returns a list of new positions.
 If the angle of the arc is set to null, then circular patterns will be created.

@@ -1,11 +1,5 @@
 # MODIFY    
 
-## getOrigin  
-* **Description:** undefined  
-* **Parameters:**  
-  * *origin:* undefined  
-  * *fn_name:* undefined  
-  
 ## Move  
 * **Description:** Moves entities. The directio and distance if movement is specified as a vector.
 ~
@@ -32,8 +26,8 @@ then the position will be moved by the average of the vectors.
 * **Description:** Rotates entities on plane by angle.  
 * **Parameters:**  
   * *entities:* Vertex, edge, wire, face, plane, position, point, polyline, polygon, collection.  
-  * *origin:* A list of three numbers (or a position, point, or vertex).  
-  * *axis:* A list of three numbers.  
+  * *origin:* Origin [x,y,z], a plane, a ray, or entities from which a centroid can be extracted.  
+  * *axis:* Axuz [x,y,z].  
   * *angle:* Angle (in radians).  
 * **Returns:** void  
 * **Examples:**  
@@ -46,7 +40,7 @@ then the position will be moved by the average of the vectors.
 ~  
 * **Parameters:**  
   * *entities:* Vertex, edge, wire, face, plane, position, point, polyline, polygon, collection.  
-  * *origin:* Position, point, vertex, list of three numbers, plane.  
+  * *origin:* Origin [x,y,z], a plane, a ray, or entities from which a centroid can be extracted.  
   * *scale:* Scale factor, a single number to scale equally, or [scale_x, scale_y, scale_z].  
 * **Returns:** void  
 * **Examples:**  
@@ -60,8 +54,8 @@ then the position will be moved by the average of the vectors.
 * **Description:** Mirrors entities across plane.  
 * **Parameters:**  
   * *entities:* Vertex, edge, wire, face, plane, position, point, polyline, polygon, collection.  
-  * *origin:* Position, vertex, point, list of three numbers.  
-  * *direction:* Vector or a list of three numbers.  
+  * *origin:* Origin [x,y,z], a plane, a ray, or entities from which a centroid can be extracted.  
+  * *direction:* Vector [x,y,z].  
 * **Returns:** void  
 * **Examples:**  
   * modify.Mirror(polygon1, plane1)  
