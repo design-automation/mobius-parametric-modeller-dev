@@ -113,7 +113,7 @@ This ignores the intersections between planes and face triangles (including poly
   
   
 ## VisPlane  
-* **Description:** Visualises a plane by creating a polygon and axis lines.  
+* **Description:** Visualises a plane by creating a polyline and axis lines.  
 * **Parameters:**  
   * *planes:* undefined  
   * *scale:* undefined  
