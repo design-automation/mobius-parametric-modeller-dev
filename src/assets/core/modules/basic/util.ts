@@ -113,15 +113,15 @@ export function ModelInfo(__model__: GIModel): string {
     return JSON.stringify(
         {
             'geometry': {
-                'num_positions': __model__.geom.query.numEnts(EEntType.POSI, false),
-                'num_vertices': __model__.geom.query.numEnts(EEntType.VERT, false),
-                'num_edges': __model__.geom.query.numEnts(EEntType.EDGE, false),
-                'num_wires': __model__.geom.query.numEnts(EEntType.WIRE, false),
-                'num_faces': __model__.geom.query.numEnts(EEntType.FACE, false),
-                'num_points': __model__.geom.query.numEnts(EEntType.POINT, false),
-                'num_polylines': __model__.geom.query.numEnts(EEntType.PLINE, false),
-                'num_polygons': __model__.geom.query.numEnts(EEntType.PGON, false),
-                'num_collections': __model__.geom.query.numEnts(EEntType.COLL, false)
+                'num_positions': __model__.geom.data.numEnts(EEntType.POSI, false),
+                'num_vertices': __model__.geom.data.numEnts(EEntType.VERT, false),
+                'num_edges': __model__.geom.data.numEnts(EEntType.EDGE, false),
+                'num_wires': __model__.geom.data.numEnts(EEntType.WIRE, false),
+                'num_faces': __model__.geom.data.numEnts(EEntType.FACE, false),
+                'num_points': __model__.geom.data.numEnts(EEntType.POINT, false),
+                'num_polylines': __model__.geom.data.numEnts(EEntType.PLINE, false),
+                'num_polygons': __model__.geom.data.numEnts(EEntType.PGON, false),
+                'num_collections': __model__.geom.data.numEnts(EEntType.COLL, false)
             },
             'attributes': {
                 'position_attribs': __model__.attribs.query.getAttribNames(EEntType.POSI),

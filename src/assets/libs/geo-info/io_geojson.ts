@@ -179,8 +179,7 @@ function _addPointToModel(model: GIModel, point: any, proj_obj: proj4.Converter,
     // add feature
     const xyz: Txyz = _xformLongLat(point.geometry.coordinates, proj_obj, elevation) as Txyz;
     // create the posi
-    const posi_i: number = model.geom.add.addPosi();
-    model.attribs.add.setPosiCoords(posi_i, xyz);
+    const posi_i: number = model.createPosi(xyz);
     // create the point
     const point_i: number = model.geom.add.addPoint(posi_i);
     // add attribs
@@ -212,8 +211,7 @@ function _addPlineToModel(model: GIModel, linestring: any, proj_obj: proj4.Conve
     // create the posis
     const posis_i: number[] = [];
     for (const xyz of xyzs) {
-        const posi_i: number = model.geom.add.addPosi();
-        model.attribs.add.setPosiCoords(posi_i, xyz);
+        const posi_i: number = model.createPosi(xyz);
         posis_i.push(posi_i);
     }
     // create the pline
@@ -246,8 +244,7 @@ function _addPgonToModel(model: GIModel, polygon: any, proj_obj: proj4.Converter
         // create the posis
         const posis_i: number[] = [];
         for (const xyz of xyzs) {
-            const posi_i: number = model.geom.add.addPosi();
-            model.attribs.add.setPosiCoords(posi_i, xyz);
+            const posi_i: number = model.createPosi(xyz);
             posis_i.push(posi_i);
         }
         rings.push(posis_i);

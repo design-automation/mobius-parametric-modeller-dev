@@ -1,19 +1,22 @@
 import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from './common';
 import { GIGeom } from './GIGeom';
+import { GIGeomData } from './GIGeomData';
 
 
 /**
  * Class for geometry.
  */
-export class GIGeomCheck {
+export class GIGeomChecker {
     private _geom: GIGeom;
     private _geom_arrays: IGeomArrays;
+    public _data: GIGeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
+        this._data = data;
     }
     /**
      * Checks geometry for internal consistency
@@ -140,7 +143,7 @@ export class GIGeomCheck {
                 } else {
                     // check the vert points up to this edge
                     const vert_edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-                    if (vert_edges_i.indexOf(edge_i) === -1) {
+                    if (vert_edges_i === undefined || vert_edges_i.indexOf(edge_i) === -1) {
                         errors.push('Edge ' + edge_i + ': Vert->Edge index is missing.');
                     }
                 }
@@ -406,64 +409,31 @@ export class GIGeomCheck {
             if (wire === null) { continue; } // deleted
             // check if this is closed or open
             const first_edge: TEdge = this._geom_arrays.dn_edges_verts[wire[0]];
-            const first_vert_i: number = first_edge[0];
             const last_edge: TEdge = this._geom_arrays.dn_edges_verts[wire[wire.length - 1]];
-            const last_vert_i: number = last_edge[1];
-            const is_closed: boolean = (first_vert_i === last_vert_i);
-            if (!is_closed) {
-                if (this._geom_arrays.up_verts_edges[first_edge[0]].length !== 1) {
-                    errors.push('Open wire ' + wire_i + ': First vertex does not have one edge.');
-                }
-                if (this._geom_arrays.up_verts_edges[last_edge[1]].length !== 1) {
-                    errors.push('Open wire ' + wire_i + ': Last vertex does not have one edge.');
-                }
-            }
+            const is_closed: boolean = (first_edge[0] === last_edge[1]);
             // console.log("==== ==== ====")
             // console.log("WIRE i", wire_i, "WIRE", wire)
             // check the edges of each vertex
-            for (const edge_i of wire) {
+            for (let i = 0; i < wire.length; i ++) {
+                const edge_i: number = wire[i];
                 const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
-                const start_vert_i = edge[0];
-                const end_vert_i = edge[1];
-                // console.log("====")
-                // console.log("EDGE i", edge_i, "EDGE", edge)
-                // console.log("VERT START", start_vert_i)
-                // console.log("VERT END", end_vert_i)
-                let exp_num_edges_vert0 = 2;
-                let exp_num_edges_vert1 = 2;
-                let start_idx = 1;
-                let end_idx = 0;
-                if (!is_closed) {
-                    if (edge_i === wire[0]) { // first edge
-                        exp_num_edges_vert0 = 1;
-                        start_idx = 0;
-                    }
-                    if (edge_i === wire[wire.length - 1]) { // last edge
-                        exp_num_edges_vert1 = 1;
-                        end_idx = 0;
+                const edge_start_vert_i: number = edge[0];
+                const edge_end_vert_i: number = edge[1];
+                if (!is_closed && i === 0) {
+                    if (this._geom_arrays.up_verts_edges[edge_start_vert_i][0] !== undefined) {
+                        errors.push('Open wire ' + wire_i + ': First vertex has incoming edge.');
                     }
                 }
-                // check the start vertex
-                const start_vert_edges_i: number[] = this._geom_arrays.up_verts_edges[start_vert_i];
-                // console.log("START VERT EDGES", start_vert_edges_i)
-                if (start_vert_edges_i.length !== exp_num_edges_vert0 ) {
-                    errors.push('Wire ' + wire_i + ' Edge ' + edge_i + ' Vert ' + start_vert_i +
-                        ': Start vertex does not have correct number of edges.');
+                if (!is_closed && i === wire.length - 1) {
+                    if (this._geom_arrays.up_verts_edges[edge_end_vert_i][1] !== undefined) {
+                        errors.push('Open wire ' + wire_i + ': Last vertex has an outgoing edge.');
+                    }
                 }
-                if (start_vert_edges_i[start_idx] !== edge_i) {
-                    errors.push('Wire ' + wire_i + ' Edge ' + edge_i + ' Vert ' + start_vert_i +
-                        ': Vertex edges are in the wrong order.');
+                if (this._geom_arrays.up_verts_edges[edge_start_vert_i][1] !== edge_i) {
+                    errors.push('Wire ' + wire_i + ': Edge start vertex has wrong outgoing edge.');
                 }
-                // check the end vertex
-                const end_vert_edges_i: number[] = this._geom_arrays.up_verts_edges[end_vert_i];
-                // console.log("END VERT EDGES", end_vert_edges_i)
-                if (end_vert_edges_i.length !== exp_num_edges_vert1 ) {
-                    errors.push('Wire ' + wire_i + ' Edge ' + edge_i + ' Vert ' + start_vert_i +
-                        ': End vertex does not have correct number of edges.');
-                }
-                if (end_vert_edges_i[end_idx] !== edge_i) {
-                    errors.push('Wire ' + wire_i + ' Edge ' + edge_i + ' Vert ' + end_vert_i +
-                        ': Vertex edges are in the wrong order.');
+                if (this._geom_arrays.up_verts_edges[edge_end_vert_i][0] !== edge_i) {
+                    errors.push('Wire ' + wire_i + ': Edge end vertex has wrong incoming edge.');
                 }
             }
         }

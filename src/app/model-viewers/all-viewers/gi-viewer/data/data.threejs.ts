@@ -651,7 +651,7 @@ export class DataThreejs {
         }
         // remove positions from scene
         removing.forEach((v, k) => {
-            console.log(this._scene.getObjectById(v))
+            // console.log(this._scene.getObjectById(v))
             this._scene.remove(this._scene.getObjectById(v));
             this.ObjLabelMap.delete(k);
             if (document.getElementById(`textLabel_${k}`)) {

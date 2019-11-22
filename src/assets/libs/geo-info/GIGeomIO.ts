@@ -1,19 +1,22 @@
 import { TTri, TVert, TEdge, TWire, TFace,
-    TColl, IGeomData, TPoint, TPline, TPgon, Txyz, IGeomArrays, IGeomCopy, TAttribDataTypes, IGeomPack } from './common';
+    TColl, IGeomData, TPoint, TPline, TPgon, IGeomArrays, IGeomPack } from './common';
 import { GIGeom } from './GIGeom';
+import { GIGeomData } from './GIGeomData';
 
 /**
  * Class for geometry.
  */
 export class GIGeomIO {
-    private _geom: GIGeom;
+    private geom: GIGeom;
     private _geom_arrays: IGeomArrays;
+    public _data: GIGeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
-        this._geom = geom;
+    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
+        this.geom = geom;
         this._geom_arrays = geom_arrays;
+        this._data = data;
     }
     /**
      * Adds data to this model from another model.
@@ -24,6 +27,17 @@ export class GIGeomIO {
     public merge(geom_arrays: IGeomArrays): void {
         // get lengths of existing entities before we start adding stuff
         // const num_posis: number = this._geom_arrays.num_posis;
+        // const num_posis: number = this.geom.data.numPosis();
+        // const num_verts: number = this.geom.data.numVerts();
+        // const num_tris: number = this.geom.data.numTris();
+        // const num_edges: number = this.geom.data.numEdges();
+        // const num_wires: number = this.geom.data.numWires();
+        // const num_faces: number = this.geom.data.numFaces();
+        // const num_points: number = this.geom.data.numPoints();
+        // const num_plines: number = this.geom.data.numPlines();
+        // const num_pgons: number = this.geom.data.numPgons();
+        // const num_colls: number = this.geom.data.numColls();
+
         const num_posis: number = this._geom_arrays.up_posis_verts.length;
         const num_verts: number = this._geom_arrays.dn_verts_posis.length;
         const num_tris: number = this._geom_arrays.dn_tris_verts.length;
@@ -34,6 +48,7 @@ export class GIGeomIO {
         const num_plines: number = this._geom_arrays.dn_plines_wires.length;
         const num_pgons: number = this._geom_arrays.dn_pgons_faces.length;
         const num_colls: number = this._geom_arrays.dn_colls_objs.length;
+
 
         // for the down arrays, it is important the values are never undefined
         // undefined cannot be exported as json
@@ -181,13 +196,13 @@ export class GIGeomIO {
         // update verts to edges
         let ve_i = 0; const ve_i_max = geom_arrays.up_verts_edges.length;
         for (; ve_i < ve_i_max; ve_i++) {
-            const edges_i: number[] = geom_arrays.up_verts_edges[ve_i];
+            const edges_i: [number, number] = geom_arrays.up_verts_edges[ve_i];
             if (edges_i === undefined) {
                 continue;
             } else if (edges_i === null) {
                 this._geom_arrays.up_verts_edges[ve_i + num_verts] = null;
             } else {
-                const new_edges_i: number[] = edges_i.map( edge_i => edge_i + num_edges);
+                const new_edges_i: [number, number] = edges_i.map( edge_i => edge_i + num_edges) as [number, number];
                 this._geom_arrays.up_verts_edges[ve_i + num_verts] = new_edges_i;
             }
         }
@@ -325,7 +340,7 @@ export class GIGeomIO {
         // add collections to model
         this._geom_arrays.dn_colls_objs = geom_data.collections;
         // set selected
-        this._geom.selected = geom_data.selected;
+        this.geom.selected = geom_data.selected;
 
         // update the up arrays
         // many of the values will be undefined
@@ -337,7 +352,7 @@ export class GIGeomIO {
         this._geom_arrays.up_posis_verts = [];
         let posi_i = 0; const posi_i_max = geom_data.num_positions;
         for (; posi_i < posi_i_max; posi_i++) {
-            if (this._geom.model.attribs.query.getPosiCoords(posi_i) === undefined) {
+            if (this.geom.model.attribs.query.getPosiCoords(posi_i) === undefined) {
                 this._geom_arrays.up_posis_verts[posi_i] = null;
             } else {
                 this._geom_arrays.up_posis_verts[posi_i] = [];
@@ -368,7 +383,7 @@ export class GIGeomIO {
             if (vert_i_arr !== null) {
                 vert_i_arr.forEach( (vert_i, index) => {
                     if (this._geom_arrays.up_verts_edges[vert_i] === undefined) {
-                        this._geom_arrays.up_verts_edges[vert_i] = [];
+                        this._geom_arrays.up_verts_edges[vert_i] = [undefined, undefined];
                     }
                     if (index === 0) {
                         this._geom_arrays.up_verts_edges[vert_i].push(edge_i);
@@ -478,8 +493,36 @@ export class GIGeomIO {
             polylines: this._geom_arrays.dn_plines_wires,
             polygons: this._geom_arrays.dn_pgons_faces,
             collections: this._geom_arrays.dn_colls_objs,
-            selected: this._geom.selected
+            selected: this.geom.selected
         };
     }
-
+    /**
+     * Returns the JSON data for this model.
+     */
+    public merge2(geom_arrays: IGeomArrays): void {
+        function mergeDnArrs(a1: number[], a2: number[], o: number) {
+            const a1_len: number = a1.length; const a2_len: number = a2.length;
+            let i = 0;
+            for (; i < a2_len; i++) {
+                a2[i] = null ? a1[a1_len + i] = null : a1[a1_len + i] = a2[i] + o;
+            }
+        }
+        function mergeDnNestedArrs(a1: number[][], a2: number[][], o: number) {
+            const a1_len: number = a1.length; const a2_len: number = a2.length;
+            let i = 0;
+            for (; i < a2_len; i++) {
+                a2[i] = null ? a1[a1_len + i] = null : a1[a1_len + i] = a2[i].map(n => n + o);
+            }
+        }
+        function mergeUpArrs(a1: number[], a2: number[], o: number) {
+            const a1_len: number = a1.length; const a2_len: number = a2.length;
+            let i = 0;
+            for (; i < a2_len; i++) {
+                //a2[i] !== undefined ? a1[a1_len + i] = a2[i] + o : ;
+            }
+        }
+        // array have parents that are -1
+        // verts have nested values that are undefined 
+        // these should all be set to null
+    }
 }

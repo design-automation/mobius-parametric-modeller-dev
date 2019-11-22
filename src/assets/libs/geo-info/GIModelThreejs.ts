@@ -18,7 +18,7 @@ export class GIModelThreejs {
      */
     private _generateColors(): number[] {
         const colors = [];
-        const numEnts = this._model.geom.query.numEnts(EEntType.VERT, false);
+        const numEnts = this._model.geom.data.numEnts(EEntType.VERT, false);
         for (let index = 0; index < numEnts; index++) {
             colors.push(1, 1, 1);
         }
@@ -29,7 +29,7 @@ export class GIModelThreejs {
     //  */
     // private _generateNormals(): number[] {
     //     const normals = [];
-    //     const numEnts = this.geom.query.numEnts(EEntType.VERT, false);
+    //     const numEnts = this.geom.data.numEnts(EEntType.VERT, false);
     //     for (let index = 0; index < numEnts; index++) {
     //         normals.push(0, 0, 0);
     //     }
@@ -73,7 +73,8 @@ export class GIModelThreejs {
         //     }
         //     str += vertex_xyz[t * 3] + ',' + vertex_xyz[t * 3 + 1] + ',' + vertex_xyz[t * 3 + 2] + ' ';
         // }
-        // str += vertex_xyz[last * 3] + ',' + vertex_xyz[last * 3 + 1] + ',' + vertex_xyz[last * 3 + 2] + ' _SelPolyline _PlanarSrf _Delete'
+        // str += vertex_xyz[last * 3] + ',' + vertex_xyz[last * 3 + 1] + ',' + vertex_xyz[last * 3 + 2] +
+        //     ' _SelPolyline _PlanarSrf _Delete'
         // console.log(str);
 
         const [edges_verts_i, edge_select_map]: [number[], Map<number, number>] = this._model.geom.threejs.get3jsEdges(vertex_map);

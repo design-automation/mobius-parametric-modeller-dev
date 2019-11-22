@@ -84,7 +84,7 @@ function _create(__model__: GIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEn
     const coll_i: number = __model__.geom.add.addColl(-1, points_i, plines_i, pgons_i);
     // set the parents
     for (const child_coll_i of child_colls_i) {
-        __model__.geom.modify_coll.setCollParent(child_coll_i, coll_i);
+        __model__.geom.data.collSetParent(child_coll_i, coll_i);
     }
     // return the new collection
     return [EEntType.COLL, coll_i];
@@ -107,7 +107,7 @@ export function Get(__model__: GIModel, names: string|string[]): TId|TId[] {
 }
 function _get(__model__: GIModel, names: string|string[]): TEntTypeIdx | TEntTypeIdx[] {
     if (!Array.isArray(names)) {
-        const colls_i: number[] = __model__.geom.query.getEnts(EEntType.COLL, false);
+        const colls_i: number[] = __model__.geom.data.getEnts(EEntType.COLL, false);
         const query_result: number[] = __model__.attribs.query.filterByAttribs(
             EEntType.COLL, colls_i, 'name', null, EFilterOperatorTypes.IS_EQUAL, names);
         if (query_result.length > 0) {
@@ -142,29 +142,25 @@ export function Add(__model__: GIModel, coll: TId, entities: TId|TId[]): void {
 }
 
 function _collectionAdd(__model__: GIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
-    const points_i: number[] = [];
-    const plines_i: number[] = [];
-    const pgons_i: number[] = [];
     for (const [ent_type, ent_i] of ents_arr) {
         switch (ent_type) {
             case EEntType.POINT:
-                points_i.push(ent_i);
+                __model__.geom.data.collAddPoint(coll_i, ent_i);
                 break;
             case EEntType.PLINE:
-                plines_i.push(ent_i);
+                __model__.geom.data.collAddPline(coll_i, ent_i);
                 break;
             case EEntType.PGON:
-                pgons_i.push(ent_i);
+                __model__.geom.data.collAddPgon(coll_i, ent_i);
                 break;
             case EEntType.COLL:
-                __model__.geom.modify_coll.setCollParent(ent_i, coll_i);
+                __model__.geom.data.collSetParent(ent_i, coll_i);
                 break;
             default:
                 throw new Error('Error adding entities to a collection. \
                 A collection can only contain points, polylines, polygons, and other collections.');
         }
     }
-    __model__.geom.modify_coll.collAddEnts(coll_i, points_i, plines_i, pgons_i);
 }
 // ================================================================================================
 /**
@@ -195,41 +191,34 @@ export function Remove(__model__: GIModel, coll: TId, entities: TId|TId[]): void
     }
 }
 function _collectionRemove(__model__: GIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
-    const points_i: number[] = [];
-    const plines_i: number[] = [];
-    const pgons_i: number[] = [];
     for (const [ent_type, ent_i] of ents_arr) {
         switch (ent_type) {
             case EEntType.POINT:
-                points_i.push(ent_i);
+                __model__.geom.data.collRemovePoint(coll_i, ent_i);
                 break;
             case EEntType.PLINE:
-                plines_i.push(ent_i);
+                __model__.geom.data.collRemovePline(coll_i, ent_i);
                 break;
             case EEntType.PGON:
-                pgons_i.push(ent_i);
+                __model__.geom.data.collRemovePgon(coll_i, ent_i);
                 break;
             case EEntType.COLL:
-                if (__model__.geom.query.getCollParent(ent_i) === coll_i) {
-                    __model__.geom.modify_coll.setCollParent(ent_i, -1);
-                }
+                __model__.geom.data.collRemoveColl(coll_i, ent_i);
                 break;
             default:
                 throw new Error('Error removing entities from a collection. \
                 A collection can only contain points, polylines, polygons, and other collections.');
         }
     }
-    __model__.geom.modify_coll.collRemoveEnts(coll_i, points_i, plines_i, pgons_i);
 }
 function _collectionEmpty(__model__: GIModel, coll_i: number): void {
-    const points_i: number[] = __model__.geom.nav.navCollToPoint(coll_i);
-    const plines_i: number[] = __model__.geom.nav.navCollToPline(coll_i);
-    const pgons_i: number[] = __model__.geom.nav.navCollToPgon(coll_i);
-    __model__.geom.modify_coll.collRemoveEnts(coll_i, points_i, plines_i, pgons_i);
-    // remove the collections that are children of this collection
-    const child_colls_i: number[] = __model__.geom.query.getCollChildren(coll_i);
-    for (const child_coll_i of child_colls_i) {
-        __model__.geom.modify_coll.setCollParent(child_coll_i, -1);
-    }
+    const points_i: number[] = __model__.geom.data.navCollToPoint(coll_i);
+    points_i.forEach(point_i => __model__.geom.data.collRemovePoint(coll_i, point_i));
+    const plines_i: number[] = __model__.geom.data.navCollToPline(coll_i);
+    plines_i.forEach(pline_i => __model__.geom.data.collRemovePline(coll_i, pline_i));
+    const pgons_i: number[] = __model__.geom.data.navCollToPgon(coll_i);
+    pgons_i.forEach(pgon_i => __model__.geom.data.collRemovePgon(coll_i, pgon_i));
+    const child_colls_i: number[] = __model__.geom.data.collGetChildren(coll_i);
+    child_colls_i.forEach(child_coll_i => __model__.geom.data.collRemoveColl(coll_i, child_coll_i));
 }
 // ================================================================================================

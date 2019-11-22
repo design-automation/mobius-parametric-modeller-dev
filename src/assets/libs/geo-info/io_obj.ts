@@ -52,8 +52,7 @@ export function importObj(obj_str: string): GIModel {
         }
     }
     for (const coord of coords) {
-        const posi_i: number = model.geom.add.addPosi();
-        model.attribs.add.setAttribVal(EEntType.POSI, posi_i, EAttribNames.COORDS, coord);
+        const posi_i: number = model.createPosi(coord);
     }
     for (const face of faces) {
         console.log(face[0]);
@@ -79,8 +78,8 @@ export function exportObj(model: GIModel): string {
     const has_color_attrib: boolean = model.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.COLOR);
     const has_normal_attrib: boolean = model.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.NORMAL);
     const has_texture_attrib: boolean = model.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.TEXTURE);
-    const posis_i: number[] = model.geom.query.getEnts(EEntType.POSI, false);
-    const verts_i: number[] = model.geom.query.getEnts(EEntType.VERT, false);
+    const posis_i: number[] = model.geom.data.getEnts(EEntType.POSI, false);
+    const verts_i: number[] = model.geom.data.getEnts(EEntType.VERT, false);
     // positions
     if (has_color_attrib) {
         for (const vert_i of verts_i) {
@@ -109,9 +108,9 @@ export function exportObj(model: GIModel): string {
         }
     }
     // polygons, f
-    const pgons_i: number[] = model.geom.query.getEnts(EEntType.PGON, false);
+    const pgons_i: number[] = model.geom.data.getEnts(EEntType.PGON, false);
     for (const pgon_i of pgons_i) {
-        const pgon_verts_i_outer: number[] = model.geom.nav.navAnyToVert(EEntType.PGON, pgon_i);
+        const pgon_verts_i_outer: number[] = model.geom.data.navAnyToVert(EEntType.PGON, pgon_i);
         // const verts_i_outer = verts_i[0];
         // TODO what about holes
         if (has_texture_attrib) {
@@ -123,13 +122,13 @@ export function exportObj(model: GIModel): string {
         if (has_color_attrib) {
             f_str += 'f ' + pgon_verts_i_outer.map( vert_i => (vert_i + 1).toString() ).join(' ') + '\n';
         } else {
-            f_str += 'f ' + pgon_verts_i_outer.map( vert_i => (model.geom.nav.navVertToPosi(vert_i) + 1).toString() ).join(' ') + '\n';
+            f_str += 'f ' + pgon_verts_i_outer.map( vert_i => (model.geom.data.navVertToPosi(vert_i) + 1).toString() ).join(' ') + '\n';
         }
     }
     // polylines, l
-    const plines_i: number[] = model.geom.query.getEnts(EEntType.PLINE, false);
+    const plines_i: number[] = model.geom.data.getEnts(EEntType.PLINE, false);
     for (const pline_i of plines_i) {
-        const pline_verts_i: number[] = model.geom.nav.navAnyToVert(EEntType.PLINE, pline_i);
+        const pline_verts_i: number[] = model.geom.data.navAnyToVert(EEntType.PLINE, pline_i);
         l_str += 'l ' + pline_verts_i.map( vert_i => (vert_i + 1).toString() ).join(' ') + '\n';
     }
     // result

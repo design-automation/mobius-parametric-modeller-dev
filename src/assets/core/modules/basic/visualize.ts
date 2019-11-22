@@ -58,7 +58,7 @@ function _color(__model__: GIModel, ents_arr: TEntTypeIdx[], color: TColor): voi
         if (ent_type === EEntType.VERT) {
             all_verts_i.push(ent_i);
         } else {
-            const verts_i: number[] = __model__.geom.nav.navAnyToVert(ent_type, ent_i);
+            const verts_i: number[] = __model__.geom.data.navAnyToVert(ent_type, ent_i);
             for (const vert_i of verts_i) {
                 all_verts_i.push(vert_i);
             }
@@ -140,7 +140,7 @@ function _gradient(__model__: GIModel, ents_arr: TEntTypeIdx[], attrib_name: str
         if (ent_type === EEntType.VERT) {
             all_verts_i.push(ent_i);
         } else {
-            const verts_i: number[] = __model__.geom.nav.navAnyToVert(ent_type, ent_i);
+            const verts_i: number[] = __model__.geom.data.navAnyToVert(ent_type, ent_i);
             for (const vert_i of verts_i) {
                 all_verts_i.push(vert_i);
             }
@@ -197,11 +197,9 @@ function _visRay(__model__: GIModel, rays: TRay|TRay[], scale: number): TEntType
         const vec: Txyz = vecMult(ray[1], scale);
         const end: Txyz = vecAdd(origin, vec);
         // create orign point
-        const origin_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(origin_posi_i, origin);
+        const origin_posi_i: number = __model__.createPosi(origin);
         // create pline
-        const end_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(end_posi_i, end);
+        const end_posi_i: number = __model__.createPosi(end);
         const pline_i = __model__.geom.add.addPline([origin_posi_i, end_posi_i]);
         // create the arrow heads
         const vec_unit: Txyz = vecNorm(ray[1]);
@@ -213,12 +211,10 @@ function _visRay(__model__: GIModel, rays: TRay|TRay[], scale: number): TEntType
         }
         const vec_rev: Txyz = vecSetLen(vecMult(vec, -1), scale);
         const arrow_a: Txyz = vecAdd(vecAdd(end, vec_rev), vec_norm);
-        const arrow_a_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(arrow_a_posi_i, arrow_a);
+        const arrow_a_posi_i: number = __model__.createPosi(arrow_a);
         const arrow_a_pline_i: number = __model__.geom.add.addPline([end_posi_i, arrow_a_posi_i]);
         const arrow_b: Txyz = vecSub(vecAdd(end, vec_rev), vec_norm);
-        const arrow_b_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(arrow_b_posi_i, arrow_b);
+        const arrow_b_posi_i: number = __model__.createPosi(arrow_b);
         const arrow_b_pline_i = __model__.geom.add.addPline([end_posi_i, arrow_b_posi_i]);
         // return the geometry IDs
         return [
@@ -273,25 +269,20 @@ function _visPlane(__model__: GIModel, planes: TPlane|TPlane[], scale: number): 
         x_end = vecAdd(x_end, vecMult(x_vec, 0.1));
         y_end = vecSub(y_end, vecMult(y_vec, 0.1));
         // create the point
-        const origin_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(origin_posi_i, origin);
+        const origin_posi_i: number = __model__.createPosi(origin);
         // create the x axis
-        const x_end_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(x_end_posi_i, x_end);
+        const x_end_posi_i: number = __model__.createPosi(x_end);
         const x_pline_i = __model__.geom.add.addPline([origin_posi_i, x_end_posi_i]);
         // create the y axis
-        const y_end_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(y_end_posi_i, y_end);
+        const y_end_posi_i: number = __model__.createPosi(y_end);
         const y_pline_i = __model__.geom.add.addPline([origin_posi_i, y_end_posi_i]);
         // create the z axis
-        const z_end_posi_i: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(z_end_posi_i, z_end);
+        const z_end_posi_i: number = __model__.createPosi(z_end);
         const z_pline_i = __model__.geom.add.addPline([origin_posi_i, z_end_posi_i]);
         // create pline for plane
         const corner_posis_i: number[] = [];
         for (const corner of plane_corners) {
-            const posi_i: number = __model__.geom.add.addPosi();
-            __model__.attribs.add.setPosiCoords(posi_i, corner);
+            const posi_i: number = __model__.createPosi(corner);
             corner_posis_i.push(posi_i);
         }
         const plane_i = __model__.geom.add.addPline(corner_posis_i, true);
@@ -336,23 +327,15 @@ function _visBBox(__model__: GIModel, bboxs: TBBox|TBBox[]): TEntTypeIdx[] {
         const _min: Txyz = bbox[1];
         const _max: Txyz = bbox[2];
         // bottom
-        const ps0: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps0, _min);
-        const ps1: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps1, [_max[0], _min[1], _min[2]]);
-        const ps2: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps2, [_max[0], _max[1], _min[2]]);
-        const ps3: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps3, [_min[0], _max[1], _min[2]]);
+        const ps0: number = __model__.createPosi(_min);
+        const ps1: number = __model__.createPosi( [_max[0], _min[1], _min[2]] );
+        const ps2: number = __model__.createPosi( [_max[0], _max[1], _min[2]] );
+        const ps3: number = __model__.createPosi( [_min[0], _max[1], _min[2]] );
         // top
-        const ps4: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps4, [_min[0], _min[1], _max[2]]);
-        const ps5: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps5, [_max[0], _min[1], _max[2]]);
-        const ps6: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps6, _max);
-        const ps7: number = __model__.geom.add.addPosi();
-        __model__.attribs.add.setPosiCoords(ps7, [_min[0], _max[1], _max[2]]);
+        const ps4: number = __model__.createPosi( [_min[0], _min[1], _max[2]] );
+        const ps5: number = __model__.createPosi( [_max[0], _min[1], _max[2]] );
+        const ps6: number = __model__.createPosi( _max );
+        const ps7: number = __model__.createPosi( [_min[0], _max[1], _max[2]] );
         // plines bottom
         const pl0 = __model__.geom.add.addPline([ps0, ps1]);
         const pl1 = __model__.geom.add.addPline([ps1, ps2]);

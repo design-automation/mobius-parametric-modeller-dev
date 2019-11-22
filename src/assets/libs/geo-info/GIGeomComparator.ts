@@ -1,21 +1,23 @@
 import { GIModel } from './GIModel';
 import { IGeomArrays, EEntType, TFace } from './common';
 import { GIGeom } from './GIGeom';
+import { GIGeomData } from './GIGeomData';
 
 /**
  * Class for comparing the geometry in two models.
  */
-export class GIGeomCompare {
+export class GIGeomComparator {
     private _geom: GIGeom;
     private _geom_arrays: IGeomArrays;
+    public _data: GIGeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
+        this._data = data;
     }
-
     /**
      * Compares this model and another model.
      * ~
@@ -42,8 +44,8 @@ export class GIGeomCompare {
         for (const ent_type of eny_types) {
             // total marks is not updated, we deduct marks
             // get the number of entitoes in each model
-            const this_num_ents: number = this._geom.query.numEnts(ent_type, false);
-            const other_num_ents: number = other_model.geom.query.numEnts(ent_type, false);
+            const this_num_ents: number = this._geom.data.numEnts(ent_type, false);
+            const other_num_ents: number = other_model.geom.data.numEnts(ent_type, false);
             if (this_num_ents > other_num_ents) {
                 geom_comments.push([
                     'Mismatch: Model has too few entities of type:',

@@ -103,7 +103,7 @@ export function Get(__model__: GIModel, ent_type_enum: _EEntType, entities: TId|
     // if ents_arr is null, then get all entities in the model of type ent_type
     if (ents_arr === null) {
         ents_arr = ents_arr as TEntTypeIdx[];
-        const ents_i: number[] = __model__.geom.query.getEnts(ent_type, false);
+        const ents_i: number[] = __model__.geom.data.getEnts(ent_type, false);
         ents_arr = ents_i.map(ent_i => [ent_type, ent_i]) as TEntTypeIdx[];
     }
     if (isEmptyArr(ents_arr)) { return []; }
@@ -125,7 +125,7 @@ function _get(__model__: GIModel, ent_type: EEntType, ents_arr: TEntTypeIdx[]|TE
         // get the list of entities that are found
         const found_ents_i_set: Set<number> = new Set();
         for (const ent_arr of ents_arr) {
-            const ents_i: number[] = __model__.geom.nav.navAnyToAny(ent_arr[0], ent_type, ent_arr[1]);
+            const ents_i: number[] = __model__.geom.data.navAnyToAny(ent_arr[0], ent_type, ent_arr[1]);
             for (const ent_i of ents_i) {
                 found_ents_i_set.add(ent_i);
             }
@@ -237,7 +237,7 @@ function _filter(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][],
         // get the list of entities
         const found_ents_i: number[] = [];
         for (const ent_arr of ents_arr) {
-            found_ents_i.push(...__model__.geom.nav.navAnyToAny(ent_arr[0], ent_type, ent_arr[1]));
+            found_ents_i.push(...__model__.geom.data.navAnyToAny(ent_arr[0], ent_type, ent_arr[1]));
         }
         // do the query on the list of entities
         const query_result: number[] = __model__.attribs.query.filterByAttribs(ent_type, found_ents_i, name, idx_or_key, op_type, value);
@@ -286,7 +286,7 @@ function _invert(__model__: GIModel, select_ent_types: EEntType|EEntType[], ents
             .filter(ent_arr => ent_arr[0] === select_ent_type).map(ent_arr => ent_arr[1]);
         // get the list of entities
         const found_entities_i: number[] = [];
-        const ents_i: number[] = __model__.geom.query.getEnts(select_ent_type, false);
+        const ents_i: number[] = __model__.geom.data.getEnts(select_ent_type, false);
         for (const ent_i of ents_i) {
             if (excl_ents_i.indexOf(ent_i) === -1) { found_entities_i.push(ent_i); }
         }
@@ -392,13 +392,13 @@ export function _perimeter(__model__: GIModel,  select_ent_types: EEntType|EEntT
         const edges_i: number[] = [];
         for (const ent_arr of ents_arr) {
             const [ent_type, index]: TEntTypeIdx = ent_arr as TEntTypeIdx ;
-            const edges_ent_i: number[] = __model__.geom.nav.navAnyToEdge(ent_type, index);
+            const edges_ent_i: number[] = __model__.geom.data.navAnyToEdge(ent_type, index);
             for (const edge_ent_i of edges_ent_i) {
                 edges_i.push(edge_ent_i);
             }
         }
         // get the perimeter entities
-        const all_perim_ents_i: number[] = __model__.geom.query.perimeter(select_ent_type, edges_i);
+        const all_perim_ents_i: number[] = __model__.geom.data.getEntPerimeters(select_ent_type, edges_i);
         return all_perim_ents_i.map(perim_ent_i => [select_ent_type, perim_ent_i]) as TEntTypeIdx[];
     } else {
         const query_results: TEntTypeIdx[] = [];
@@ -444,14 +444,14 @@ export function _neighbors(__model__: GIModel,  select_ent_types: EEntType|EEntT
         const verts_i: number[] = [];
         for (const ent_arr of ents_arr) {
             const [ent_type, index]: TEntTypeIdx = ent_arr as TEntTypeIdx ;
-            const verts_ent_i: number[] = __model__.geom.nav.navAnyToVert(ent_type, index);
+            const verts_ent_i: number[] = __model__.geom.data.navAnyToVert(ent_type, index);
             for (const vert_ent_i of verts_ent_i) {
                 verts_i.push(vert_ent_i);
             }
         }
         console.log(verts_i);
         // get the neighbor entities
-        const all_nbor_ents_i: number[] = __model__.geom.query.neighbor(select_ent_type, verts_i);
+        const all_nbor_ents_i: number[] = __model__.geom.data.getEntNeighbors(select_ent_type, verts_i);
         return all_nbor_ents_i.map(nbor_ent_i => [select_ent_type, nbor_ent_i]) as TEntTypeIdx[];
     } else {
         const query_results: TEntTypeIdx[] = [];
@@ -502,9 +502,9 @@ function _isClosed(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]): boo
         }
         let wire_i: number = index;
         if (ent_type === EEntType.PLINE) {
-            wire_i = __model__.geom.nav.navPlineToWire(index);
+            wire_i = __model__.geom.data.navPlineToWire(index);
         }
-        return __model__.geom.query.isWireClosed(wire_i) as boolean;
+        return __model__.geom.data.wireIsClosed(wire_i) as boolean;
     } else {
         return (ents_arr as TEntTypeIdx[]).map(ents => _isClosed(__model__, ents)) as boolean[];
     }
@@ -536,14 +536,14 @@ export enum _ETypeQueryEnum {
 }
 function _exists(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     const [ent_type, index]: TEntTypeIdx = ent_arr;
-    return __model__.geom.query.entExists(ent_type, index);
+    return __model__.geom.data.entExists(ent_type, index);
 }
 function _isUsedPosi(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     const [ent_type, index]: TEntTypeIdx = ent_arr;
     if (ent_type !== EEntType.POSI) {
         return false;
     }
-    const verts_i: number[] = __model__.geom.nav.navPosiToVert(index);
+    const verts_i: number[] = __model__.geom.data.navPosiToVert(index);
     if (verts_i === undefined || verts_i === null) {
         return false;
     }
@@ -566,7 +566,7 @@ function _isTopo(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
 function _isPointTopo(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     const [ent_type, index]: TEntTypeIdx = ent_arr;
     if (ent_type === EEntType.VERT || ent_type === EEntType.EDGE || ent_type === EEntType.WIRE || ent_type === EEntType.FACE) {
-        const points_i: number[] = __model__.geom.nav.navAnyToPoint(ent_type, index);
+        const points_i: number[] = __model__.geom.data.navAnyToPoint(ent_type, index);
         if (points_i !== undefined && points_i !== null && points_i.length) { return true; }
     }
     return false;
@@ -574,7 +574,7 @@ function _isPointTopo(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
 function _isPlineTopo(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     const [ent_type, index]: TEntTypeIdx = ent_arr;
     if (ent_type === EEntType.VERT || ent_type === EEntType.EDGE || ent_type === EEntType.WIRE || ent_type === EEntType.FACE) {
-        const plines_i: number[] = __model__.geom.nav.navAnyToPline(ent_type, index);
+        const plines_i: number[] = __model__.geom.data.navAnyToPline(ent_type, index);
         if (plines_i !== undefined && plines_i !== null && plines_i.length) { return true; }
     }
     return false;
@@ -582,7 +582,7 @@ function _isPlineTopo(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
 function _isPgonTopo(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     const [ent_type, index]: TEntTypeIdx = ent_arr;
     if (ent_type === EEntType.VERT || ent_type === EEntType.EDGE || ent_type === EEntType.WIRE || ent_type === EEntType.FACE) {
-        const pgons_i: number[] = __model__.geom.nav.navAnyToPgon(ent_type, index);
+        const pgons_i: number[] = __model__.geom.data.navAnyToPgon(ent_type, index);
         if (pgons_i !== undefined && pgons_i !== null && pgons_i.length) { return true; }
     }
     return false;
@@ -596,20 +596,20 @@ function _isClosed2(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     }
     let wire_i: number = index;
     if (ent_type === EEntType.PLINE) {
-        wire_i = __model__.geom.nav.navPlineToWire(index);
+        wire_i = __model__.geom.data.navPlineToWire(index);
     }
-    return __model__.geom.query.isWireClosed(wire_i) as boolean;
+    return __model__.geom.data.wireIsClosed(wire_i) as boolean;
 }
 function _isHole(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     const [ent_type, index]: TEntTypeIdx = ent_arr;
     if (ent_type !== EEntType.WIRE) {
         return false;
     }
-    const face_i: number = __model__.geom.nav.navWireToFace(index);
+    const face_i: number = __model__.geom.data.navWireToFace(index);
     if (face_i === undefined || face_i === null) {
         return false;
     }
-    const wires_i: number[] = __model__.geom.nav.navFaceToWire(face_i);
+    const wires_i: number[] = __model__.geom.data.navFaceToWire(face_i);
     return wires_i.indexOf(index) > 0;
 }
 function _hasNoHoles(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
@@ -619,9 +619,9 @@ function _hasNoHoles(__model__: GIModel, ent_arr: TEntTypeIdx): boolean {
     }
     let face_i: number = index;
     if (ent_type === EEntType.PGON) {
-        face_i = __model__.geom.nav.navPgonToFace(index);
+        face_i = __model__.geom.data.navPgonToFace(index);
     }
-    const wires_i: number[] = __model__.geom.nav.navFaceToWire(face_i);
+    const wires_i: number[] = __model__.geom.data.navFaceToWire(face_i);
     return wires_i.length === 1;
 }
 function _type(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], query_ent_type: _ETypeQueryEnum): boolean|boolean[] {

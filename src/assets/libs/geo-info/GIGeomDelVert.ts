@@ -1,20 +1,15 @@
-import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert, EWireType } from './common';
+import { EEntType, TEdge, TWire } from './common';
 import { GIGeom } from './GIGeom';
-import { arrRem, arrIdxAdd } from '../util/arrs';
-import { vecDot } from '../geom/vectors';
-
 /**
  * Class for deleting geometry.
  */
 export class GIGeomDelVert {
-    private _geom: GIGeom;
-    private _geom_arrays: IGeomArrays;
+    private geom: GIGeom;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
-        this._geom = geom;
-        this._geom_arrays = geom_arrays;
+    constructor(geom: GIGeom) {
+        this.geom = geom;
     }
     /**
      * Deletes a vert.
@@ -25,7 +20,7 @@ export class GIGeomDelVert {
      *
      * The first special case is if the vert is for a point. In that case, just delete the point.
      *
-     * Then there are two special cases for whicj we delete the whole object
+     * Then there are two special cases for which we delete the whole object
      *
      * 1) If the wire is open and has only 1 edge, then delete the wire
      * 2) if the wire is closed pgon and has only 3 edges, then:
@@ -36,192 +31,164 @@ export class GIGeomDelVert {
      * then there are two more special cases for open wires
      *
      * 1) If the vert is at the start of an open wire, then delete the first edge
-     * 2) If teh vert is at the end of an open wire, then delete the last edge
+     * 2) If the vert is at the end of an open wire, then delete the last edge
      *
      * Finally, we come to the standard case.
      * The next edge is deleted, and the prev edge gets rewired.
      *
-     * @param vert_i
      */
-    public delVert(vert_i: number): void {
-        // check, has it already been deleted
-        if (this._geom_arrays.dn_verts_posis[vert_i] === null) { return; }
-        // check, is this a point, then delete the point and vertex
-        const point_i: number = this._geom_arrays.up_verts_points[vert_i];
-        if (point_i !== undefined && point_i !== null) {
-            this._geom.del.delPoints(point_i, false);
-            return;
+    public delVert(vert_i: number): number[] {
+        if (this.geom.data.vertIsPgon(vert_i)) {
+            return this.delVertInPgon(vert_i);
+        } else if (this.geom.data.vertIsPline(vert_i)) {
+            return this.delVertInPline(vert_i);
+        } else if (this.geom.data.vertIsPoint(vert_i)) {
+            this.delVertInPoint(vert_i);
+            return [];
         }
+    }
+    /**
+     * Delete a vertex in a point
+     */
+    public delVertInPoint(vert_i: number): void {
+        const point_i: number = this.geom.data.navVertToPoint(vert_i);
+        this.geom.del.delPoints(point_i);
+    }
+    /**
+     * Delete a vertex in a pline
+     */
+    public delVertInPline(vert_i: number): number[] {
         // get the posis, edges, and wires, and other info
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-        const wire_i: number = this._geom_arrays.up_edges_wires[edges_i[0]];
-        const face_i: number = this._geom_arrays.up_wires_faces[wire_i]; // this may be undefined
-        const wire_edges_i: number[] = this._geom_arrays.dn_wires_edges[wire_i];
-        const wire_verts_i: number[] = this._geom.nav.navAnyToVert(EEntType.WIRE, wire_i);
-        const wire_is_closed: boolean = this._geom.query.isWireClosed(wire_i);
+        const edges_i: number[] = this.geom.data.navVertToEdge(vert_i);
+        const wire_i: number =  this.geom.data.navEdgeToWire(edges_i[0]);
+        const wire_verts_i: number[] = this.geom.data.navAnyToVert(EEntType.WIRE, wire_i);
+        const wire_is_closed: boolean = this.geom.data.wireIsClosed(wire_i);
         const index_vert_i: number = wire_verts_i.indexOf(vert_i);
         const num_verts: number = wire_verts_i.length;
 
         // update the edges and wires
-        if (!wire_is_closed && num_verts === 2) {
+        if (num_verts < 3) {
 
-            // special case, open pline with 2 verts
-            this.__delVert__OpenPline1Edge(wire_i);
+            // pline with 2 verts
+            const pline_i: number = this.geom.data.navWireToPline(wire_i);
+            return this.geom.del.delPlines(pline_i);
 
-        } else if (face_i !== undefined && face_i !== null && num_verts === 3) {
-
-            // special case, pgon with three verts
-            const wires_i: number[] = this._geom_arrays.dn_faces_wirestris[face_i][0];
-            const index_face_wire: number = wires_i.indexOf(wire_i);
-            if (index_face_wire === 0) {
-
-                // special case, pgon boundary with verts, delete the pgon
-                this.__delVert__PgonBoundaryWire3Edge(face_i);
-
-            } else {
-
-                // special case, pgon hole with verts, delete the hole
-                this.__delVert__PgonHoleWire3Edge(face_i, wire_i);
-
-            }
-        } else if (!wire_is_closed && index_vert_i === 0) {
+        }  else if (!wire_is_closed && index_vert_i === 0) {
 
             // special case, open pline, delete start edge and vert
-            this.__delVert__OpenPlineStart(wire_edges_i, wire_verts_i, vert_i);
+            this.__delVertOpenPlineStart(wire_i);
 
         } else if (!wire_is_closed && index_vert_i === num_verts - 1) {
 
             // special case, open pline, delete end edge and vert
-            this.__delVert__OpenPlineEnd(wire_edges_i, wire_verts_i, vert_i);
+            this.__delVertOpenPlineEnd(wire_i);
 
         } else {
 
             // standard case, delete the prev edge and reqire the next edge
-            this.__delVert__StandardCase(wire_edges_i, vert_i);
+            this.__delVertStandardCase(wire_i, vert_i);
+
+        }
+        return [];
+    }
+    /**
+     * Delete a vertex in a pgon
+     */
+    public delVertInPgon(vert_i: number): number[] {
+        // get the posis, edges, and wires, and other info
+        const edges_i: number[] = this.geom.data.navVertToEdge(vert_i);
+        const wire_i: number =  this.geom.data.navEdgeToWire(edges_i[0]);
+        const face_i: number = this.geom.data.navWireToFace(wire_i);
+        const wire_verts_i: number[] = this.geom.data.navAnyToVert(EEntType.WIRE, wire_i);
+        const num_verts: number = wire_verts_i.length;
+        // update the edges and wires
+        if (num_verts < 4) {
+
+            // special case, pgon with three verts
+            const wires_i: number[] = this.geom.data.navFaceToWire(face_i);
+            const index_face_wire: number = wires_i.indexOf(wire_i);
+            if (index_face_wire === 0) {
+
+                // special case, pgon boundary with verts, delete the pgon
+                const pgon_i: number = this.geom.data.navFaceToPgon(face_i);
+                return this.geom.del.delPgons(pgon_i);
+
+            } else {
+
+                // special case, pgon hole with verts, delete the hole
+                return this.geom.del.delPgonHoles(wire_i);
+
+            }
+
+        } else {
+
+            // standard case, delete the prev edge and reqire the next edge
+            this.__delVertStandardCase(wire_i, vert_i);
 
             if (face_i !== undefined) {
 
                 // for pgons, also update tris
-                const pgon_i: number = this._geom.nav.navFaceToPgon(face_i);
-                this._geom.modify_pgon.triPgons(pgon_i);
+                this.geom.data.faceTri(face_i);
 
             }
         }
-    }
-    /**
-     * Special case, delete the pline
-     * @param wire_i
-     */
-    private __delVert__OpenPline1Edge(wire_i: number) {
-        const pline_i: number = this._geom_arrays.up_wires_plines[wire_i];
-        this._geom.del.delPlines(pline_i, false);
-    }
-    /**
-     * Special case, delete either the pgon
-     * @param face_i
-     */
-    private __delVert__PgonBoundaryWire3Edge(face_i: number) {
-        const pgon_i: number = this._geom_arrays.up_faces_pgons[face_i];
-        this._geom.del.delPgons(pgon_i, false);
-    }
-    /**
-     * Special case, delete either the hole
-     * @param vert_i
-     */
-    private __delVert__PgonHoleWire3Edge(face_i: number, wire_i: number) {
-        // TODO
-        console.log('not implemented');
+        return [];
     }
     /**
      * Special case, delete the first edge
-     * @param vert_i
      */
-    private __delVert__OpenPlineStart(wire_edges_i: number[], wire_verts_i: number[], vert_i: number) {
-        const posi_i: number = this._geom_arrays.dn_verts_posis[vert_i];
+    private __delVertOpenPlineStart(wire_i: number): void {
+        const wire_edges_i: number[] = this.geom.data.navWireToEdge(wire_i);
         // vert_i is at the star of an open wire, we have one edge
         const start_edge_i: number = wire_edges_i[0];
         // delete the first edge
-        this._geom_arrays.dn_edges_verts[start_edge_i] = null;
-        delete this._geom_arrays.up_edges_wires[start_edge_i];
-        this._geom.model.attribs.add.delEntFromAttribs(EEntType.EDGE, start_edge_i);
-        // update the second vert
-        const second_vert_i: number = wire_verts_i[1];
-        arrRem(this._geom_arrays.up_verts_edges[second_vert_i], start_edge_i);
-        // update the wire
-        arrRem(wire_edges_i, start_edge_i);
-        // delete the vert
-        this._geom_arrays.dn_verts_posis[vert_i] = null;
-        delete this._geom_arrays.up_verts_edges[vert_i];
-        this._geom.model.attribs.add.delEntFromAttribs(EEntType.VERT, vert_i);
-        // update the posis
-        arrRem(this._geom_arrays.up_posis_verts[posi_i], vert_i);
+        const verts_i: [number, number] = this.geom.data.remEdgeEnt(start_edge_i);
+        // delete the first vertex
+        this.geom.data.remVertEnt(verts_i[0]);
+        // unlink the second vertex
+        this.geom.data.unlinkEdgeEndVert(wire_i, verts_i[1]);
     }
     /**
      * Special case, delete the last edge
      * @param vert_i
      */
-    private __delVert__OpenPlineEnd(wire_edges_i: number[], wire_verts_i: number[], vert_i: number) {
-        const posi_i: number = this._geom_arrays.dn_verts_posis[vert_i];
-        // vert_i is at the end of an open wire, we have one edge
-        const end_edge_i: number = wire_edges_i[wire_edges_i.length - 1];
-        // delete the last edge
-        this._geom_arrays.dn_edges_verts[end_edge_i] = null;
-        delete this._geom_arrays.up_edges_wires[end_edge_i];
-        this._geom.model.attribs.add.delEntFromAttribs(EEntType.EDGE, end_edge_i);
-        // update the one before last vert
-        const before_last_vert_i: number = wire_verts_i[wire_verts_i.length - 2];
-        arrRem(this._geom_arrays.up_verts_edges[before_last_vert_i], end_edge_i);
-        // update the wire
-        arrRem(wire_edges_i, end_edge_i);
-        // delete the vert
-        this._geom_arrays.dn_verts_posis[vert_i] = null;
-        delete this._geom_arrays.up_verts_edges[vert_i];
-        this._geom.model.attribs.add.delEntFromAttribs(EEntType.VERT, vert_i);
-        // update the posis
-        arrRem(this._geom_arrays.up_posis_verts[posi_i], vert_i);
+    private __delVertOpenPlineEnd(wire_i: number): void {
+        const wire_edges_i: number[] = this.geom.data.navWireToEdge(wire_i);
+        // vert_i is at the star of an open wire, we have one edge
+        const end_edge_i: number = wire_edges_i[0];
+        // delete the first edge
+        const verts_i: [number, number] = this.geom.data.remEdgeEnt(end_edge_i);
+        // delete the first vertex
+        this.geom.data.remVertEnt(verts_i[1]);
+        // unlink the second vertex
+        this.geom.data.unlinkEdgeStartVert(wire_i, verts_i[0]);
     }
     /**
      * Final case, delete the next edge, reqire the previous edge
      * For pgons, this does not update the tris
      * @param vert_i
      */
-    private __delVert__StandardCase(wire_edges_i: number[], vert_i: number) {
-        const posi_i: number = this._geom_arrays.dn_verts_posis[vert_i];
+    private __delVertStandardCase(wire_i: number, vert_i: number): void {
+        const wire_edges_i: number[] = this.geom.data.navWireToEdge(wire_i);
         // vert_i is in the middle of a wire, we must have two edges
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-        const prev_edge_i: number = edges_i[0]; // is_first ? edges_i[1] : edges_i[0];
-        const next_edge_i: number = edges_i[1]; // is_first ? edges_i[0] : edges_i[1];
-        // get the verts of the two edges
-        const prev_edge_verts_i: number[] = this._geom_arrays.dn_edges_verts[prev_edge_i];
-        const next_edge_verts_i: number[] = this._geom_arrays.dn_edges_verts[next_edge_i];
-        const prev_vert_i: number = prev_edge_verts_i[0];
-        const next_vert_i: number = next_edge_verts_i[1];
-        // console.log(wire_edges_i);
-        // console.log(vert_i);
-        // console.log(is_first);
-        // console.log(edges_i);
-        // console.log(prev_edge_i, next_edge_i)
-        // console.log(prev_edge_verts_i, next_edge_verts_i)
-        // console.log(prev_vert_i, next_vert_i)
-        // run some checks
-        if (prev_vert_i === vert_i) {throw new Error('Unexpected vertex ordering 1'); }
-        if (next_vert_i === vert_i) { throw new Error('Unexpected vertex ordering 2'); }
-        if (prev_edge_verts_i[1] !== next_edge_verts_i[0]) { throw new Error('Unexpected vertex ordering 3'); }
-        if (prev_edge_verts_i[1] !== vert_i) { throw new Error('Unexpected vertex ordering 4'); }
-        // rewire the end vert of the previous edge to the end vert of the next edge
-        prev_edge_verts_i[1] = next_vert_i;
-        this._geom_arrays.up_verts_edges[next_vert_i][0] = prev_edge_i;
-        // delete the next edge
-        this._geom_arrays.dn_edges_verts[next_edge_i] = null;
-        delete this._geom_arrays.up_edges_wires[next_edge_i];
-        this._geom.model.attribs.add.delEntFromAttribs(EEntType.EDGE, next_edge_i);
-        // update the wire
-        arrRem(wire_edges_i, next_edge_i);
-        // delete the vert
-        this._geom_arrays.dn_verts_posis[vert_i] = null;
-        delete this._geom_arrays.up_verts_edges[vert_i];
-        this._geom.model.attribs.add.delEntFromAttribs(EEntType.VERT, vert_i);
-        // update the posis
-        arrRem(this._geom_arrays.up_posis_verts[posi_i], vert_i);
+        const old_edges_i: number[] = this.geom.data.navVertToEdge(vert_i);
+        // get the old edge data
+        const idx_a: number = wire_edges_i.indexOf(old_edges_i[0]);
+        const idx_b: number = wire_edges_i.indexOf(old_edges_i[1]);
+        const edge_a_verts_i: [number, number] = this.geom.data.navEdgeToVert(old_edges_i[0]);
+        const edge_b_verts_i: [number, number] = this.geom.data.navEdgeToVert(old_edges_i[1]);
+        // create new edge
+        const new_edge: TEdge = [edge_a_verts_i[0], edge_b_verts_i[1]];
+        const new_edge_i: number = this.geom.data.addEdgeEnt(new_edge);
+        // create new wire
+        const new_edges_i: TWire = wire_edges_i.slice();
+        new_edges_i.splice(idx_a, 1, new_edge_i);
+        new_edges_i.splice(idx_b, 1);
+        this.geom.data.insWireEnt(new_edges_i, wire_i);
+        // delete the two old edges
+        this.geom.data.remEdgeEnt(old_edges_i[0]);
+        this.geom.data.remEdgeEnt(old_edges_i[1]);
+        // delete the old vert
+        this.geom.data.remVertEnt(vert_i);
     }
 }

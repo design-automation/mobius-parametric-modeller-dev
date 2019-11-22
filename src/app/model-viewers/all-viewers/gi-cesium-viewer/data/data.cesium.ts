@@ -188,7 +188,7 @@ export class DataCesium {
             new Cesium.Matrix4()
         );
         // create all positions
-        const posis_i: number[] = model.geom.query.getEnts(EEntType.POSI, false);
+        const posis_i: number[] = model.geom.data.getEnts(EEntType.POSI, false);
         const posi_to_point_map: Map<number, any> = new Map();
         for (const posi_i of posis_i) {
             if (!posi_to_point_map.has(posi_i)) {
@@ -202,7 +202,7 @@ export class DataCesium {
         // add geom
         if (model) {
             // get each polygon
-            const pgons_i: number[] = model.geom.query.getEnts(EEntType.PGON, false);
+            const pgons_i: number[] = model.geom.data.getEnts(EEntType.PGON, false);
             // get each triangle
             const lines_instances: any[] = [];
             const tris_instances: any[] = [];
@@ -210,7 +210,7 @@ export class DataCesium {
                 // get the colour of the vertices
                 let pgon_colour = Cesium.Color.WHITE;
                 if (model.attribs.query.hasAttrib(EEntType.VERT, 'rgb')) {
-                    const verts_i: number[] = model.geom.nav.navAnyToVert(EEntType.PGON, pgon_i);
+                    const verts_i: number[] = model.geom.data.navAnyToVert(EEntType.PGON, pgon_i);
                     const rgb_sum: Txyz = [0, 0, 0];
                     for (const vert_i of verts_i) {
                         let vert_rgb: Txyz = model.attribs.query.getAttribVal(EEntType.VERT, 'rgb', vert_i) as Txyz;
@@ -251,10 +251,10 @@ export class DataCesium {
                 // }
 
                 // create the triangles
-                const pgon_tris_i: number[] = model.geom.nav.navAnyToTri(EEntType.PGON, pgon_i);
+                const pgon_tris_i: number[] = model.geom.data.navAnyToTri(EEntType.PGON, pgon_i);
                 for (const pgon_tri_i of pgon_tris_i) {
                     // tris_i.push(pgon_tri_i);
-                    const tri_posis_i: number[] = model.geom.nav.navAnyToPosi(EEntType.TRI, pgon_tri_i);
+                    const tri_posis_i: number[] = model.geom.data.navAnyToPosi(EEntType.TRI, pgon_tri_i);
                     const tri_points: any[] = tri_posis_i.map( posi_i => posi_to_point_map.get(posi_i) );
                     const tri_geom = new Cesium.PolygonGeometry({
                         perPositionHeight : true,
@@ -271,12 +271,12 @@ export class DataCesium {
                 }
             }
             // get each polygon
-            const plines_i: number[] = model.geom.query.getEnts(EEntType.PLINE, false);
+            const plines_i: number[] = model.geom.data.getEnts(EEntType.PLINE, false);
             // get each pline
             for (const pline_i of plines_i) {
                 let pline_colour = Cesium.Color.BLACK;
                 if (model.attribs.query.hasAttrib(EEntType.VERT, 'rgb')) {
-                    const verts_i: number[] = model.geom.nav.navAnyToVert(EEntType.PLINE, pline_i);
+                    const verts_i: number[] = model.geom.data.navAnyToVert(EEntType.PLINE, pline_i);
                     const rgb_sum: Txyz = [0, 0, 0];
                     for (const vert_i of verts_i) {
                         let vert_rgb: Txyz = model.attribs.query.getAttribVal(EEntType.VERT, 'rgb', vert_i) as Txyz;
@@ -289,11 +289,11 @@ export class DataCesium {
                     pline_colour = new Cesium.Color(rgb_sum[0] / num_verts, rgb_sum[1] / num_verts, rgb_sum[2] / num_verts, 1.0);
                 }
                 // create the edges
-                const wire_i: number = model.geom.nav.navPlineToWire(pline_i);
-                const wire_posis_i: number[] = model.geom.nav.navAnyToPosi(EEntType.WIRE, wire_i);
+                const wire_i: number = model.geom.data.navPlineToWire(pline_i);
+                const wire_posis_i: number[] = model.geom.data.navAnyToPosi(EEntType.WIRE, wire_i);
                 if (wire_posis_i.length > 1) {
                     const wire_points: any[] = wire_posis_i.map( wire_posi_i => posi_to_point_map.get(wire_posi_i) );
-                    if (model.geom.query.isWireClosed(wire_i)) {
+                    if (model.geom.data.wireIsClosed(wire_i)) {
                         wire_points.push(wire_points[0]);
                     }
                     const line_geom = new Cesium.SimplePolylineGeometry({

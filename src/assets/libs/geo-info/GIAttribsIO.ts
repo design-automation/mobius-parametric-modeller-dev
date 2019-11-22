@@ -120,7 +120,7 @@ export class GIAttribsIO {
     private _mergeAttribs(attribs_maps: IAttribsMaps, ent_type: EEntType) {
         const from_attribs: Map<string, GIAttribMap> = attribs_maps[EEntTypeStr[ ent_type ]];
         const to_attribs: Map<string, GIAttribMap> = this._attribs_maps[EEntTypeStr[ ent_type ]];
-        const num_ents: number = this._model.geom.query.numEnts(ent_type, true); // incude deleted ents
+        const num_ents: number = this._model.geom.data.numEnts(ent_type, true); // incude deleted ents
         from_attribs.forEach( from_attrib => {
             const name: string = from_attrib.getName();
             // get or create the existing attrib

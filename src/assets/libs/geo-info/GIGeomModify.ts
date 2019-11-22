@@ -2,19 +2,18 @@ import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert } 
 import { GIGeom } from './GIGeom';
 import { arrRem, arrIdxAdd } from '../util/arrs';
 import { vecDot } from '../geom/vectors';
+import { GIGeomData } from './GIGeomData';
 
 /**
  * Class for geometry.
  */
 export class GIGeomModify {
-    private _geom: GIGeom;
-    private _geom_arrays: IGeomArrays;
+    private geom: GIGeom;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
-        this._geom = geom;
-        this._geom_arrays = geom_arrays;
+    constructor(geom: GIGeom) {
+        this.geom = geom;
     }
     // ============================================================================
     // Modify geometry
@@ -27,75 +26,68 @@ export class GIGeomModify {
      * Plines can be open or closed.
      * ~
      */
-    public insertVertIntoWire(edge_i: number, posi_i: number): number {
-        const wire_i: number = this._geom.nav.navEdgeToWire(edge_i);
-        const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-        const old_edge_verts_i: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
-        const old_and_prev_edge_i: number[] = this._geom_arrays.up_verts_edges[old_edge_verts_i[0]];
-        const old_and_next_edge_i: number[] = this._geom_arrays.up_verts_edges[old_edge_verts_i[1]];
-        // check prev edge
-        if (old_and_prev_edge_i.length === 2) {
-            if (old_and_prev_edge_i[0] === edge_i) {
-                throw new Error('Edges are in wrong order');
-            }
+    public divideEdge(edge_i: number, posis_i: number|number[]): number|number[] {
+        const wire_i: number = this.geom.data.navEdgeToWire(edge_i);
+        const old_edge_verts_i: TEdge = this.geom.data.navEdgeToVert(edge_i);
+        // make sure posis is an array
+        const return_arr: boolean = Array.isArray(posis_i);
+        posis_i = Array.isArray(posis_i) ? posis_i : [posis_i];
+        // loop
+        const new_edges_i: number[] = [];
+        let prev_vert_i: number = old_edge_verts_i[0];
+        for (const posi_i of posis_i) {
+            // create one new vertex and one new edge
+            const new_vert_i: number = this.geom.data.addVertEnt(posi_i);
+            const new_edge: TEdge = [prev_vert_i, new_vert_i];
+            const new_edge_i: number = this.geom.data.addEdgeEnt(new_edge);
+            new_edges_i.push(new_edge_i);
+            prev_vert_i = new_vert_i;
         }
-        // check next edge amd save the next edge
-        if (old_and_next_edge_i.length === 2) {
-            if (old_and_next_edge_i[1] === edge_i) {
-                throw new Error('Edges are in wrong order');
-            }
-            this._geom_arrays.up_verts_edges[old_edge_verts_i[1]] = [old_and_next_edge_i[1]];
-        } else {
-            this._geom_arrays.up_verts_edges[old_edge_verts_i[1]] = [];
-        }
-        // create one new vertex and one new edge
-        const new_vert_i: number = this._geom.add._addVertex(posi_i);
-        this._geom_arrays.up_verts_edges[new_vert_i] = [edge_i];
-        const new_edge_i: number = this._geom.add._addEdge(new_vert_i, old_edge_verts_i[1]);
-        // update the down arrays
-        old_edge_verts_i[1] = new_vert_i;
-        wire.splice(wire.indexOf(edge_i), 1, edge_i, new_edge_i);
-        // update the up arrays for edges to wires
-        this._geom_arrays.up_edges_wires[new_edge_i] = wire_i;
-        // return the new edge
-        return new_edge_i;
+        // create the last edge
+        const new_last_edge: TEdge = [prev_vert_i, old_edge_verts_i[1]];
+        const new_last_edge_i: number = this.geom.data.addEdgeEnt(new_last_edge);
+        new_edges_i.push(new_last_edge_i);
+        // update the wire
+        const wire: TWire = this.geom.data.navWireToEdge(wire_i);
+        const idx: number = wire.indexOf(edge_i);
+        wire.splice(idx, 1, ...new_edges_i);
+        this.geom.data.insWireEnt(wire, wire_i);
+        // delete the old edge, but dont delete the vertices
+        this.geom.data.remEdgeEnt(edge_i);
+        this.geom.data.unlinkEdgeToWire(edge_i, wire_i);
+        // return the new edge or edges
+        if (!return_arr) { return new_edges_i[0]; }
+        return new_edges_i;
     }
     /**
      * Replace all positions in an entity with a new set of positions.
      * ~
      */
     public replacePosis(ent_type: EEntType, ent_i: number, new_posis_i: number[]): void {
-        const old_posis_i: number[] = this._geom.nav.navAnyToPosi(ent_type, ent_i);
-        if (old_posis_i.length !== new_posis_i.length) {
-            throw new Error('Replacing positions operation failed due to incorrect number of positions.');
+        const verts_i: number[] = this.geom.data.navAnyToVert(ent_type, ent_i);
+        if (verts_i.length !== new_posis_i.length) {
+            throw new Error('Error replacing posis: The numbr of new posis must be the same as the number of existing posis.');
         }
-        const old_posis_i_map: Map<number, number> = new Map(); // old_posi_i -> index
-        for (let i = 0; i < old_posis_i.length; i++) {
-            const old_posi_i: number = old_posis_i[i];
-            old_posis_i_map[old_posi_i] = i;
-        }
-        const verts_i: number[] = this._geom.nav.navAnyToVert(ent_type, ent_i);
-        for (const vert_i of verts_i) {
-            const old_posi_i: number = this._geom.nav.navVertToPosi(vert_i);
-            const i: number = old_posis_i_map[old_posi_i];
+        // insert the new posis into the old verts
+        for (let i = 0; i < verts_i.length; i++) {
+            const vert_i: number = verts_i[i];
+            // unlink the old posi
+            const old_posi_i: number = this.geom.data.navVertToPosi(vert_i);
+            this.geom.data.unlinkPosiToVert(old_posi_i, vert_i);
+            // insert the new posi
             const new_posi_i: number = new_posis_i[i];
-            // set the down array
-            this._geom_arrays.dn_verts_posis[vert_i] = new_posi_i;
-            // update the up arrays for the old posi, i.e. remove this vert
-            arrRem(this._geom_arrays.up_posis_verts[old_posi_i], vert_i);
-            // update the up arrays for the new posi, i.e. add this vert
-            this._geom_arrays.up_posis_verts[new_posi_i].push(vert_i);
+            this.geom.data.insVertEnt(new_posi_i, vert_i);
         }
     }
     /**
      * Unweld the vertices on naked edges.
      * ~
      */
-    public unweldVertsShallow(verts_i: number[]): number[] {
+    public cloneVertPosisShallow(verts_i: number[]): number[] {
         // create a map, for each posi_i, count how many verts there are in the input verts
         const exist_posis_i_map: Map<number, number> = new Map(); // posi_i -> count
         for (const vert_i of verts_i) {
-            const posi_i: number = this._geom.nav.navVertToPosi(vert_i);
+            const posi_i: number = this.geom.data.navVertToPosi(vert_i);
             if (!exist_posis_i_map.has(posi_i)) {
                 exist_posis_i_map.set(posi_i, 0);
             }
@@ -105,26 +97,24 @@ export class GIGeomModify {
         // copy positions on the perimeter and make a map
         const old_to_new_posis_i_map: Map<number, number> = new Map();
         exist_posis_i_map.forEach( (vert_count, old_posi_i) => {
-            const all_old_verts_i: number[] = this._geom.nav.navPosiToVert(old_posi_i);
+            const all_old_verts_i: number[] = this.geom.data.navPosiToVert(old_posi_i);
             const all_vert_count: number = all_old_verts_i.length;
             if (vert_count !== all_vert_count) {
                 if (!old_to_new_posis_i_map.has(old_posi_i)) {
-                    const new_posi_i: number = this._geom.add.copyPosis(old_posi_i, true) as number;
+                    const new_posi_i: number = this.geom.add.copyPosis(old_posi_i, true) as number;
                     old_to_new_posis_i_map.set(old_posi_i, new_posi_i);
                 }
             }
         });
         // now go through the geom again and rewire to the new posis
         for (const vert_i of verts_i) {
-            const old_posi_i: number = this._geom.nav.navVertToPosi(vert_i);
+            const old_posi_i: number = this.geom.data.navVertToPosi(vert_i);
             if (old_to_new_posis_i_map.has(old_posi_i)) {
                 const new_posi_i: number = old_to_new_posis_i_map.get(old_posi_i);
-                // update the down arrays
-                this._geom_arrays.dn_verts_posis[vert_i] = new_posi_i;
-                // update the up arrays for the old posi, i.e. remove this vert
-                arrRem(this._geom_arrays.up_posis_verts[old_posi_i], vert_i);
-                // update the up arrays for the new posi, i.e. add this vert
-                this._geom_arrays.up_posis_verts[new_posi_i].push(vert_i);
+                // unlink the old posi
+                this.geom.data.unlinkPosiToVert(old_posi_i, vert_i);
+                // insert the new posi
+                this.geom.data.insVertEnt(new_posi_i, vert_i);
             }
         }
         // return all the new positions
@@ -137,20 +127,18 @@ export class GIGeomModify {
      * ~
      * @param verts_i
      */
-    public cloneVertPositions(verts_i: number[]): number[] {
+    public cloneVertPosis(verts_i: number[]): number[] {
         const new_posis_i: number[] = [];
         for (const vert_i of verts_i) {
-            const exist_posi_i: number = this._geom.nav.navVertToPosi(vert_i);
-            const all_verts_i: number[] = this._geom.nav.navPosiToVert(exist_posi_i);
-            const all_verts_count: number = all_verts_i.length;
-            if (all_verts_count > 1) {
-                const new_posi_i: number = this._geom.add.copyPosis(exist_posi_i, true) as number;
-                // update the down arrays
-                this._geom_arrays.dn_verts_posis[vert_i] = new_posi_i;
-                // update the up arrays for the old posi, i.e. remove this vert
-                arrRem(this._geom_arrays.up_posis_verts[exist_posi_i], vert_i);
-                // update the up arrays for the new posi, i.e. add this vert
-                this._geom_arrays.up_posis_verts[new_posi_i].push(vert_i);
+            const exist_posi_i: number = this.geom.data.navVertToPosi(vert_i);
+            const all_verts_i: number[] = this.geom.data.navPosiToVert(exist_posi_i);
+            if (all_verts_i.length > 1) {
+                // copy the posi
+                const new_posi_i: number = this.geom.add.copyPosis(exist_posi_i, true) as number;
+                // unlink the existing posi
+                this.geom.data.unlinkPosiToVert(exist_posi_i, vert_i);
+                // insert the new posi
+                this.geom.data.insVertEnt(new_posi_i, vert_i);
                 // add the new posi_i to the list, to be returned later
                 new_posis_i.push(new_posi_i);
             }
@@ -165,52 +153,84 @@ export class GIGeomModify {
      * ~
      * @param verts_i
      */
-    public mergeVertPositions(verts_i: number[]): number[] {
+    public mergeVertPosis(verts_i: number[]): number[] {
         const new_posis_i: number[] = [];
         throw new Error('Not implemented');
         // return all the new positions
         return new_posis_i;
     }
     /**
-     * Reverse the edges of a wire.
-     * This lists the edges in reverse order, and flips each edge.
+     * Close a polyline.
      * ~
-     * The attributes will not be affected. So the order of edge attribtes will also become reversed.
+     * If the pline is already closed, do nothing.
+     * ~
      */
-    public reverse(wire_i: number): void {
-        const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-        wire.reverse();
-        // reverse the edges
-        for (const edge_i of wire) {
-            const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
-            edge.reverse();
-            // the verts pointing up to edges also need to be reversed
-            const edges_i: number[] = this._geom_arrays.up_verts_edges[edge[0]];
-            edges_i.reverse();
-        }
-        // if this is the first wire in a face, reverse the triangles
-        const face_i: number = this._geom_arrays.up_wires_faces[wire_i];
-        if (face_i !== undefined) {
-            const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-            if (face[0][0] === wire_i) {
-                for (const tri_i of face[1]) {
-                    const tri: TTri = this._geom_arrays.dn_tris_verts[tri_i];
-                    tri.reverse();
-                }
-            }
-        }
+    public plineClose(pline_i: number): number {
+        const wire_i: number = this.geom.data.navPlineToWire(pline_i);
+        if (this.geom.data.wireIsClosed(wire_i)) { return; }
+        // get the wire start and end verts
+        const wire: TWire = this.geom.data.navWireToEdge(wire_i);
+        const num_edges: number = wire.length;
+        const start_edge_i: number = wire[0];
+        const end_edge_i: number = wire[num_edges - 1];
+        const start_vert_i: number = this.geom.data.navEdgeToVert(start_edge_i)[0];
+        const end_vert_i: number = this.geom.data.navEdgeToVert(end_edge_i)[1];
+        // add the edge to the model
+        const edge: TEdge = [end_vert_i, start_vert_i];
+        const new_edge_i: number = this.geom.data.addEdgeEnt(edge);
+        // link the wire to the new edge
+        this.geom.data.linkWireEdge(wire_i, num_edges, new_edge_i);
+        // return the new edge
+        return new_edge_i;
     }
     /**
-     * Shifts the edges of a wire.
-     * ~
-     * The attributes will not be affected. For example, lets say a polygon has three edges
-     * e1, e2, e3, with attribute values 5, 6, 7
-     * If teh edges are shifted by 1, the edges will now be
-     * e2, e3, e1, withh attribute values 6, 7, 5
+     * Open a wire, by deleting the last edge.
+     *
+     * If teh wire is already open, do nothing.
+     *
+     * @param wire_i The wire to close.
      */
-    public shift(wire_i: number, offset: number): void {
-        const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-        wire.unshift.apply( wire, wire.splice( offset, wire.length ) );
+    public plineOpen(pline_i: number): void {
+        const wire_i: number = this.geom.data.navPlineToWire(pline_i);
+        if (this.geom.data.wireIsOpen(wire_i)) { return; }
+        // get the wire start and end verts
+        const wire: TWire = this.geom.data.navWireToEdge(wire_i);
+        // check wire has more than two edges
+        const num_edges: number = wire.length;
+        if (num_edges === 1) { return; }
+        // get start and end
+        const end_edge_i: number = wire[num_edges - 1];
+        // unlink
+        this.geom.data.unlinkWireEdge(wire_i, end_edge_i);
+        // del the end edge from the pline
+       this.geom.data.remEdgeEnt(end_edge_i);
     }
-
+    /**
+     * Creates one or more holes in a polygon.
+     * ~
+     */
+    public cutPgonHoles(pgon_i: number, posis_i_arr: number[][]): number[] {
+        const face_i: number = this.geom.data.navPgonToFace(pgon_i);
+        // get the normal of the face
+        const face_normal: Txyz = this.geom.model.calc.getFaceNormal(face_i);
+        // make the wires for the holes
+        const hole_wires_i: number[] = [];
+        for (const hole_posis_i of posis_i_arr) {
+            const hole_vert_i_arr: number[] = hole_posis_i.map( posi_i => this.geom.data.addVertEnt(posi_i));
+            const hole_edges_i_arr: number[] = this.geom.data.addEdgeEnts(hole_vert_i_arr, true);
+            const hole_wire_i: number = this.geom.data.addWireEnt(hole_edges_i_arr);
+            // get normal of wire and check if we need to reverse the wire
+            const wire_normal: Txyz = this.geom.model.calc.getWireNormal(hole_wire_i);
+            if (vecDot(face_normal, wire_normal) > 0) {
+                this.geom.data.wireReverse(hole_wire_i);
+            }
+            // add to list of holes
+            hole_wires_i.push(hole_wire_i);
+        }
+        // create the holes, does everything at face level
+        this.geom.data.faceCutHoles(face_i, hole_wires_i);
+        // no need to change either the up or down arrays
+        // return the new wires
+        return hole_wires_i;
+    }
 }

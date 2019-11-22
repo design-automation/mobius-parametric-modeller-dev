@@ -2,6 +2,7 @@ import { GIGeom } from './GIGeom';
 import { IGeomArrays, TTri, TEdge, TPoint } from './common';
 import { GIAttribMap } from './GIAttribMap';
 import * as THREE from 'three';
+import { GIGeomData } from './GIGeomData';
 
 /**
  * Class for geometry.
@@ -9,12 +10,14 @@ import * as THREE from 'three';
 export class GIGeomThreejs {
     private _geom: GIGeom;
     private _geom_arrays: IGeomArrays;
+    public _data: GIGeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
+        this._data = data;
     }
     // ============================================================================
     // ThreeJS

@@ -2,18 +2,13 @@ import { GIModel } from './GIModel';
 import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TEntTypeIdx, EEntType, TPoint } from './common';
 import { GIGeomAdd } from './GIGeomAdd';
 import { GIGeomModify } from './GIGeomModify';
-import { GIGeomQuery } from './GIGeomQuery';
 import { GIGeomThreejs } from './GIGeomThreejs';
 import { GIGeomIO } from './GIGeomIO';
 import { GIGeomDel } from './GIGeomDel';
-import { GIGeomCheck } from './GIGeomCheck';
-import { GIGeomCompare } from './GiGeomCompare';
-import { GIGeomModifyPline } from './GIGeomModifyPline';
-import { GIGeomModifyPgon } from './GIGeomModifyPgon';
-import { GIGeomModifyColl } from './GIGeomModifyColl';
-import { GIGeomNav } from './GIGeomNav';
+import { GIGeomChecker } from './GIGeomChecker';
+import { GIGeomComparator } from './GIGeomComparator';
+import { GIGeomData } from './GIGeomData';
 import { GIGeomDelVert } from './GIGeomDelVert';
-import { GIGeomDelEdge } from './GIGeomDelEdge';
 
 /**
  * Class for geometry.
@@ -46,40 +41,31 @@ export class GIGeom {
         up_plines_colls: [],
         up_pgons_colls: []
     };
-    // sub classes with methods
+    // daga with low level methods
+    public data: GIGeomData;
+    // classes with user methods
     public io: GIGeomIO;
     public add: GIGeomAdd;
     public del: GIGeomDel;
     public del_vert: GIGeomDelVert;
-    public del_edge: GIGeomDelEdge;
     public modify: GIGeomModify;
-    public modify_pline: GIGeomModifyPline;
-    public modify_pgon: GIGeomModifyPgon;
-    public modify_coll: GIGeomModifyColl;
-    public nav: GIGeomNav;
-    public query: GIGeomQuery;
-    public check: GIGeomCheck;
-    public compare: GIGeomCompare;
+    public checker: GIGeomChecker;
+    public comparator: GIGeomComparator;
     public threejs: GIGeomThreejs;
     /**
      * Constructor
      */
     constructor(model: GIModel) {
         this.model = model;
-        this.io = new GIGeomIO(this, this._geom_arrays);
-        this.add = new GIGeomAdd(this, this._geom_arrays);
-        this.del = new GIGeomDel(this, this._geom_arrays);
-        this.del_vert = new GIGeomDelVert(this, this._geom_arrays);
-        this.del_edge = new GIGeomDelEdge(this, this._geom_arrays);
-        this.modify = new GIGeomModify(this, this._geom_arrays);
-        this.modify_pline = new GIGeomModifyPline(this, this._geom_arrays);
-        this.modify_pgon = new GIGeomModifyPgon(this, this._geom_arrays);
-        this.modify_coll = new GIGeomModifyColl(this, this._geom_arrays);
-        this.nav = new GIGeomNav(this, this._geom_arrays);
-        this.query = new GIGeomQuery(this, this._geom_arrays);
-        this.check = new GIGeomCheck(this, this._geom_arrays);
-        this.compare = new GIGeomCompare(this, this._geom_arrays);
-        this.threejs = new GIGeomThreejs(this, this._geom_arrays);
+        this.data = new GIGeomData(this, this._geom_arrays);
+        this.io = new GIGeomIO(this, this._geom_arrays, this.data);
+        this.add = new GIGeomAdd(this);
+        this.del = new GIGeomDel(this);
+        this.del_vert = new GIGeomDelVert(this);
+        this.modify = new GIGeomModify(this);
+        this.checker = new GIGeomChecker(this, this._geom_arrays, this.data);
+        this.comparator = new GIGeomComparator(this, this._geom_arrays, this.data);
+        this.threejs = new GIGeomThreejs(this, this._geom_arrays, this.data);
         this.selected = [];
     }
 }

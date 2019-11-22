@@ -1,6 +1,7 @@
 import { GIGeom } from './GIGeom';
 import { GIAttribs } from './GIAttribs';
-import { IModelData, IGeomPack, EEntType, Txyz, TEntAttribValuesArr, TAttribDataTypes, TEntity, TEntTypeIdx } from './common';
+import { IModelData, IGeomPack, Txy, Txyz } from './common';
+import { GICalc } from './GICalc';
 import { GIModelComparator } from './GIModelComparator';
 import { GIModelThreejs } from './GIModelThreejs';
 
@@ -11,6 +12,7 @@ export class GIModel {
     [x: string]: any; // TODO: What is this???
     public geom: GIGeom;
     public attribs: GIAttribs;
+    public calc: GICalc;
     public comparator: GIModelComparator;
     public threejs: GIModelThreejs;
     /**
@@ -19,6 +21,7 @@ export class GIModel {
     constructor(model_data?: IModelData) {
         this.geom = new GIGeom(this);
         this.attribs = new GIAttribs(this);
+        this.calc = new GICalc(this.geom, this.attribs);
         this.comparator = new GIModelComparator(this);
         this.threejs = new GIModelThreejs(this);
         if (model_data) {
@@ -57,9 +60,9 @@ export class GIModel {
      * Check model for internal consistency
      */
     public check(): string[] {
-        return this.geomCheck.check();
+        return this.geom.checker.check();
     }
-        /**
+    /**
      * Compares this model and another model.
      * ~
      * This is the answer model.
@@ -72,5 +75,15 @@ export class GIModel {
     public compare(model: GIModel, normalize: boolean, check_geom_equality: boolean, check_attrib_equality: boolean):
             {percent: number, score: number, total: number, comment: string} {
         return this.comparator.compare(model, normalize, check_geom_equality, check_attrib_equality);
+    }
+    /**
+     * Conv method for creating one position.
+     * First creates the position in geom side.
+     * Then sets the position xyz in attrib side.
+     */
+    public createPosi(xyz: Txyz): number {
+        const posi_i: number = this.geom.data.addPosiEnt();
+        this.attribs.add.setPosiCoords(posi_i, xyz);
+        return posi_i;
     }
 }
