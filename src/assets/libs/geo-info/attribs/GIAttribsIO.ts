@@ -1,5 +1,5 @@
-import { GIModel } from './GIModel';
-import { IAttribsData, IAttribData, TAttribDataTypes, EEntType, IAttribsMaps, EEntTypeStr, TModelAttribValuesArr } from './common';
+import { GIModel } from '../GIModel';
+import { IAttribsData, IAttribData, TAttribDataTypes, EEntType, IAttribsMaps, EEntTypeStr, TModelAttribValuesArr } from '../common';
 import { GIAttribMap } from './GIAttribMap';
 
 /**

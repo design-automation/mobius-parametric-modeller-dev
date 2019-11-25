@@ -1,4 +1,4 @@
-import { EEntType, TEdge, TWire } from './common';
+import { EEntType, TEdge, TWire } from '../common';
 import { GIGeom } from './GIGeom';
 /**
  * Class for deleting geometry.

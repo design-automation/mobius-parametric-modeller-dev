@@ -1,7 +1,7 @@
-import { GIModel } from './GIModel';
+import { GIModel } from '../GIModel';
 import { TAttribDataTypes, IAttribsMaps,
     Txyz, EAttribNames, EEntType,  ESort,
-    EAttribDataTypeStrs, EEntTypeStr, EFilterOperatorTypes } from './common';
+    EAttribDataTypeStrs, EEntTypeStr, EFilterOperatorTypes } from '../common';
 import { GIAttribMap } from './GIAttribMap';
 
 /**

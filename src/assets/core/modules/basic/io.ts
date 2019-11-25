@@ -7,9 +7,9 @@
  */
 
 import { GIModel } from '@libs/geo-info/GIModel';
-import { importObj, exportObj } from '@libs/geo-info/io_obj';
-import { importDae, exportDae } from '@libs/geo-info/io_dae';
-import { importGeojson } from '@libs/geo-info/io_geojson';
+import { importObj, exportObj } from '@assets/libs/geo-info/io/io_obj';
+import { importDae, exportDae } from '@assets/libs/geo-info/io/io_dae';
+import { importGeojson } from '@assets/libs/geo-info/io/io_geojson';
 import { download } from '@libs/filesys/download';
 import { TId, EEntType, Txyz, TPlane, TRay, IGeomPack, IModelData } from '@libs/geo-info/common';
 import { __merge__ } from '../_model';

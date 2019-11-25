@@ -1,5 +1,5 @@
 import { TTri, TVert, TEdge, TWire, TFace,
-    TColl, IGeomData, TPoint, TPline, TPgon, IGeomArrays, IGeomPack } from './common';
+    TColl, IGeomData, TPoint, TPline, TPgon, IGeomArrays, IGeomPack } from '../common';
 import { GIGeom } from './GIGeom';
 import { GIGeomData } from './data/GIGeomData';
 import { ConditionalExpr } from '@angular/compiler';

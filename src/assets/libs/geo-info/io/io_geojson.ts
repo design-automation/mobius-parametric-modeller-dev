@@ -1,6 +1,6 @@
-import { GIModel } from './GIModel';
-import { TNormal, TTexture, EAttribNames, Txyz, EEntType, EAttribDataTypeStrs, TAttribDataTypes, LONGLAT, IGeomPack } from './common';
-import { getArrDepth } from './id';
+import { GIModel } from '../GIModel';
+import { TNormal, TTexture, EAttribNames, Txyz, EEntType, EAttribDataTypeStrs, TAttribDataTypes, LONGLAT, IGeomPack } from '../common';
+import { getArrDepth } from '../id';
 import proj4 from 'proj4';
 
 

@@ -1,4 +1,4 @@
-import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from '../common';
+import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from '../../common';
 import { GIGeom } from '../GIGeom';
 import { GIGeomData } from './GIGeomData';
 
@@ -6,7 +6,7 @@ import { GIGeomData } from './GIGeomData';
 /**
  * Class for geometry.
  */
-export class GIGeomChecker {
+export class GIGeomCheck {
     private _geom: GIGeom;
     private _geom_arrays: IGeomArrays;
     public _data: GIGeomData;

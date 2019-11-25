@@ -1,7 +1,7 @@
-import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert } from './common';
+import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert } from '../common';
 import { GIGeom } from './GIGeom';
-import { arrRem, arrIdxAdd } from '../util/arrs';
-import { vecDot } from '../geom/vectors';
+import { arrRem, arrIdxAdd } from '../../util/arrs';
+import { vecDot } from '../../geom/vectors';
 import { GIGeomData } from './data/GIGeomData';
 
 /**

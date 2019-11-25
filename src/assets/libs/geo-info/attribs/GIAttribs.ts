@@ -1,8 +1,8 @@
 import { GIAttribsAdd } from './GIAttribsAdd';
 import { GIAttribsThreejs } from './GIAttribsThreejs';
 import { GIAttribsQuery } from './GIAttribsQuery';
-import { GIModel } from './GIModel';
-import { EEntType, EAttribNames,  IAttribsData, EAttribDataTypeStrs, IAttribsMaps } from './common';
+import { GIModel } from '../GIModel';
+import { EEntType, EAttribNames,  IAttribsData, EAttribDataTypeStrs, IAttribsMaps } from '../common';
 import { GIAttribsIO } from './GIAttribsIO';
 import { GIAttribsModify } from './GIAttribModify';
 import { strictEqual } from 'assert';

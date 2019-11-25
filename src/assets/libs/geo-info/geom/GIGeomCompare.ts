@@ -1,12 +1,12 @@
-import { GIModel } from './GIModel';
-import { IGeomArrays, EEntType, TFace } from './common';
+import { GIModel } from '../GIModel';
+import { IGeomArrays, EEntType, TFace } from '../common';
 import { GIGeom } from './GIGeom';
 import { GIGeomData } from './data/GIGeomData';
 
 /**
  * Class for comparing the geometry in two models.
  */
-export class GIGeomComparator {
+export class GIGeomCompare {
     private _geom: GIGeom;
     private _geom_arrays: IGeomArrays;
     public _data: GIGeomData;

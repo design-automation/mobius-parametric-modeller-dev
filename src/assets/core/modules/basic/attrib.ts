@@ -16,32 +16,6 @@ import { getArrDepth } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj, checkAttribValue, checkAttribName,
     checkAttribIdxKey, checkAttribNameIdxKey } from '../_check_args';
 // ================================================================================================
-function _getEntTypeFromStr(ent_type_str: _EEntType|_EEntTypeAndMod): EEntType {
-    switch (ent_type_str) {
-        case _EEntTypeAndMod.POSI:
-            return EEntType.POSI;
-        case _EEntTypeAndMod.VERT:
-            return EEntType.VERT;
-        case _EEntTypeAndMod.EDGE:
-            return EEntType.EDGE;
-        case _EEntTypeAndMod.WIRE:
-            return EEntType.WIRE;
-        case _EEntTypeAndMod.FACE:
-            return EEntType.FACE;
-        case _EEntTypeAndMod.POINT:
-            return EEntType.POINT;
-        case _EEntTypeAndMod.PLINE:
-            return EEntType.PLINE;
-        case _EEntTypeAndMod.PGON:
-            return EEntType.PGON;
-        case _EEntTypeAndMod.COLL:
-            return EEntType.COLL;
-        case _EEntTypeAndMod.MOD:
-            return EEntType.MOD;
-        default:
-            break;
-    }
-}
 export enum _EEntType {
     POSI =   'ps',
     VERT =   '_v',
@@ -71,6 +45,32 @@ export enum _EDataType {
     BOOLEAN = 'boolean',
     LIST =   'list',
     DICT = 'dict'
+}
+function _getEntTypeFromStr(ent_type_str: _EEntType|_EEntTypeAndMod): EEntType {
+    switch (ent_type_str) {
+        case _EEntTypeAndMod.POSI:
+            return EEntType.POSI;
+        case _EEntTypeAndMod.VERT:
+            return EEntType.VERT;
+        case _EEntTypeAndMod.EDGE:
+            return EEntType.EDGE;
+        case _EEntTypeAndMod.WIRE:
+            return EEntType.WIRE;
+        case _EEntTypeAndMod.FACE:
+            return EEntType.FACE;
+        case _EEntTypeAndMod.POINT:
+            return EEntType.POINT;
+        case _EEntTypeAndMod.PLINE:
+            return EEntType.PLINE;
+        case _EEntTypeAndMod.PGON:
+            return EEntType.PGON;
+        case _EEntTypeAndMod.COLL:
+            return EEntType.COLL;
+        case _EEntTypeAndMod.MOD:
+            return EEntType.MOD;
+        default:
+            break;
+    }
 }
 // ================================================================================================
 /**

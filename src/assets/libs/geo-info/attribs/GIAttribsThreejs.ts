@@ -1,8 +1,8 @@
-import { GIModel } from './GIModel';
-import { TAttribDataTypes, EEntType, IAttribsMaps, EAttribNames, EEntTypeStr } from './common';
+import { GIModel } from '../GIModel';
+import { TAttribDataTypes, EEntType, IAttribsMaps, EAttribNames, EEntTypeStr } from '../common';
 import { GIAttribMap } from './GIAttribMap';
 import { isString } from 'util';
-import { sortByKey } from '../util/maps';
+import { sortByKey } from '../../util/maps';
 
 /**
  * Class for attributes.

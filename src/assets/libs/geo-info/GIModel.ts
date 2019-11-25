@@ -1,5 +1,5 @@
-import { GIGeom } from './GIGeom';
-import { GIAttribs } from './GIAttribs';
+import { GIGeom } from './geom/GIGeom';
+import { GIAttribs } from './attribs/GIAttribs';
 import { IModelData, IGeomPack, Txy, Txyz } from './common';
 import { GICalc } from './GICalc';
 import { GIModelComparator } from './GIModelComparator';

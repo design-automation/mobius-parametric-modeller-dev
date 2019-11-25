@@ -1,12 +1,12 @@
-import { GIModel } from './GIModel';
-import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TEntTypeIdx, EEntType, TPoint } from './common';
+import { GIModel } from '../GIModel';
+import { IGeomArrays, TEntTypeIdx } from '../common';
 import { GIGeomAdd } from './GIGeomAdd';
 import { GIGeomModify } from './GIGeomModify';
 import { GIGeomThreejs } from './GIGeomThreejs';
 import { GIGeomIO } from './GIGeomIO';
 import { GIGeomDel } from './GIGeomDel';
-import { GIGeomChecker } from './data/GIGeomChecker';
-import { GIGeomComparator } from './GIGeomComparator';
+import { GIGeomCheck } from './data/GIGeomCheck';
+import { GIGeomCompare } from './GIGeomCompare';
 import { GIGeomData } from './data/GIGeomData';
 import { GIGeomDelVert } from './GIGeomDelVert';
 
@@ -49,8 +49,8 @@ export class GIGeom {
     public del: GIGeomDel;
     public del_vert: GIGeomDelVert;
     public modify: GIGeomModify;
-    public checker: GIGeomChecker;
-    public comparator: GIGeomComparator;
+    public checker: GIGeomCheck;
+    public comparator: GIGeomCompare;
     public threejs: GIGeomThreejs;
     /**
      * Constructor
@@ -63,8 +63,8 @@ export class GIGeom {
         this.del = new GIGeomDel(this);
         this.del_vert = new GIGeomDelVert(this);
         this.modify = new GIGeomModify(this);
-        this.checker = new GIGeomChecker(this, this._geom_arrays, this.data);
-        this.comparator = new GIGeomComparator(this, this._geom_arrays, this.data);
+        this.checker = new GIGeomCheck(this, this._geom_arrays, this.data);
+        this.comparator = new GIGeomCompare(this, this._geom_arrays, this.data);
         this.threejs = new GIGeomThreejs(this, this._geom_arrays, this.data);
         this.selected = [];
     }

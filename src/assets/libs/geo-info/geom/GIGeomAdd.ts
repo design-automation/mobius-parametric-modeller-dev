@@ -1,7 +1,7 @@
-import { EEntType, TTri, TFace, Txyz, IGeomArrays, TAttribDataTypes, TEdge, TCollTree, TColl } from './common';
-import { triangulate } from '../triangulate/triangulate';
+import { EEntType, TTri, TFace, Txyz, IGeomArrays, TAttribDataTypes, TEdge, TCollTree, TColl } from '../common';
+import { triangulate } from '../../triangulate/triangulate';
 import { GIGeom } from './GIGeom';
-import { vecAdd } from '../geom/vectors';
+import { vecAdd } from '../../geom/vectors';
 import { GIGeomData } from './data/GIGeomData';
 
 /**

@@ -1,6 +1,6 @@
 import { GIGeom } from './GIGeom';
-import { IGeomArrays, TTri, TEdge, TPoint } from './common';
-import { GIAttribMap } from './GIAttribMap';
+import { IGeomArrays, TTri, TEdge, TPoint } from '../common';
+import { GIAttribMap } from '../attribs/GIAttribMap';
 import * as THREE from 'three';
 import { GIGeomData } from './data/GIGeomData';
 

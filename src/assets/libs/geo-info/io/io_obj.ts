@@ -1,5 +1,5 @@
-import { GIModel } from './GIModel';
-import {  TColor, TNormal, TTexture, EAttribNames, Txyz, EEntType } from './common';
+import { GIModel } from '../GIModel';
+import {  TColor, TNormal, TTexture, EAttribNames, Txyz, EEntType } from '../common';
 
 /**
  * Import obj

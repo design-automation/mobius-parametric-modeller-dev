@@ -14,6 +14,29 @@ import { TId, EEntType, ESort, TEntTypeIdx, EFilterOperatorTypes, TAttribDataTyp
 import { idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj, TypeCheckObj, checkArgTypes, checkAttribNameIdxKey, checkAttribValue } from '../_check_args';
 // ================================================================================================
+export enum _EEntType {
+    POSI =   'ps',
+    VERT =   '_v',
+    EDGE =   '_e',
+    WIRE =   '_w',
+    FACE =   '_f',
+    POINT =  'pt',
+    PLINE =  'pl',
+    PGON =   'pg',
+    COLL =   'co'
+}
+export enum _EEntTypeAndMod {
+    POSI =   'ps',
+    VERT =   '_v',
+    EDGE =   '_e',
+    WIRE =   '_w',
+    FACE =   '_f',
+    POINT =  'pt',
+    PLINE =  'pl',
+    PGON =   'pg',
+    COLL =   'co',
+    MOD =    'mo'
+}
 function _getEntTypeFromStr(ent_type_str: _EEntType|_EEntTypeAndMod): EEntType {
     switch (ent_type_str) {
         case _EEntTypeAndMod.POSI:
@@ -39,29 +62,6 @@ function _getEntTypeFromStr(ent_type_str: _EEntType|_EEntTypeAndMod): EEntType {
         default:
             break;
     }
-}
-export enum _EEntType {
-    POSI =   'ps',
-    VERT =   '_v',
-    EDGE =   '_e',
-    WIRE =   '_w',
-    FACE =   '_f',
-    POINT =  'pt',
-    PLINE =  'pl',
-    PGON =   'pg',
-    COLL =   'co'
-}
-export enum _EEntTypeAndMod {
-    POSI =   'ps',
-    VERT =   '_v',
-    EDGE =   '_e',
-    WIRE =   '_w',
-    FACE =   '_f',
-    POINT =  'pt',
-    PLINE =  'pl',
-    PGON =   'pg',
-    COLL =   'co',
-    MOD =    'mo'
 }
 // ================================================================================================
 export enum _EDataType {

@@ -1,7 +1,7 @@
 import {  EEntType, IGeomArrays,  Txyz } from './common';
-import { GIGeom } from './GIGeom';
+import { GIGeom } from './geom/GIGeom';
 import { vecFromTo, vecCross, vecDiv } from '../geom/vectors';
-import { GIAttribs } from './GIAttribs';
+import { GIAttribs } from './attribs/GIAttribs';
 /**
  * Class for calculating stuff that requires bothe geometry and attributes.
  */

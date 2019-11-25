@@ -1,4 +1,4 @@
-import { EEntType, TFace, TColl } from './common';
+import { EEntType, TFace, TColl } from '../common';
 import { GIGeom } from './GIGeom';
 
 /**
@@ -55,16 +55,12 @@ export class GIGeomDel {
             if (!this.geom.data.entExists(EEntType.POSI, posi_i)) { continue; } // already deleted
             // delete all verts for this posi
             const verts_i: number[] = this.geom.data.navPosiToVert(posi_i);
-
-            console.log(" posi", posi_i, "vert", verts_i);
-
-            // for (const vert_i of verts_i) {
-            //     const secondary_posis_i: number[] = this.geom.del_vert.delVert(vert_i);
-            //     for (const secondary_posi_i of secondary_posis_i) {
-            //         other_posis_i.push(secondary_posi_i);
-            //     }
-            // }
-
+            for (const vert_i of verts_i) {
+                const secondary_posis_i: number[] = this.geom.del_vert.delVert(vert_i);
+                for (const secondary_posi_i of secondary_posis_i) {
+                    other_posis_i.push(secondary_posi_i);
+                }
+            }
             // delete the posi
             this.geom.data.remPosiEnt(posi_i);
             // no need to update down arrays
@@ -158,13 +154,7 @@ export class GIGeomDel {
                 const edges_i: number[] = this.geom.data.remWireEnt(wire_i);
                 for (const edge_i of edges_i) {
                     const verts_i: number[] = this.geom.data.remEdgeEnt(edge_i);
-
-                    console.log(">>verts_i", verts_i)
-
                     for (const vert_i of verts_i) {
-
-                        console.log("??del vert", vert_i)
-
                         const posi_i: number = this.geom.data.remVertEnt(vert_i);
                         if (posi_i !== null) {
                             posis_i.push(posi_i);
