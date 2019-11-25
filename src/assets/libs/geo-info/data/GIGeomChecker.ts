@@ -1,5 +1,5 @@
-import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from './common';
-import { GIGeom } from './GIGeom';
+import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from '../common';
+import { GIGeom } from '../GIGeom';
 import { GIGeomData } from './GIGeomData';
 
 
@@ -69,8 +69,8 @@ export class GIGeomChecker {
             }
             // check if the parent is a popint or edge
             const point_i: number = this._geom_arrays.up_verts_points[vert_i];
-            const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-            if (point_i !== undefined && edges_i !== undefined) {
+            const edges_a_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+            if (point_i !== undefined && edges_a_i !== undefined) {
                 errors.push('Vert ' + vert_i + ': Both Vert->Edge and Vert->Point.');
             }
             if (point_i !== undefined) {
@@ -91,32 +91,36 @@ export class GIGeomChecker {
                 if (point !== vert_i) {
                     errors.push('Vert ' + vert_i + ': Point->Vert index is incorrect.');
                 }
-            } else if (edges_i !== undefined) {
+            } else if (edges_a_i !== undefined) {
                 // up for edges
-                if (edges_i === null) {
+                if (edges_a_i === null) {
                     errors.push('Vert ' + vert_i + ': Vert->Edge null.');
                     continue;
                 }
-                if (edges_i.length > 2) { errors.push('Vert ' + vert_i + ': Vert->Edge has more than two edges.'); }
-                for (const edge_i of edges_i) {
-                    if (edge_i === undefined) {
-                        errors.push('Vert ' + vert_i + ': Vert->Edge undefined.');
+                if (edges_a_i.length > 2) { errors.push('Vert ' + vert_i + ': Vert->Edge has more than two edges.'); }
+                for (let i = 0; i < 2; i++) {
+                    // get one edge
+                    const edge_a_i: number[]  = edges_a_i[i];
+                    if (edge_a_i === undefined || edge_a_i === null) {
+                        errors.push('Vert ' + vert_i + ': Vert->Edge array undefined or null when it should be [].');
                     }
-                    if (edge_i === null) {
-                        errors.push('Vert ' + vert_i + ': Vert->Edge null.');
-                    }
-                    // down for edges
-                    const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
-                    if (edge === undefined) {
-                        errors.push('Vert ' + vert_i + ': Edge->Vert undefined.');
-                    } else if (edge === null) {
-                        errors.push('Vert ' + vert_i + ': Edge->Vert null.');
-                    } else {
-                        // check the egde points down to this vertex
-                        if (edge.indexOf(vert_i) === -1) {
-                            errors.push('Vert ' + vert_i + ': Edge->Vert index is missing.');
-                        }
-                    }
+                    // else if (edge_a_i[0] === undefined || edge_a_i[0] === null) {
+                    //     errors.push('Vert ' + vert_i + ': Vert->Edge undefined or null.');
+                    // }
+                    // else {
+                    //     // down for edges
+                    //     const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_a_i[0]];
+                    //     if (edge === undefined) {
+                    //         errors.push('Vert ' + vert_i + ': Edge->Vert undefined.');
+                    //     } else if (edge === null) {
+                    //         errors.push('Vert ' + vert_i + ': Edge->Vert null.');
+                    //     } else {
+                    //         // check the egde points down to this vertex
+                    //         if (edge.indexOf(vert_i) === -1) {
+                    //             errors.push('Vert ' + vert_i + ': Edge->Vert index is missing.');
+                    //         }
+                    //     }
+                    // }
                 }
             } else {
                 errors.push('Vert ' + vert_i + ': Both Vert->Edge and Vert->Point undefined.');
@@ -134,17 +138,22 @@ export class GIGeomChecker {
             if (edge.length > 2) { errors.push('Edge ' + edge_i + ': Edge has more than two vertices.'); }
             // down from edge to vertices
             const verts_i: number[] = this._geom_arrays.dn_edges_verts[edge_i];
-            for (const vert_i of verts_i)   {
+            for (let i = 0; i < 2; i++)   {
+                const vert_i: number = verts_i[i];
                 // check the vertex
                 if (vert_i === undefined) {
                     errors.push('Edge ' + edge_i + ': Edge->Vert undefined.');
                 } else if (vert_i === null) {
                     errors.push('Edge ' + edge_i + ': Edge->Vert null.');
                 } else {
-                    // check the vert points up to this edge
-                    const vert_edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-                    if (vert_edges_i === undefined || vert_edges_i.indexOf(edge_i) === -1) {
-                        errors.push('Edge ' + edge_i + ': Vert->Edge index is missing.');
+                    // check the verts link up to this edge
+                    const vert_edges_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+                    if (vert_edges_i === undefined) {
+                        errors.push('Edge ' + edge_i + ': Vert->Edge index is undefined.');
+                    } else if (i === 0 && vert_edges_i[1][0] !== edge_i) {
+                        errors.push('Edge ' + edge_i + ': Vert->Edge start vertex is incorrect.');
+                    } else if (i === 1 && vert_edges_i[0][0] !== edge_i) {
+                        errors.push('Edge ' + edge_i + ': Vert->Edge end vertex is incorrect.');
                     }
                 }
             }
@@ -420,19 +429,19 @@ export class GIGeomChecker {
                 const edge_start_vert_i: number = edge[0];
                 const edge_end_vert_i: number = edge[1];
                 if (!is_closed && i === 0) {
-                    if (this._geom_arrays.up_verts_edges[edge_start_vert_i][0] !== undefined) {
+                    if (this._geom_arrays.up_verts_edges[edge_start_vert_i][0].length !== 0) {
                         errors.push('Open wire ' + wire_i + ': First vertex has incoming edge.');
                     }
                 }
                 if (!is_closed && i === wire.length - 1) {
-                    if (this._geom_arrays.up_verts_edges[edge_end_vert_i][1] !== undefined) {
+                    if (this._geom_arrays.up_verts_edges[edge_end_vert_i][1].length !== 0) {
                         errors.push('Open wire ' + wire_i + ': Last vertex has an outgoing edge.');
                     }
                 }
-                if (this._geom_arrays.up_verts_edges[edge_start_vert_i][1] !== edge_i) {
+                if (this._geom_arrays.up_verts_edges[edge_start_vert_i][1][0] !== edge_i) {
                     errors.push('Wire ' + wire_i + ': Edge start vertex has wrong outgoing edge.');
                 }
-                if (this._geom_arrays.up_verts_edges[edge_end_vert_i][0] !== edge_i) {
+                if (this._geom_arrays.up_verts_edges[edge_end_vert_i][0][0] !== edge_i) {
                     errors.push('Wire ' + wire_i + ': Edge end vertex has wrong incoming edge.');
                 }
             }

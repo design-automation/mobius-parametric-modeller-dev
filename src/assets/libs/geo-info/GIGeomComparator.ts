@@ -1,7 +1,7 @@
 import { GIModel } from './GIModel';
 import { IGeomArrays, EEntType, TFace } from './common';
 import { GIGeom } from './GIGeom';
-import { GIGeomData } from './GIGeomData';
+import { GIGeomData } from './data/GIGeomData';
 
 /**
  * Class for comparing the geometry in two models.

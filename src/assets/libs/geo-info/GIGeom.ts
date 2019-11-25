@@ -5,9 +5,9 @@ import { GIGeomModify } from './GIGeomModify';
 import { GIGeomThreejs } from './GIGeomThreejs';
 import { GIGeomIO } from './GIGeomIO';
 import { GIGeomDel } from './GIGeomDel';
-import { GIGeomChecker } from './GIGeomChecker';
+import { GIGeomChecker } from './data/GIGeomChecker';
 import { GIGeomComparator } from './GIGeomComparator';
-import { GIGeomData } from './GIGeomData';
+import { GIGeomData } from './data/GIGeomData';
 import { GIGeomDelVert } from './GIGeomDelVert';
 
 /**

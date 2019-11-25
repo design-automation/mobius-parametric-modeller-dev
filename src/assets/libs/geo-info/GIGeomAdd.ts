@@ -2,7 +2,7 @@ import { EEntType, TTri, TFace, Txyz, IGeomArrays, TAttribDataTypes, TEdge, TCol
 import { triangulate } from '../triangulate/triangulate';
 import { GIGeom } from './GIGeom';
 import { vecAdd } from '../geom/vectors';
-import { GIGeomData } from './GIGeomData';
+import { GIGeomData } from './data/GIGeomData';
 
 /**
  * Class for geometry.
@@ -75,9 +75,10 @@ export class GIGeomAdd {
      * @param pgons_i
      */
     public addColl(parent_i: number, points_i: number[], plines_i: number[], pgons_i: number[]): number {
-        // create collection
-        const coll: TColl = [parent_i, points_i, plines_i, pgons_i];
-        return this.geom.data.addCollEnt(coll);
+        if (parent_i === null || parent_i === -1) {
+            return this.geom.data.addCollEnt([[], points_i, plines_i, pgons_i]);
+        }
+        return this.geom.data.addCollEnt([[parent_i], points_i, plines_i, pgons_i]);
     }
     // ============================================================================
     // Copy geometry

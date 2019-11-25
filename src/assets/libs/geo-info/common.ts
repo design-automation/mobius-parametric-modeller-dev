@@ -157,7 +157,7 @@ export interface IGeomArrays {
     dn_colls_objs: TColl[];
     up_posis_verts: number[][]; // one to many
     up_tris_faces: number[];
-    up_verts_edges: [number, number][]; // one to two
+    up_verts_edges: [number[], number[]][]; // one to two
     up_verts_tris: number[][]; // one to many
     up_verts_points: number[];
     up_edges_wires: number[];
@@ -184,12 +184,16 @@ export type TCollTree =  [number, number, TPointTree[], TPlineTree[], TPgonTree[
 
 
 // Object for entities
-export interface IGeomPack {
-    posis_i:  number[];
+export interface IObjPack {
     points_i: number[];
     plines_i: number[];
     pgons_i:  number[];
     colls_i:  number[];
+}
+
+// Object for entities
+export interface IGeomPack extends IObjPack {
+    posis_i:  number[];
 }
 
 // Entity packs are imple arrays of all possible entities
@@ -231,7 +235,7 @@ export type TFace = [number[], number[]]; // [[wire, ....], [triangle, ...]]
 export type TPoint = number; // [vertex,....]
 export type TPline = number; // [wire,....]
 export type TPgon = number; // [face,....]
-export type TColl = [number, number[], number[], number[]]; // [parent, [point, ...], [polyline, ...], [polygon, ....]]
+export type TColl = [number[], number[], number[], number[]]; // [[parent], [point, ...], [polyline, ...], [polygon, ....]]
 export type TEntity = TTri | TVert | TEdge | TWire | TFace | TPoint | TPline | TPgon | TColl;
 export type TAttribDataTypes = string | number | boolean | any[] | object;
 export type TEntAttribValuesArr = Array<[number[], TAttribDataTypes]>;

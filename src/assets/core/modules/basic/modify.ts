@@ -9,7 +9,7 @@
  */
 
 import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack} from '@libs/geo-info/common';
+import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack, IObjPack} from '@libs/geo-info/common';
 import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/geo-info/id';
 import { vecAdd, vecSum, vecDiv, vecFromTo, vecNorm, vecCross, vecSetLen, vecLen, vecDot } from '@libs/geom/vectors';
 import { checkArgTypes, checkIDs, IDcheckObj, TypeCheckObj} from '../_check_args';
@@ -18,6 +18,7 @@ import { Matrix4 } from 'three';
 import __ from 'underscore';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 import { getOrigin, getRay, getPlane } from './_common';
+import { INode } from '@models/node';
 
 // ================================================================================================
 /**
@@ -645,24 +646,33 @@ export enum _EDeleteMethod {
 }
 function _delete(__model__: GIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
     // get the ents
-    const gp: IGeomPack = __model__.geom.data.createGeomPackFromEnts(ents_arr, invert);
+    const geom_pack: IGeomPack = __model__.geom.data.getGeomPackFromEnts(ents_arr, invert);
+    const obj_pack: IObjPack = invert ? __model__.geom.data.invertObjPack(geom_pack) : geom_pack;
     // delete the objects
-    const pgon_posis_i: number[] = __model__.geom.del.delPgons(gp.pgons_i);
-    const pline_posis_i: number[] = __model__.geom.del.delPlines(gp.plines_i);
-    const point_posis_i: number[] = __model__.geom.del.delPoints(gp.points_i);
+    __model__.geom.del.delPgons(obj_pack.pgons_i);
+    __model__.geom.del.delPlines(obj_pack.plines_i);
+    __model__.geom.del.delPoints(obj_pack.points_i);
     // delete the collections
-    const coll_posis_i: number[] = __model__.geom.del.delColls(gp.colls_i, false);
-    // delete the posis explicitly listed in the ents_arr
-    const other_posis_i: number[] = __model__.geom.del.delPosis(gp.posis_i);
-    // collect all the posis from all the other deleted ents
-    const set_posis_i: Set<number> = new Set();
-    for (const posis_i of [coll_posis_i, pgon_posis_i, pline_posis_i, point_posis_i, other_posis_i] ) {
-        for (const posi_i of posis_i) {
-            set_posis_i.add(posi_i);
+    __model__.geom.del.delColls(obj_pack.colls_i, false);
+    // get the posis
+    const unused_posis_i: number[] = __model__.geom.data.getUnusedPosis(false);
+    const set_selected_posis_i: Set<number> = new Set(geom_pack.posis_i);
+    const posis_to_del_i: number[] = [];
+    // get the list of possi to del
+    for (const unused_posi_i of unused_posis_i) {
+        // invert = true, selected_posis_i = posis to keep
+        if (!set_selected_posis_i.has(unused_posi_i)) {
+            posis_to_del_i.push(unused_posi_i);
+        }
+        if (!invert) {
+            // invert = false, selected_posis_i = posis to del
+            for (const ent_i of geom_pack.posis_i) {
+                posis_to_del_i.push(ent_i);
+            }
         }
     }
-    // only delete the other posis if they are unused
-    __model__.geom.del.delUnusedPosis(Array.from(set_posis_i));
+    // delete the posis
+    __model__.geom.del.delPosis(posis_to_del_i);
 }
 
 

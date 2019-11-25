@@ -449,7 +449,6 @@ export function _neighbors(__model__: GIModel,  select_ent_types: EEntType|EEntT
                 verts_i.push(vert_ent_i);
             }
         }
-        console.log(verts_i);
         // get the neighbor entities
         const all_nbor_ents_i: number[] = __model__.geom.data.getEntNeighbors(select_ent_type, verts_i);
         return all_nbor_ents_i.map(nbor_ent_i => [select_ent_type, nbor_ent_i]) as TEntTypeIdx[];

@@ -113,7 +113,7 @@ function _get(__model__: GIModel, names: string|string[]): TEntTypeIdx | TEntTyp
         if (query_result.length > 0) {
             return [EEntType.COLL, query_result[0]];
         }
-        return [];
+        return null;
     } else {
         return names.map(name => _get(__model__, name)) as TEntTypeIdx[];
     }

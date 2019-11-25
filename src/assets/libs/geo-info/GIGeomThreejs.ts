@@ -2,7 +2,7 @@ import { GIGeom } from './GIGeom';
 import { IGeomArrays, TTri, TEdge, TPoint } from './common';
 import { GIAttribMap } from './GIAttribMap';
 import * as THREE from 'three';
-import { GIGeomData } from './GIGeomData';
+import { GIGeomData } from './data/GIGeomData';
 
 /**
  * Class for geometry.

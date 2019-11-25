@@ -1,10 +1,10 @@
 
 import {  EEntType, IGeomArrays, TVert, TEdge, TWire, TFace, TPoint, TPline, TPgon, TColl,
     TPointTree, TPlineTree, TEdgeTree, TVertTree, TWireTree, TFaceTree, TPgonTree, TCollTree,
-    IEntPack, EEntStrToGeomArray, TEntTypeIdx, IGeomPack, Txyz, TTri, TTree, EEntTypeStr } from './common';
-import { isPosi, isVert, isPoint, isEdge, isWire, isPline, isFace, isPgon, isColl, isTri } from './id';
-import { GIGeom } from './GIGeom';
-import { triangulate } from '../triangulate/triangulate';
+    IEntPack, EEntStrToGeomArray, TEntTypeIdx, IGeomPack, Txyz, TTri, TTree, EEntTypeStr, IObjPack } from '../common';
+import { isPosi, isVert, isPoint, isEdge, isWire, isPline, isFace, isPgon, isColl, isTri } from '../id';
+import { GIGeom } from '../GIGeom';
+import { triangulate } from '../../triangulate/triangulate';
 
 /**
  * Class for interacting with the core data.
@@ -142,7 +142,7 @@ export class GIGeomData {
     }
     // ============================================================================
     // Get num ents
-    // 
+    //
     // ============================================================================
     public numEnts2(ent_type: number): number {
         switch (ent_type) {
@@ -417,34 +417,28 @@ export class GIGeomData {
      *
      * This includes nested collections..
      */
-    public getCollGeomPack(coll_i: number): IGeomPack {
+    public getCollObjPack(coll_i: number): IObjPack {
         const set_colls_i: Set<number> = new Set();
         const set_pgons_i: Set<number> = new Set();
         const set_plines_i: Set<number> = new Set();
         const set_points_i: Set<number> = new Set();
-        const set_posis_i: Set<number> = new Set();
         // get all the descendents of this collection
-        const desc_colls_i: number[] = this.collGetDescendents(coll_i);
-        // add this coll the head of the list
-        desc_colls_i.splice(0, 0, coll_i);
-        // go through each coll
-        for (const desc_coll_i of desc_colls_i) {
+        set_colls_i.add(coll_i);
+        for (const desc_coll_i of this.collGetDescendents(coll_i)) {
             set_colls_i.add(desc_coll_i);
-            for (const pgon_i of this.navCollToPgon(desc_coll_i)) {
-                set_pgons_i.add(pgon_i);
-                this.navAnyToPosi(EEntType.PGON, pgon_i).forEach( posi_i => set_posis_i.add(posi_i) );
-            }
-            for (const pline_i of this.navCollToPline(desc_coll_i)) {
-                set_plines_i.add(pline_i);
-                this.navAnyToPosi(EEntType.PLINE, pline_i).forEach( posi_i => set_posis_i.add(posi_i) );
-            }
-            for (const point_i of this.navCollToPoint(desc_coll_i)) {
-                set_points_i.add(point_i);
-                this.navAnyToPosi(EEntType.POINT, point_i).forEach( posi_i => set_posis_i.add(posi_i) );
-            }
         }
+        // get all the objs
+        for (const pgon_i of this.navCollToPgon(coll_i)) { // Calls collGetDescendents()
+            set_pgons_i.add(pgon_i);
+        }
+        for (const pline_i of this.navCollToPline(coll_i)) { // Calls collGetDescendents()
+            set_plines_i.add(pline_i);
+        }
+        for (const point_i of this.navCollToPoint(coll_i)) { // Calls collGetDescendents()
+            set_points_i.add(point_i);
+        }
+        // return the obj pack
         return {
-            posis_i: Array.from(set_posis_i),
             points_i: Array.from(set_points_i),
             plines_i: Array.from(set_plines_i),
             pgons_i: Array.from(set_pgons_i),
@@ -452,94 +446,78 @@ export class GIGeomData {
         };
     }
     /**
-     * Returns a geompack of unique indexes, given an array of TEntTypeIdx.
+     * Returns a geom pack of unique indexes, given an array of TEntTypeIdx.
      *
-     * Object positions are added to the geompack.
-     *
-     * Collections contents is added to the geompack, including nested collections..
-     *
-     * If invert=true, then the geompack will include the opposite set of entities.
-     *
-     * Used for deleting all entities.
+     * Include objs and colls, and positions.
      */
-    public createGeomPackFromEnts(ents: TEntTypeIdx[], invert: boolean = false): IGeomPack {
-        // utility function for adding to set
-        function addToSet(_set: Set<number>, _ents_i: number[]): void {
+    public getGeomPackFromEnts(ents: TEntTypeIdx[], invert: boolean = false): IGeomPack {
+        // utility functions
+        function _addToSet(_set: Set<number>, _ents_i: number[]): void {
             _ents_i.forEach( num => _set.add(num) );
         }
-        // utility function for inverting a geompack
-        function _invertGeomPack(_sets: Set<number>[], _ga: IGeomArrays): IGeomPack {
-            const inv_posis_i: number[] = [];
-            for (let i = 0; i < _ga.up_posis_verts.length; i++) {
-                if (_ga.up_posis_verts[i] !== null && !_sets[0].has(i)) { inv_posis_i.push(i); }
-            }
-            const inv_points_i: number[] = [];
-            for (let i = 0; i < _ga.dn_points_verts.length; i++) {
-                if (_ga.dn_points_verts[i] !== null && !_sets[1].has(i)) { inv_points_i.push(i); }
-            }
-            const inv_plines_i: number[] = [];
-            for (let i = 0; i < _ga.dn_plines_wires.length; i++) {
-                if (_ga.dn_plines_wires[i] !== null && !_sets[2].has(i)) { inv_plines_i.push(i); }
-            }
-            const inv_pgons_i: number[] = [];
-            for (let i = 0; i < _ga.dn_pgons_faces.length; i++) {
-                if (_ga.dn_pgons_faces[i] !== null && !_sets[3].has(i)) { inv_pgons_i.push(i); }
-            }
-            const inv_colls_i: number[] = [];
-            for (let i = 0; i < _ga.dn_colls_objs.length; i++) {
-                if (_ga.dn_colls_objs[i] !== null && !_sets[4].has(i)) { inv_colls_i.push(i); }
-            }
-            return {
-                posis_i: inv_posis_i,
-                points_i: inv_points_i,
-                plines_i: inv_plines_i,
-                pgons_i: inv_pgons_i,
-                colls_i: inv_colls_i
-            };
-        }
         // ---------------------------------------
-        // create sets for the geompack
-        const set_posis_i: Set<number> = new Set();
+        // the other sets for the geom pack
         const set_points_i: Set<number> = new Set();
         const set_plines_i: Set<number> = new Set();
         const set_pgons_i: Set<number> = new Set();
         const set_colls_i: Set<number> = new Set();
+        const set_posis_i: Set<number> = new Set();
         // put ents into sets
         for (const ent_arr of ents) {
             const [ent_type, index]: TEntTypeIdx = ent_arr as TEntTypeIdx;
-            // add posis
-            addToSet(set_posis_i, this.navAnyToPosi(ent_type, index));
-            // add other ent types
-            if (isColl(ent_type)) {
+            // add ents
+            if (ent_type === EEntType.COLL) {
                 set_colls_i.add(index);
-                const coll_gp: IGeomPack = this.getCollGeomPack(index);
-                if ('posis_i' in coll_gp)  { addToSet(set_posis_i,  coll_gp.posis_i); }
-                if ('points_i' in coll_gp) { addToSet(set_points_i, coll_gp.points_i); }
-                if ('plines_i' in coll_gp) { addToSet(set_plines_i, coll_gp.plines_i); }
-                if ('pgons_i' in coll_gp)  { addToSet(set_pgons_i,  coll_gp.pgons_i); }
-                if ('colls_i' in coll_gp)  { addToSet(set_colls_i,  coll_gp.colls_i); }
-            } else if (isPgon(ent_type)) {
+                const coll_gp: IObjPack = this.getCollObjPack(index);
+                _addToSet(set_points_i, coll_gp.points_i);
+                _addToSet(set_plines_i, coll_gp.plines_i);
+                _addToSet(set_pgons_i,  coll_gp.pgons_i);
+                _addToSet(set_colls_i,  coll_gp.colls_i);
+            } else if (ent_type === EEntType.PGON) {
                 set_pgons_i.add(index);
-            } else if (isPline(ent_type)) {
+            } else if (ent_type === EEntType.PLINE) {
                 set_plines_i.add(index);
-            } else if (isPoint(ent_type)) {
+            } else if (ent_type === EEntType.POINT) {
                 set_points_i.add(index);
-            } else if (isPosi(ent_type)) {
-                set_posis_i.add(index);
+            } else if (ent_type === EEntType.POSI) {
+                set_points_i.add(index);
             }
         }
-        // no invert?, return the geom pack
-        if (!invert) {
-            return {
-                posis_i: Array.from(set_posis_i),
-                points_i: Array.from(set_points_i),
-                plines_i: Array.from(set_plines_i),
-                pgons_i: Array.from(set_pgons_i),
-                colls_i: Array.from(set_colls_i)
-            };
+        // return the arrays, do not invert
+        return {
+            points_i: Array.from(set_points_i),
+            plines_i: Array.from(set_plines_i),
+            pgons_i: Array.from(set_pgons_i),
+            colls_i: Array.from(set_colls_i),
+            posis_i: Array.from(set_posis_i),
+        };
+    }
+    /**
+     * Inverts a obj pack, returns unique indexes
+     *
+     * Include objs and colls, but no positions.
+     */
+    public invertObjPack(pack: IObjPack|IGeomPack): IObjPack {
+        // utility functions
+        function _invSet(_ents: any[], _ga: any[]): any[] {
+            const _set_ents: Set<number> = new Set(_ents);
+            const _set_inv_ents: Set<number> = new Set();
+            let i = 0; const max = _ga.length;
+            for (; i < max; i++) {
+                if (_ga[i] !== null && !_set_ents.has(i)) {
+                    _set_inv_ents.add(i);
+                }
+            }
+            return Array.from(_set_inv_ents);
         }
-        // invert? invert and then return geom pack
-        return _invertGeomPack([ set_posis_i, set_points_i, set_plines_i, set_pgons_i, set_colls_i ], this._geom_arrays);
+        // ---------------------------------------
+        // return the arrays, invert
+        return {
+            points_i: _invSet(pack.points_i, this._geom_arrays.dn_points_verts),
+            plines_i: _invSet(pack.plines_i, this._geom_arrays.dn_plines_wires),
+            pgons_i:  _invSet(pack.pgons_i,  this._geom_arrays.dn_pgons_faces),
+            colls_i:  _invSet(pack.colls_i,  this._geom_arrays.dn_colls_objs)
+        };
     }
     // ============================================================================
     // Add entities into the data structure
@@ -563,8 +541,18 @@ export class GIGeomData {
         // down
         const edge_i: number =  this._geom_arrays.dn_edges_verts.push(edge) - 1;
         // up
-        this._insToArr(this._geom_arrays.up_verts_edges, edge[0], edge_i, 1);
-        this._insToArr(this._geom_arrays.up_verts_edges, edge[1], edge_i, 0);
+        // this._insToArr(this._geom_arrays.up_verts_edges, edge[0], edge_i, 1);
+        // this._insToArr(this._geom_arrays.up_verts_edges, edge[1], edge_i, 0);
+        if (this._geom_arrays.up_verts_edges[edge[0]] === undefined) {
+            this._geom_arrays.up_verts_edges[edge[0]] = [[], [edge_i]];
+        } else {
+            this._geom_arrays.up_verts_edges[edge[0]][1][0] = edge_i;
+        }
+        if (this._geom_arrays.up_verts_edges[edge[1]] === undefined) {
+            this._geom_arrays.up_verts_edges[edge[1]] = [[edge_i], []];
+        } else {
+            this._geom_arrays.up_verts_edges[edge[1]][0][0] = edge_i;
+        }
         // return
         return edge_i;
     }
@@ -659,6 +647,11 @@ export class GIGeomData {
         return verts_i;
     }
     public remVertEnt(vert_i: number): TVert {
+
+        console.log("===")
+        console.log(">>> DEL BF up_posis_verts", JSON.stringify(this._geom_arrays.up_posis_verts ))
+        console.log(">>> DEL BF dn_verts_posis", JSON.stringify(this._geom_arrays.dn_verts_posis ))
+
         // down
         const vert: TVert = this._geom_arrays.dn_verts_posis[vert_i];
         if (vert === null) { return null; }
@@ -668,6 +661,12 @@ export class GIGeomData {
         const posi_i: number = vert;
         this._remFromSet(this._geom_arrays.up_posis_verts, posi_i, vert_i, false);
         // delete attribs
+
+        
+        console.log(">>> DEL AF up_posis_verts", JSON.stringify(this._geom_arrays.up_posis_verts ))
+        console.log(">>> DEL AF dn_verts_posis", JSON.stringify(this._geom_arrays.dn_verts_posis ))
+        console.log("===")
+
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.VERT, vert_i);
         // return
         return vert;
@@ -679,9 +678,15 @@ export class GIGeomData {
         // remove down
         this._clear(this._geom_arrays.dn_edges_verts, edge_i, false);
         // remove up
-        const [start_vert_i, end_vert_i]: [number, number] = edge;
-        this._remFromArrIf(this._geom_arrays.up_verts_edges, start_vert_i, 1, edge_i, true);
-        this._remFromArrIf(this._geom_arrays.up_verts_edges, end_vert_i, 0, edge_i, true);
+        // const [start_vert_i, end_vert_i]: [number, number] = edge;
+        // this._remFromArrIf(this._geom_arrays.up_verts_edges, start_vert_i, 1, edge_i, true);
+        // this._remFromArrIf(this._geom_arrays.up_verts_edges, end_vert_i, 0, edge_i, true);
+        if (this._geom_arrays.up_verts_edges[edge[0]][1][0] === edge_i) {
+            this._geom_arrays.up_verts_edges[edge[0]][1] = [];
+        }
+        if (this._geom_arrays.up_verts_edges[edge[1]][0][0] === edge_i) {
+            this._geom_arrays.up_verts_edges[edge[1]][0] = [];
+        }
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.EDGE, edge_i);
         // return
@@ -800,8 +805,10 @@ export class GIGeomData {
         // down
         this._geom_arrays.dn_edges_verts[edge_i] = edge;
         // up
-        this._insToArr(this._geom_arrays.up_verts_edges, edge[0], edge_i, 1);
-        this._insToArr(this._geom_arrays.up_verts_edges, edge[1], edge_i, 0);
+        // this._insToArr(this._geom_arrays.up_verts_edges, edge[0], edge_i, 1);
+        // this._insToArr(this._geom_arrays.up_verts_edges, edge[1], edge_i, 0);
+        this._geom_arrays.up_verts_edges[edge[0]][1][0] = edge_i;
+        this._geom_arrays.up_verts_edges[edge[1]][0][0] = edge_i;
     }
     public insWireEnt(wire: TWire, wire_i: number): void {
         wire = wire.slice() as TWire;
@@ -859,22 +866,22 @@ export class GIGeomData {
         // down
         this._geom_arrays.dn_edges_verts[edge_i][0] = vert_i;
         // up
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
+        const edges_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
         if (edges_i === undefined) {
-            this._geom_arrays.up_verts_edges[vert_i] = [undefined, edge_i]; // TODO Not sure about this
+            this._geom_arrays.up_verts_edges[vert_i] = [[], [edge_i]]; // Empty array
         } else {
-            this._geom_arrays.up_verts_edges[vert_i][1] = edge_i;
+            this._geom_arrays.up_verts_edges[vert_i][1] = [edge_i];
         }
     }
     public linkEdgeEndVert(edge_i: number, vert_i: number): void {
         // down
         this._geom_arrays.dn_edges_verts[edge_i][1] = vert_i;
         // up
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
+        const edges_i:  [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
         if (edges_i === undefined) {
-            this._geom_arrays.up_verts_edges[vert_i] = [edge_i, undefined]; // TODO Not sure about this
+            this._geom_arrays.up_verts_edges[vert_i] = [[edge_i], []]; // Empty array
         } else {
-            this._geom_arrays.up_verts_edges[vert_i][0] = edge_i;
+            this._geom_arrays.up_verts_edges[vert_i][0] = [edge_i];
         }
     }
     public linkWireEdge(wire_i: number, idx: number,  edge_i: number): void {
@@ -950,20 +957,21 @@ export class GIGeomData {
         // down
         this._clear(this._geom_arrays.dn_edges_verts[edge_i], 0, false);
         // up
-        if (this._geom_arrays.up_verts_edges[vert_i] === undefined) { return; } // TODO is this needed
-        this._clearIf(this._geom_arrays.up_verts_edges[vert_i], 1, edge_i, true);
+        if (this._geom_arrays.up_verts_edges[vert_i][0].length === 0) { return; } // TODO is this needed
+        this._clearIf(this._geom_arrays.up_verts_edges[vert_i][1], 0, edge_i, false);
     }
     public unlinkEdgeEndVert(edge_i: number, vert_i: number): void {
         // down
         this._clear(this._geom_arrays.dn_edges_verts[edge_i], 1, false);
         // up
-        if (this._geom_arrays.up_verts_edges[vert_i] === undefined) { return; } // TODO is this needed
-        this._clearIf( this._geom_arrays.up_verts_edges[vert_i], 0, edge_i, true);
+        if (this._geom_arrays.up_verts_edges[vert_i][0].length === 0) { return; } // TODO is this needed
+        this._clearIf( this._geom_arrays.up_verts_edges[vert_i][0], 0, edge_i, false);
     }
     public unlinkVertToEdge(vert_i: number, edge_i: number): void {
         // up
-        if (this._geom_arrays.up_verts_edges[vert_i] === undefined) { return; } // TODO is this needed
-        this._clearIf(this._geom_arrays.up_verts_edges[vert_i], 1, edge_i, true);
+        if (this._geom_arrays.up_verts_edges[vert_i][0].length === 0) { return; } // TODO is this needed
+        this._clearIf(this._geom_arrays.up_verts_edges[vert_i][0], 0, edge_i, false);
+        this._clearIf(this._geom_arrays.up_verts_edges[vert_i][1], 0, edge_i, false);
     }
     public unlinkWireEdge(wire_i: number, edge_i: number): void {
         // down
@@ -1097,22 +1105,43 @@ export class GIGeomData {
         return this._geom_arrays.dn_pgons_faces[pgon_i];
     }
     public navCollToPoint(coll_i: number): number[] {
-        const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll_i][1];
-        if (ents_i) { return ents_i.slice(); }
-        return ents_i; // coll points
+        const all_colls_i: number[] = this.collGetDescendents(coll_i);
+        all_colls_i.push(coll_i);
+        const set_ents_i: Set<number> = new Set();
+        for (const coll2_i of all_colls_i) {
+            const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll2_i][1];
+            for (const ent_i of ents_i) {
+                set_ents_i.add(ent_i);
+            }
+        }
+        return Array.from(set_ents_i); // coll points
     }
     public navCollToPline(coll_i: number): number[] {
-        const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll_i][2];
-        if (ents_i) { return ents_i.slice(); }
-        return ents_i; // coll lines
+        const all_colls_i: number[] = this.collGetDescendents(coll_i);
+        all_colls_i.push(coll_i);
+        const set_ents_i: Set<number> = new Set();
+        for (const coll2_i of all_colls_i) {
+            const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll2_i][2];
+            for (const ent_i of ents_i) {
+                set_ents_i.add(ent_i);
+            }
+        }
+        return Array.from(set_ents_i); // coll lines
     }
     public navCollToPgon(coll_i: number): number[] {
-        const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll_i][3];
-        if (ents_i) { return ents_i.slice(); }
-        return ents_i; // coll pgons
+        const all_colls_i: number[] = this.collGetDescendents(coll_i);
+        all_colls_i.push(coll_i);
+        const set_ents_i: Set<number> = new Set();
+        for (const coll2_i of all_colls_i) {
+            const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll2_i][3];
+            for (const ent_i of ents_i) {
+                set_ents_i.add(ent_i);
+            }
+        }
+        return Array.from(set_ents_i); // coll pgons
     }
-    public navCollToColl(coll_i: number): number {
-        return coll_i[0]; // coll parent
+    public navCollToColl(coll_i: number): number[] {
+        return this.collGetDescendents(coll_i);
     }
     // ============================================================================
     // Navigate up the hierarchy
@@ -1129,9 +1158,11 @@ export class GIGeomData {
         return ents_i;
     }
     public navVertToEdge(vert_i: number): [number, number] {
-        const ents_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-        if (ents_i) { return ents_i.slice() as [number, number]; }
-        return ents_i as [number, number];
+        const ents_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+        const edges_i: number[] = [];
+        if (ents_i[0][0] !== undefined) {  edges_i.push(ents_i[0][0]); }
+        if (ents_i[1][0] !== undefined) {  edges_i.push(ents_i[1][0]); }
+        return edges_i as [number, number];
     }
     public navTriToFace(tri_i: number): number {
         return this._geom_arrays.up_tris_faces[tri_i];
@@ -1776,13 +1807,13 @@ export class GIGeomData {
         this._addToSet(this._geom_arrays.up_points_colls, pgon_i, coll_i);
     }
     /**
-     * Add entities to a collection
+     * Add collection to a collection, the first collection is the parent, the second is the child
      */
     public collAddColl(coll0_i: number, coll1_i: number): void {
-        this._geom_arrays.dn_colls_objs[coll1_i][0] = coll0_i;
+        this._insToArr(this._geom_arrays.dn_colls_objs[coll1_i], 0, coll0_i, 0);
     }
     /**
-     * Remove entities from a collection
+     * Remove entities from a collection.
      */
     public collRemovePoint(coll_i: number, point_i: number): void {
         if (this._geom_arrays.dn_colls_objs[coll_i] == null) { return; } // deleted
@@ -1790,7 +1821,7 @@ export class GIGeomData {
         this._remFromSet(this._geom_arrays.up_points_colls, point_i, coll_i, true);
     }
     /**
-     * Remove entities from a collection
+     * Remove entities from a collection.
      */
     public collRemovePline(coll_i: number, pline_i: number): void {
         if (this._geom_arrays.dn_colls_objs[coll_i] == null) { return; } // deleted
@@ -1798,7 +1829,7 @@ export class GIGeomData {
         this._remFromSet(this._geom_arrays.up_plines_colls, pline_i, coll_i, true);
     }
     /**
-     * Remove entities from a collection
+     * Remove entities from a collection.
      */
     public collRemovePgon(coll_i: number, pgon_i: number): void {
         if (this._geom_arrays.dn_colls_objs[coll_i] == null) { return; } // deleted
@@ -1806,12 +1837,13 @@ export class GIGeomData {
         this._remFromSet(this._geom_arrays.up_pgons_colls, pgon_i, coll_i, true);
     }
     /**
-     * Remove entities from a collection
+     * Remove entities from a collection.
+     * Remove the second collection from the first collection.
      */
     public collRemoveColl(coll0_i: number, coll1_i: number): void {
         if (this._geom_arrays.dn_colls_objs[coll0_i] == null) { return; } // deleted
-        if (this._geom_arrays.dn_colls_objs[coll1_i][0] === coll0_i) {
-            this._geom_arrays.dn_colls_objs[coll1_i][0] = -1;
+        if (this._geom_arrays.dn_colls_objs[coll1_i][0][0] === coll0_i) {
+            this._geom_arrays.dn_colls_objs[coll1_i][0] = [];
         }
     }
     /**
@@ -1819,7 +1851,7 @@ export class GIGeomData {
      * @param coll_i
      */
     public collGetParent(coll_i: number): number {
-        return this._geom_arrays.dn_colls_objs[coll_i][0];
+        return this._geom_arrays.dn_colls_objs[coll_i][0][0];
     }
     /**
      * Set the parent of a collection
@@ -1827,7 +1859,7 @@ export class GIGeomData {
      * @param parent_coll_i
      */
     public collSetParent(coll_i: number, parent_coll_i: number): void {
-        this._geom_arrays.dn_colls_objs[coll_i][0] = parent_coll_i;
+        this._geom_arrays.dn_colls_objs[coll_i][0][0] = parent_coll_i;
     }
     /**
      * Get the children collections of a collection.
@@ -1837,7 +1869,7 @@ export class GIGeomData {
         const children: number[] = [];
         for (let i = 0; i < this._geom_arrays.dn_colls_objs.length; i++) {
             const coll: TColl = this._geom_arrays.dn_colls_objs[i];
-            if (coll !== null && coll[0] === coll_i) {
+            if (coll !== null && coll[0][0] === coll_i) {
                 children.push(i);
             }
         }
@@ -1849,10 +1881,10 @@ export class GIGeomData {
      */
     public collGetAncestors(coll_i: number): number[] {
         const ancestor_colls_i: number[] = [];
-        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll_i][0];
-        while (parent_coll_i !== -1) {
+        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll_i][0][0];
+        while (parent_coll_i !== undefined) {
             ancestor_colls_i.push(parent_coll_i);
-            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0];
+            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0][0];
         }
         return ancestor_colls_i;
     }
@@ -1863,8 +1895,9 @@ export class GIGeomData {
     public collGetDescendents(coll_i: number): number[] {
         const descendent_colls_i: number[] = [];
         for (let i = 0; i < this._geom_arrays.dn_colls_objs.length; i++) {
+            if (i === coll_i) { continue; }
             const coll: TColl = this._geom_arrays.dn_colls_objs[i];
-            if (coll !== null && coll[0] !== -1) {
+            if (coll !== null && coll[0][0] !== undefined) {
                 if (this.isCollDescendent(i, coll_i)) {
                     descendent_colls_i.push(i);
                 }
@@ -1877,10 +1910,10 @@ export class GIGeomData {
      * @param coll_i
      */
     public isCollDescendent(coll1_i: number, coll2_i: number): boolean {
-        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll1_i][0];
-        while (parent_coll_i !== -1) {
-            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0];
+        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll1_i][0][0];
+        while (parent_coll_i !== undefined) {
             if (parent_coll_i === coll2_i) { return true; }
+            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0][0];
         }
         return false;
     }
@@ -1889,14 +1922,13 @@ export class GIGeomData {
      * @param coll_i
      */
     public isCollAncestor(coll1_i: number, coll2_i: number): boolean {
-        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll2_i][0];
-        while (parent_coll_i !== -1) {
-            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0];
+        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll2_i][0][0];
+        while (parent_coll_i !== undefined) {
+            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0][0];
             if (parent_coll_i === coll1_i) { return true; }
         }
         return false;
     }
-
     // ============================================================================
     // Faces
     // ============================================================================
@@ -1921,14 +1953,14 @@ export class GIGeomData {
     // ============================================================================
 
     public vertIsPline(vert_i: number): boolean {
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-        const edge_i: number = edges_i[0] !== undefined ? edges_i[0] : edges_i[1];
+        const edges_a_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+        const edge_i: number = edges_a_i[0][0] !== undefined ? edges_a_i[0][0] : edges_a_i[1][0];
         if (edge_i === undefined) { return false; }
         return this._geom_arrays.up_wires_plines[this._geom_arrays.up_edges_wires[edge_i]] !== undefined;
     }
     public vertIsPgon(vert_i: number): boolean {
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[vert_i];
-        const edge_i: number = edges_i[0] !== undefined ? edges_i[0] : edges_i[1];
+        const edges_a_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+        const edge_i: number = edges_a_i[0][0] !== undefined ? edges_a_i[0][0] : edges_a_i[1][0];
         if (edge_i === undefined) { return false; }
         return this._geom_arrays.up_wires_faces[this._geom_arrays.up_edges_wires[edge_i]] !== undefined;
     }
@@ -2162,7 +2194,7 @@ export class GIGeomData {
         const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
         edge.reverse();
         // the verts pointing up to edges also need to be reversed
-        const edges_i: number[] = this._geom_arrays.up_verts_edges[edge[0]];
+        const edges_i: [number[], number[]] = this._geom_arrays.up_verts_edges[edge[0]];
         edges_i.reverse();
     }
     /**

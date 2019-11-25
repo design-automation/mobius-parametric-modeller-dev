@@ -1,7 +1,8 @@
 import { TTri, TVert, TEdge, TWire, TFace,
     TColl, IGeomData, TPoint, TPline, TPgon, IGeomArrays, IGeomPack } from './common';
 import { GIGeom } from './GIGeom';
-import { GIGeomData } from './GIGeomData';
+import { GIGeomData } from './data/GIGeomData';
+import { ConditionalExpr } from '@angular/compiler';
 
 /**
  * Class for geometry.
@@ -134,7 +135,7 @@ export class GIGeomIO {
             if (coll === null) {
                 this._geom_arrays.dn_colls_objs.push( null );
             } else {
-                const parent: number = (coll[0] === -1) ? -1 : coll[0] + num_colls;
+                const parent: number[] = (coll[0][0] === undefined) ? [] : [coll[0][0] + num_colls];
                 const coll_points_i: number[] = coll[1].map( point => point + num_points);
                 const coll_plines_i: number[] = coll[2].map( line => line + num_plines);
                 const coll_pgons_i: number[] = coll[3].map( pgon => pgon + num_pgons);
@@ -196,14 +197,17 @@ export class GIGeomIO {
         // update verts to edges
         let ve_i = 0; const ve_i_max = geom_arrays.up_verts_edges.length;
         for (; ve_i < ve_i_max; ve_i++) {
-            const edges_i: [number, number] = geom_arrays.up_verts_edges[ve_i];
+            const edges_i: [number[], number[]] = geom_arrays.up_verts_edges[ve_i];
             if (edges_i === undefined) {
                 continue;
             } else if (edges_i === null) {
                 this._geom_arrays.up_verts_edges[ve_i + num_verts] = null;
             } else {
-                const new_edges_i: [number, number] = edges_i.map( edge_i => edge_i + num_edges) as [number, number];
-                this._geom_arrays.up_verts_edges[ve_i + num_verts] = new_edges_i;
+                let edge0_i: number[] = [];
+                if (edge0_i[0] !== undefined) { edge0_i = [edge0_i[0] + num_edges]; }
+                let edge1_i: number[] = [];
+                if (edge1_i[0] !== undefined) { edge1_i = [edge1_i[0] + num_edges]; }
+                this._geom_arrays.up_verts_edges[ve_i + num_verts] = [edge0_i, edge1_i];
             }
         }
         // update edges to wires
@@ -320,7 +324,6 @@ export class GIGeomIO {
     public setData(geom_data: IGeomData): IGeomPack {
         // update the down arrays
         // these are assumed never to undefined
-
         // add vertices to model
         this._geom_arrays.dn_verts_posis =  geom_data.vertices;
         // add triangles to model
@@ -361,6 +364,11 @@ export class GIGeomIO {
         // posis->verts
         this._geom_arrays.dn_verts_posis.forEach( (_posi_i, vert_i) => { // val, index
             if (_posi_i !== null) {
+
+
+                // console.log(">> posi_i", _posi_i)
+                // console.log(">> vert_i", this._geom_arrays.up_posis_verts[_posi_i])
+
                 this._geom_arrays.up_posis_verts[_posi_i].push(vert_i);
             }
         });
@@ -379,16 +387,16 @@ export class GIGeomIO {
         // verts->edges, one to two
         // order is important
         this._geom_arrays.up_verts_edges = [];
-        this._geom_arrays.dn_edges_verts.forEach( (vert_i_arr, edge_i) => { // val, index
-            if (vert_i_arr !== null) {
-                vert_i_arr.forEach( (vert_i, index) => {
+        this._geom_arrays.dn_edges_verts.forEach( (vert_pair_i, edge_i) => { // val, index
+            if (vert_pair_i !== null) {
+                vert_pair_i.forEach( (vert_i, index) => {
                     if (this._geom_arrays.up_verts_edges[vert_i] === undefined) {
-                        this._geom_arrays.up_verts_edges[vert_i] = [undefined, undefined];
+                        this._geom_arrays.up_verts_edges[vert_i] = [[], []];
                     }
                     if (index === 0) {
-                        this._geom_arrays.up_verts_edges[vert_i].push(edge_i);
+                        this._geom_arrays.up_verts_edges[vert_i][1] = [edge_i];
                     } else if (index === 1) {
-                        this._geom_arrays.up_verts_edges[vert_i].splice(0, 0, edge_i);
+                        this._geom_arrays.up_verts_edges[vert_i][0] = [edge_i];
                     }
                     if (index > 1) {
                         throw new Error('Import data error: Found an edge with more than two vertices.');
@@ -498,6 +506,7 @@ export class GIGeomIO {
     }
     /**
      * Returns the JSON data for this model.
+     * Experimetal/// TODO
      */
     public merge2(geom_arrays: IGeomArrays): void {
         function mergeDnArrs(a1: number[], a2: number[], o: number) {
@@ -518,11 +527,11 @@ export class GIGeomIO {
             const a1_len: number = a1.length; const a2_len: number = a2.length;
             let i = 0;
             for (; i < a2_len; i++) {
-                //a2[i] !== undefined ? a1[a1_len + i] = a2[i] + o : ;
+                // a2[i] !== undefined ? a1[a1_len + i] = a2[i] + o : ;
             }
         }
         // array have parents that are -1
-        // verts have nested values that are undefined 
+        // verts have nested values that are undefined
         // these should all be set to null
     }
 }

@@ -2,7 +2,7 @@ import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert } 
 import { GIGeom } from './GIGeom';
 import { arrRem, arrIdxAdd } from '../util/arrs';
 import { vecDot } from '../geom/vectors';
-import { GIGeomData } from './GIGeomData';
+import { GIGeomData } from './data/GIGeomData';
 
 /**
  * Class for geometry.
