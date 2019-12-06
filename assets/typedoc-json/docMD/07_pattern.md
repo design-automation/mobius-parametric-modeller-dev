@@ -45,7 +45,7 @@ If integer, same number for x and y; if list of two numbers, number for x and y 
   * *origin:* XYZ coordinates as a list of three numbers.  
   * *size:* Size of the box. If one number, assume equal lengths.
 If list of two or three numbers, specifies x y z lengths respectively.  
-  * *num_posis:* Number of positions. If number, assume equal number of positions.
+  * *num_positions:* Number of positions. If number, assume equal number of positions.
 If list of two or three numbers, specifies x y z numbers respectively.  
   * *method:* Enum  
 * **Returns:** Entities, a list of 6 positions.  
