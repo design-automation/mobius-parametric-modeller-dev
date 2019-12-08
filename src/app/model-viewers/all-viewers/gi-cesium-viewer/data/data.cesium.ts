@@ -1,6 +1,6 @@
-import { GIModel } from '@libs/geo-info/GIModel';
+import { GIModel } from '@assets/libs/sim/SIModel';
 import { CesiumSettings } from '../gi-cesium-viewer.settings';
-import { EEntType, Txyz, TAttribDataTypes, LONGLAT } from '@libs/geo-info/common';
+import { EEntType, Txyz, TAttribDataTypes, LONGLAT } from '@libs/sim/common';
 // import { HereMapsImageryProvider } from './HereMapsImageryProvider.js';
 /**
  * Cesium data

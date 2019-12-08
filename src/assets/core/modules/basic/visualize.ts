@@ -7,10 +7,10 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { Txyz, TColor, EAttribNames, EAttribDataTypeStrs, EAttribPush, TRay, TPlane, TBBox } from '@libs/geo-info/common';
-import { TId, EEntType, ESort, TEntTypeIdx } from '@libs/geo-info/common';
-import { isEmptyArr, getArrDepth, idsMake } from '@libs/geo-info/id';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { Txyz, TColor, EAttribNames, EAttribDataTypeStrs, EAttribPush, TRay, TPlane, TBBox } from '@libs/sim/common';
+import { TId, EEntType, ESort, TEntTypeIdx } from '@libs/sim/common';
+import { isEmptyArr, getArrDepth, idsMake } from '@libs/sim/id';
 import { checkIDs, IDcheckObj, checkArgTypes, TypeCheckObj } from '../_check_args';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 import { min, max } from '@assets/core/inline/_math';

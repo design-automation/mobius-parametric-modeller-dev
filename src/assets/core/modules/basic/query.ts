@@ -9,9 +9,9 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, EEntType, ESort, TEntTypeIdx, EFilterOperatorTypes, TAttribDataTypes} from '@libs/geo-info/common';
-import { idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { TId, EEntType, ESort, TEntTypeIdx, EFilterOperatorTypes, TAttribDataTypes} from '@libs/sim/common';
+import { idsMake, getArrDepth, isEmptyArr } from '@libs/sim/id';
 import { checkIDs, IDcheckObj, TypeCheckObj, checkArgTypes, checkAttribNameIdxKey, checkAttribValue } from '../_check_args';
 // ================================================================================================
 export enum _EEntType {

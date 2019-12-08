@@ -3,10 +3,10 @@ import {
   ViewChildren, QueryList, Output, EventEmitter, ViewChild, DoCheck
 } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { GIModel } from '@libs/geo-info/GIModel';
+import { GIModel } from '@assets/libs/sim/SIModel';
 import { DataService } from '../data/data.service';
-import { EEntType, EEntTypeStr } from '@libs/geo-info/common';
-import { GIAttribsThreejs } from '@assets/libs/geo-info/attribs/GIAttribsThreejs';
+import { EEntType, EEntTypeStr } from '@libs/sim/common';
+import { GIAttribsThreejs } from '@assets/libs/sim/attribs/AttribsThreejs';
 import { ATabsComponent } from './tabs.component';
 import { sortByKey } from '@libs/util/maps';
 

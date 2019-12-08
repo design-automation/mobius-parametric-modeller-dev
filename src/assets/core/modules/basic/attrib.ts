@@ -9,10 +9,10 @@
  *
  */
 import __ from 'underscore';
-import { GIModel } from '@libs/geo-info/GIModel';
+import { GIModel } from '@assets/libs/sim/SIModel';
 import { TId, EEntType, TEntTypeIdx,
-    EAttribPush, TAttribDataTypes, EEntTypeStr, EAttribDataTypeStrs} from '@libs/geo-info/common';
-import { getArrDepth } from '@libs/geo-info/id';
+    EAttribPush, TAttribDataTypes, EEntTypeStr, EAttribDataTypeStrs} from '@libs/sim/common';
+import { getArrDepth } from '@libs/sim/id';
 import { checkIDs, IDcheckObj, checkAttribValue, checkAttribName,
     checkAttribIdxKey, checkAttribNameIdxKey } from '../_check_args';
 // ================================================================================================

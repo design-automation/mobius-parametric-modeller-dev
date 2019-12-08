@@ -8,9 +8,9 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack, IObjPack} from '@libs/geo-info/common';
-import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/geo-info/id';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack, IObjPack} from '@libs/sim/common';
+import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/sim/id';
 import { vecAdd, vecSum, vecDiv, vecFromTo, vecNorm, vecCross, vecSetLen, vecLen, vecDot } from '@libs/geom/vectors';
 import { checkArgTypes, checkIDs, IDcheckObj, TypeCheckObj} from '../_check_args';
 import { rotateMatrix, multMatrix, scaleMatrix, mirrorMatrix, xfromSourceTargetMatrix } from '@libs/geom/matrix';

@@ -11,8 +11,8 @@
  */
 
 import { checkArgTypes, TypeCheckObj } from '../_check_args';
-import { idsBreak } from '@libs/geo-info/id';
-import { TEntTypeIdx } from '@libs/geo-info/common';
+import { idsBreak } from '@libs/sim/id';
+import { TEntTypeIdx } from '@libs/sim/common';
 
 
 // ================================================================================================

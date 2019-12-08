@@ -6,10 +6,10 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
+import { GIModel } from '@assets/libs/sim/SIModel';
 
 import { download } from '@libs/filesys/download';
-import { EEntType, IModelData } from '@libs/geo-info/common';
+import { EEntType, IModelData } from '@libs/sim/common';
 import { __merge__ } from '../_model';
 import { _model } from '..';
 

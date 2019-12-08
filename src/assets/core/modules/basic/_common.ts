@@ -6,12 +6,12 @@
 
 /**
  *
- */import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, TPlane, Txyz, EEntType, TRay, TEntTypeIdx, EEntTypeStr, Txy} from '@libs/geo-info/common';
+ */import { GIModel } from '@assets/libs/sim/SIModel';
+import { TId, TPlane, Txyz, EEntType, TRay, TEntTypeIdx, EEntTypeStr, Txy} from '@libs/sim/common';
 import { checkArgTypes, TypeCheckObj, checkIDs, IDcheckObj} from '../_check_args';
-import { getArrDepth, isColl } from '@assets/libs/geo-info/id';
+import { getArrDepth, isColl } from '@assets/libs/sim/id';
 import { vecDiv, vecSum, vecAvg, vecFromTo, vecLen, vecCross, vecNorm, vecAdd, vecSetLen, vecDot } from '@assets/libs/geom/vectors';
-import { isRay, isPlane, isVec3 } from '@assets/libs/geo-info/virtual';
+import { isRay, isPlane, isVec3 } from '@assets/libs/sim/virtual';
 import { rayFromPln } from '@assets/core/inline/_ray';
 import { plnFromRay } from '@assets/core/inline/_plane';
 const EPS = 1e-8;

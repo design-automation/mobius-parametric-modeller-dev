@@ -8,8 +8,8 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, TPlane } from '@libs/geo-info/common';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { TId, TPlane } from '@libs/sim/common';
 import { __merge__ } from '../_model';
 import { checkIDs, checkArgTypes, checkIDnTypes, IDcheckObj} from '../_check_args';
 

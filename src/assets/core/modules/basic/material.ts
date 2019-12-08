@@ -9,11 +9,11 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { Txyz, EAttribNames, EAttribDataTypeStrs } from '@libs/geo-info/common';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { Txyz, EAttribNames, EAttribDataTypeStrs } from '@libs/sim/common';
 import * as THREE from 'three';
-import { TId, EEntType, TEntTypeIdx } from '@libs/geo-info/common';
-import { isEmptyArr } from '@libs/geo-info/id';
+import { TId, EEntType, TEntTypeIdx } from '@libs/sim/common';
+import { isEmptyArr } from '@libs/sim/id';
 import { checkIDs, IDcheckObj, checkArgTypes, TypeCheckObj } from '../_check_args';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 

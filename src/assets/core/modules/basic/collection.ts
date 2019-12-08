@@ -6,9 +6,9 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, EEntType, TEntTypeIdx, EFilterOperatorTypes } from '@libs/geo-info/common';
-import { isPoint, isPline, isPgon, isColl, idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { TId, EEntType, TEntTypeIdx, EFilterOperatorTypes } from '@libs/sim/common';
+import { isPoint, isPline, isPgon, isColl, idsMake, getArrDepth, isEmptyArr } from '@libs/sim/id';
 import { __merge__} from '../_model';
 import { _model } from '..';
 import { checkArgTypes, checkIDs, IDcheckObj, TypeCheckObj } from '../_check_args';

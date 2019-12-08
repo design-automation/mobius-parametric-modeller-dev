@@ -7,10 +7,10 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { EAttribNames, TId, EEntType, Txyz, TEntTypeIdx, TPlane, Txy } from '@libs/geo-info/common';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { EAttribNames, TId, EEntType, Txyz, TEntTypeIdx, TPlane, Txy } from '@libs/sim/common';
 import { isPoint, isPline, isPgon, isDim0, isDim2, isColl, isPosi,
-    isEdge, isFace, idsMake, idIndicies, getArrDepth, isEmptyArr, isWire } from '@libs/geo-info/id';
+    isEdge, isFace, idsMake, idIndicies, getArrDepth, isEmptyArr, isWire } from '@libs/sim/id';
 import { __merge__} from '../_model';
 import { _model } from '..';
 import { vecDiv, vecMult, interpByNum, interpByLen, vecAdd, vecFromTo, vecLen, vecSetLen } from '@libs/geom/vectors';

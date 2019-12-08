@@ -1,4 +1,4 @@
-import { GIModel } from '@libs/geo-info/GIModel';
+import { GIModel } from '@assets/libs/sim/SIModel';
 // import @angular stuff
 import {
     Component, OnInit, Input, Output, EventEmitter,

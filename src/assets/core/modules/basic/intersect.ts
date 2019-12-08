@@ -6,10 +6,10 @@
  *
  */
 
-import { TId, Txyz, EEntType, TPlane, TRay, TEntTypeIdx, TBBox } from '@libs/geo-info/common';
+import { TId, Txyz, EEntType, TPlane, TRay, TEntTypeIdx, TBBox } from '@libs/sim/common';
 import { checkArgTypes, checkIDs, TypeCheckObj, IDcheckObj } from '../_check_args';
-import { GIModel } from '@libs/geo-info/GIModel';
-import { getArrDepth } from '@libs/geo-info/id';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { getArrDepth } from '@libs/sim/id';
 import { vecCross} from '@libs/geom/vectors';
 import { _normal } from './calc';
 import * as THREE from 'three';

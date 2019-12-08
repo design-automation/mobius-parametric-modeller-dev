@@ -8,9 +8,9 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, Txyz, EEntType, TEntTypeIdx, TRay, TPlane, Txy, XYPLANE } from '@libs/geo-info/common';
-import { isPline, isWire, isEdge, isPgon, isFace, getArrDepth, isVert, isPosi, isPoint, idsMakeFromIndicies } from '@libs/geo-info/id';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { TId, Txyz, EEntType, TEntTypeIdx, TRay, TPlane, Txy, XYPLANE } from '@libs/sim/common';
+import { isPline, isWire, isEdge, isPgon, isFace, getArrDepth, isVert, isPosi, isPoint, idsMakeFromIndicies } from '@libs/sim/id';
 import { distance } from '@libs/geom/distance';
 import { vecSum, vecDiv, vecAdd, vecSub, vecCross, vecMult, vecFromTo, vecLen, vecDot, vecNorm, vecAng2 } from '@libs/geom/vectors';
 import { triangulate } from '@libs/triangulate/triangulate';

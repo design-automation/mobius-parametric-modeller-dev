@@ -1,5 +1,5 @@
-import { GIModel } from '@libs/geo-info/GIModel';
-import { EEntType, EEntTypeStr } from '@libs/geo-info/common';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { EEntType, EEntTypeStr } from '@libs/sim/common';
 import { DataThreejs } from './data.threejs';
 // import @angular stuff
 import { Injectable } from '@angular/core';

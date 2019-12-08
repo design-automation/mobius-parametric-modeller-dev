@@ -1,4 +1,4 @@
-import { GIModel } from '@libs/geo-info/GIModel';
+import { GIModel } from '@assets/libs/sim/SIModel';
 // import @angular stuff
 import {
     Component, OnInit, Input, Output, EventEmitter,
@@ -7,7 +7,7 @@ import {
 import { DataThreejs } from '../data/data.threejs';
 // import { IModel } from 'gs-json';
 import { DataService } from '../data/data.service';
-import { EEntType, EEntStrToGeomArray, EEntTypeStr, Txyz } from '@libs/geo-info/common';
+import { EEntType, EEntStrToGeomArray, EEntTypeStr, Txyz } from '@libs/sim/common';
 import { DropdownMenuComponent } from '../html/dropdown-menu.component';
 import { ModalService } from '../html/modal-window.service';
 import { ThreeJSViewerService } from './threejs-viewer.service';

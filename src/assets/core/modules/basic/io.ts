@@ -6,15 +6,15 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { importObj, exportObj } from '@assets/libs/geo-info/io/io_obj';
-import { importDae, exportDae } from '@assets/libs/geo-info/io/io_dae';
-import { importGeojson } from '@assets/libs/geo-info/io/io_geojson';
+import { GIModel } from '@assets/libs/sim/SIModel';
+import { importObj, exportObj } from '@assets/libs/sim/io/io_obj';
+import { importDae, exportDae } from '@assets/libs/sim/io/io_dae';
+import { importGeojson } from '@assets/libs/sim/io/io_geojson';
 import { download } from '@libs/filesys/download';
-import { TId, EEntType, Txyz, TPlane, TRay, IGeomPack, IModelData } from '@libs/geo-info/common';
+import { TId, EEntType, Txyz, TPlane, TRay, IGeomPack, IModelData } from '@libs/sim/common';
 import { __merge__ } from '../_model';
 import { _model } from '..';
-import { idsMake } from '@libs/geo-info/id';
+import { idsMake } from '@libs/sim/id';
 
 // ================================================================================================
 declare global {
