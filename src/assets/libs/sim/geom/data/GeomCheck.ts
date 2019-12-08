@@ -1,19 +1,19 @@
 import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from '../../common';
-import { GIGeom } from '../Geom';
-import { GIGeomData } from './GeomData';
+import { Geom } from '../Geom';
+import { GeomData } from './GeomData';
 
 
 /**
  * Class for geometry.
  */
-export class GIGeomCheck {
-    private _geom: GIGeom;
+export class GeomCheck {
+    private _geom: Geom;
     private _geom_arrays: IGeomArrays;
-    public _data: GIGeomData;
+    public _data: GeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays, data: GeomData) {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
         this._data = data;

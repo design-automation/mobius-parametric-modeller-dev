@@ -6,7 +6,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 
 import { download } from '@libs/filesys/download';
 import { EEntType, IModelData } from '@libs/sim/common';
@@ -29,7 +29,7 @@ import { _model } from '..';
  * @example util.ExportIO('my_model.json')
  * @example_info Exports all the data in the model as an OBJ.
  */
-export function ExportIO(__model__: GIModel, __console__: string[], __constList__: any, __fileName__: string,
+export function ExportIO(__model__: SIModel, __console__: string[], __constList__: any, __fileName__: string,
                         file_name: string, exportParams: _EIOExportParams, exportContent: _EIOExportContents): boolean {
     // let gi_data: string = JSON.stringify(__model__.getData());
     // gi_data = gi_data.replace(/\\\"/g, '\\\\\\"'); // TODO temporary fix
@@ -99,7 +99,7 @@ function convertString(value) {
  * @param __constList__
  * @returns Text that summarises what is in the model.
  */
-export function ParamInfo(__model__: GIModel, __constList__: {}): string {
+export function ParamInfo(__model__: SIModel, __constList__: {}): string {
     return JSON.stringify(__constList__);
 }
 // ================================================================================================
@@ -109,7 +109,7 @@ export function ParamInfo(__model__: GIModel, __constList__: {}): string {
  * @param __model__
  * @returns Text that summarises what is in the model, click print to see this text.
  */
-export function ModelInfo(__model__: GIModel): string {
+export function ModelInfo(__model__: SIModel): string {
     return JSON.stringify(
         {
             'geometry': {
@@ -156,9 +156,9 @@ export enum _ECOmpareMethod {
  * @param method Enum, method used to compare this model to the other model specified in the gi_model parameter.
  * @returns Text that summarises the comparison between the two models.
  */
-export function ModelCompare(__model__: GIModel, gi_model: string, method: _ECOmpareMethod): string {
+export function ModelCompare(__model__: SIModel, gi_model: string, method: _ECOmpareMethod): string {
     const gi_obj: IModelData = JSON.parse(gi_model) as IModelData;
-    const other_model = new GIModel(gi_obj);
+    const other_model = new SIModel(gi_obj);
     let result: {score: number, total: number, comment: string} = null;
     switch (method) {
         case _ECOmpareMethod.THIS_IS_SUBSET:
@@ -182,7 +182,7 @@ export function ModelCompare(__model__: GIModel, gi_model: string, method: _ECOm
  * @param __model__
  * @returns Text that summarises what is in the model, click print to see this text.
  */
-export function ModelCheck(__model__: GIModel): string {
+export function ModelCheck(__model__: SIModel): string {
     const check: string[] = __model__.check();
     if (check.length > 0) {
         console.log(__model__);

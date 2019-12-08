@@ -1,4 +1,4 @@
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { EEntType, EEntTypeStr } from '@libs/sim/common';
 import { DataThreejs } from './data.threejs';
 // import @angular stuff
@@ -11,7 +11,7 @@ import { DataService as DS } from '@services';
 @Injectable()
 export class DataService {
     // GI Model
-    // private _model: GIModel;
+    // private _model: SIModel;
     private _data_threejs: DataThreejs;
 
     selecting: any = [];

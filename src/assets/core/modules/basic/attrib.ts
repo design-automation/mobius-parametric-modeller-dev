@@ -9,7 +9,7 @@
  *
  */
 import __ from 'underscore';
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { TId, EEntType, TEntTypeIdx,
     EAttribPush, TAttribDataTypes, EEntTypeStr, EAttribDataTypeStrs} from '@libs/sim/common';
 import { getArrDepth } from '@libs/sim/id';
@@ -84,7 +84,7 @@ function _getEntTypeFromStr(ent_type_str: _EEntType|_EEntTypeAndMod): EEntType {
  * @param value The attribute value, or list of values.
  * @param method Enum
  */
-export function Set(__model__: GIModel, entities: TId|TId[]|TId[][],
+export function Set(__model__: SIModel, entities: TId|TId[]|TId[][],
         attrib: string|[string, number|string], value: TAttribDataTypes|TAttribDataTypes[], method: _ESet): void {
     // if entities is null, then we are setting model attributes
     // @ts-ignore
@@ -104,7 +104,7 @@ export enum _ESet {
     ONE_VALUE =   'one_value',
     MANY_VALUES =   'many_values'
 }
-function _setAttrib(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
+function _setAttrib(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
         attrib_name: string, attrib_values: TAttribDataTypes|TAttribDataTypes[], idx_or_key: number|string, method: _ESet): void {
     // check the ents_arr
     if (ents_arr === null) {
@@ -124,7 +124,7 @@ function _setAttrib(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
     }
     return;
 }
-function _setModelAttrib(__model__: GIModel, attrib_name: string, attrib_value: TAttribDataTypes, idx_or_key?: number|string): void {
+function _setModelAttrib(__model__: SIModel, attrib_name: string, attrib_value: TAttribDataTypes, idx_or_key?: number|string): void {
     if (typeof idx_or_key === 'number') {
         __model__.attribs.add.setModelAttribListIdxVal(attrib_name, idx_or_key, attrib_value as number);
     } if (typeof idx_or_key === 'string') {
@@ -133,7 +133,7 @@ function _setModelAttrib(__model__: GIModel, attrib_name: string, attrib_value: 
         __model__.attribs.add.setModelAttribVal(attrib_name, attrib_value);
     }
 }
-function _setEachEntDifferentAttribValue(__model__: GIModel, ents_arr: TEntTypeIdx[],
+function _setEachEntDifferentAttribValue(__model__: SIModel, ents_arr: TEntTypeIdx[],
         attrib_name: string, attrib_values: TAttribDataTypes[], idx_or_key?: number|string): void {
     if (ents_arr.length !== attrib_values.length) {
         throw new Error(
@@ -156,7 +156,7 @@ function _setEachEntDifferentAttribValue(__model__: GIModel, ents_arr: TEntTypeI
         }
     }
 }
-function _setEachEntSameAttribValue(__model__: GIModel, ents_arr: TEntTypeIdx[],
+function _setEachEntSameAttribValue(__model__: SIModel, ents_arr: TEntTypeIdx[],
         attrib_name: string, attrib_value: TAttribDataTypes, idx_or_key?: number|string): void {
     // --- Error Check ---
     const fn_name = 'entities@' + attrib_name;
@@ -172,7 +172,7 @@ function _setEachEntSameAttribValue(__model__: GIModel, ents_arr: TEntTypeIdx[],
         __model__.attribs.add.setAttribVal(ent_type, ents_i, attrib_name, attrib_value);
     }
 }
-function _getEntsIndices(__model__: GIModel, ents_arr: TEntTypeIdx[]): number[] {
+function _getEntsIndices(__model__: SIModel, ents_arr: TEntTypeIdx[]): number[] {
     const ent_type: number = ents_arr[0][0];
     const ents_i: number[] = [];
     for (let i = 0; i < ents_arr.length; i++) {
@@ -194,7 +194,7 @@ function _getEntsIndices(__model__: GIModel, ents_arr: TEntTypeIdx[]): number[] 
  * @param attrib The attribute. Can be `name`, `[name, index]`, or `[name, key]`.
  * @returns One attribute value, or a list of attribute values.
  */
-export function Get(__model__: GIModel, entities: TId|TId[]|TId[][],
+export function Get(__model__: SIModel, entities: TId|TId[]|TId[][],
         attrib: string|[string, number|string]): TAttribDataTypes|TAttribDataTypes[] {
     // @ts-ignore
     if (entities !== null && getArrDepth(entities) === 2) { entities = __.flatten(entities); }
@@ -209,7 +209,7 @@ export function Get(__model__: GIModel, entities: TId|TId[]|TId[][],
     // --- Error Check ---
     return _get(__model__, ents_arr, attrib_name, attrib_idx_key);
 }
-function _get(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
+function _get(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
         attrib_name: string, attrib_idx_key?: number|string): TAttribDataTypes|TAttribDataTypes[] {
     const has_idx_key: boolean = attrib_idx_key !== null && attrib_idx_key !== undefined;
     if (ents_arr === null) {
@@ -254,7 +254,7 @@ function _get(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
  * @param data_type_sel Enum, the data type for this attribute
  * @param attribs A single attribute name, or a list of attribute names.
  */
-export function Add(__model__: GIModel, ent_type_sel: _EEntTypeAndMod, data_type_sel: _EDataType, attribs: string|string[]): void {
+export function Add(__model__: SIModel, ent_type_sel: _EEntTypeAndMod, data_type_sel: _EDataType, attribs: string|string[]): void {
     // --- Error Check ---
     const fn_name = 'attrib.Add';
     const arg_name = 'ent_type_sel';
@@ -309,7 +309,7 @@ export function Add(__model__: GIModel, ent_type_sel: _EEntTypeAndMod, data_type
  * @param ent_type_sel Enum, the attribute entity type.
  * @param attribs A single attribute name, or a list of attribute names. In 'null' all attributes will be deleted.
  */
-export function Delete(__model__: GIModel, ent_type_sel: _EEntTypeAndMod, attribs: string|string[]): void {
+export function Delete(__model__: SIModel, ent_type_sel: _EEntTypeAndMod, attribs: string|string[]): void {
     // --- Error Check ---
     const fn_name = 'attrib.Delete';
     const arg_name = 'ent_type_sel';
@@ -344,7 +344,7 @@ export function Delete(__model__: GIModel, ent_type_sel: _EEntTypeAndMod, attrib
  * @param old_attrib The old attribute name.
  * @param new_attrib The old attribute name.
  */
-export function Rename(__model__: GIModel, ent_type_sel: _EEntTypeAndMod, old_attrib: string, new_attrib: string): void {
+export function Rename(__model__: SIModel, ent_type_sel: _EEntTypeAndMod, old_attrib: string, new_attrib: string): void {
     if (ent_type_sel === 'ps' && old_attrib === 'xyz') { return; }
     // --- Error Check ---
     const fn_name = 'attrib.Rename';
@@ -372,7 +372,7 @@ export function Rename(__model__: GIModel, ent_type_sel: _EEntTypeAndMod, old_at
  * @param ent_type_sel Enum, the traget entity type where the attribute values should be pushed to.
  * @param method_sel Enum, the method for aggregating attribute values in cases where aggregation is necessary.
  */
-export function Push(__model__: GIModel, entities: TId|TId[],
+export function Push(__model__: SIModel, entities: TId|TId[],
         attrib: string|[string, number|string]|[string, number|string, string]|[string, number|string, string, number|string],
         ent_type_sel: _EEntTypeAndMod, method_sel: _EPushMethodSel): void {
     // @ts-ignore

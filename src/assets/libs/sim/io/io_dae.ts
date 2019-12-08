@@ -1,4 +1,4 @@
-import { GIModel } from '../SIModel';
+import { SIModel } from '../SIModel';
 import { TColor, TNormal, TTexture, EAttribNames, Txyz, EEntType, TAttribDataTypes } from '../common';
 import { area } from '@libs/geom/triangle';
 import { distance } from '@libs/geom/distance';
@@ -6,8 +6,8 @@ import { distance } from '@libs/geom/distance';
 /**
  * Import obj
  */
-export function importDae(obj_str: string): GIModel {
-    const model: GIModel = new GIModel();
+export function importDae(obj_str: string): SIModel {
+    const model: SIModel = new SIModel();
     throw new Error('Not implemented');
     return model;
 }
@@ -135,7 +135,7 @@ function getNodesWithInstGeoms(id: string, inst_geoms: string): string {
 /**
  * Process polygons
  */
-function processColls(model: GIModel): void {
+function processColls(model: SIModel): void {
     const colls_map: Map<number, number[]> = new Map();
     // go through the collections
     const colls_i: number[] = model.geom.data.getEnts(EEntType.COLL, false);
@@ -152,13 +152,13 @@ function processColls(model: GIModel): void {
 
     }
 }
-function processPgonInColl(model: GIModel, pgon_i: number) {
+function processPgonInColl(model: SIModel, pgon_i: number) {
 
 }
 /**
  * Process polygons
  */
-function processMaterialPgon(model: GIModel, pgon_i: number, has_color_attrib: boolean,
+function processMaterialPgon(model: SIModel, pgon_i: number, has_color_attrib: boolean,
         materials_map: Map<string, string>, material_effects_map: Map<string, string>,
         materials_rev_map: Map<string, string>): string {
     const pgon_verts_i: number[] = model.geom.data.navAnyToVert(EEntType.PGON, pgon_i);
@@ -185,7 +185,7 @@ function processMaterialPgon(model: GIModel, pgon_i: number, has_color_attrib: b
     }
     return material_id;
 }
-function processGeomMeshPgon(model: GIModel, pgon_i: number, material_id: string,
+function processGeomMeshPgon(model: SIModel, pgon_i: number, material_id: string,
         geom_meshes_map: Map<string, string>): void {
     const id = 'pg' + pgon_i;
     let xyz_str = '';
@@ -217,7 +217,7 @@ function processGeomMeshPgon(model: GIModel, pgon_i: number, material_id: string
 /**
  * Process polylines
  */
-function processMaterialPline(model: GIModel, pline_i: number, has_color_attrib: boolean,
+function processMaterialPline(model: SIModel, pline_i: number, has_color_attrib: boolean,
         materials_map: Map<string, string>, material_effects_map: Map<string, string>,
         materials_rev_map: Map<string, string>): string {
     const pline_verts_i: number[] = model.geom.data.navAnyToVert(EEntType.PLINE, pline_i);
@@ -244,7 +244,7 @@ function processMaterialPline(model: GIModel, pline_i: number, has_color_attrib:
     }
     return material_id;
 }
-function processGeomMeshPline(model: GIModel, pline_i: number, material_id: string,
+function processGeomMeshPline(model: SIModel, pline_i: number, material_id: string,
         geom_meshes_map: Map<string, string>): void {
     const id = 'pl' + pline_i;
     let xyz_str = '';
@@ -277,7 +277,7 @@ function processGeomMeshPline(model: GIModel, pline_i: number, material_id: stri
 /**
  * Export to dae collada file
  */
-export function exportDae(model: GIModel): string {
+export function exportDae(model: SIModel): string {
     // do we have color, texture, normal?
     const has_color_attrib: boolean = model.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.COLOR);
     const has_normal_attrib: boolean = model.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.NORMAL);

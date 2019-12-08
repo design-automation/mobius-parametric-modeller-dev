@@ -1,16 +1,16 @@
 import { IGeomArrays } from '../../common';
-import { GIGeom } from '../Geom';
-import { GIGeomNav } from './GeomNav';
+import { Geom } from '../Geom';
+import { GeomNav } from './GeomNav';
 
 /**
  * Linking and unlinking entities.
  *
  */
-export class GIGeomLink extends GIGeomNav {
+export class GeomLink extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
     // ============================================================================

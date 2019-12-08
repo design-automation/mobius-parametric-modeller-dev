@@ -9,7 +9,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { Txyz, EAttribNames, EAttribDataTypeStrs } from '@libs/sim/common';
 import * as THREE from 'three';
 import { TId, EEntType, TEntTypeIdx } from '@libs/sim/common';
@@ -64,7 +64,7 @@ function _getTjsColor(col: Txyz): THREE.Color {
     return new THREE.Color(col[0], col[1], col[2]);
 }
 
-function _setMaterialModelAttrib(__model__: GIModel, name: string, settings_obj: object) {
+function _setMaterialModelAttrib(__model__: SIModel, name: string, settings_obj: object) {
     // if the material already exists, then existing settings will be added
     // but new settings will take precedence
     if (__model__.attribs.query.hasModelAttrib(name)) {
@@ -104,7 +104,7 @@ enum _EMaterialType {
  * @param color The name of the material.
  * @returns void
  */
-export function Set(__model__: GIModel, entities: TId|TId[], material: string): void {
+export function Set(__model__: SIModel, entities: TId|TId[], material: string): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -117,7 +117,7 @@ export function Set(__model__: GIModel, entities: TId|TId[], material: string): 
         _material(__model__, ents_arr, material);
     }
 }
-function _material(__model__: GIModel, ents_arr: TEntTypeIdx[], material: string): void {
+function _material(__model__: SIModel, ents_arr: TEntTypeIdx[], material: string): void {
     if (!__model__.attribs.query.hasAttrib(EEntType.PGON, EAttribNames.MATERIAL)) {
         __model__.attribs.add.addAttrib(EEntType.PGON, EAttribNames.MATERIAL, EAttribDataTypeStrs.STRING);
     }
@@ -140,7 +140,7 @@ function _material(__model__: GIModel, ents_arr: TEntTypeIdx[], material: string
  * @param opacity The opacity of the glass, between 0 (totally transparent) and 1 (totally opaque).
  * @returns void
  */
-export function Glass(__model__: GIModel, name: string, opacity: number): void {
+export function Glass(__model__: SIModel, name: string, opacity: number): void {
     // --- Error Check ---
     const fn_name = 'material.Glass';
     checkArgTypes(fn_name, 'name', name, [TypeCheckObj.isString]);
@@ -186,7 +186,7 @@ export function Glass(__model__: GIModel, name: string, opacity: number): void {
  * @param select_vert_colors Enum, select whether to use vertex colors if they exist.
  * @returns void
  */
-export function Basic(__model__: GIModel, name: string,
+export function Basic(__model__: SIModel, name: string,
             color: Txyz,
             opacity: number,
             select_side: _ESide,
@@ -228,7 +228,7 @@ export function Basic(__model__: GIModel, name: string,
  * @param emissive The emissive color, as [r, g, b] values between 0 and 1. White is [1, 1, 1].
  * @returns void
  */
-export function Lambert(__model__: GIModel, name: string, emissive: Txyz): void {
+export function Lambert(__model__: SIModel, name: string, emissive: Txyz): void {
     // --- Error Check ---
     const fn_name = 'material.Lambert';
     checkArgTypes(fn_name, 'name', name, [TypeCheckObj.isString]);
@@ -257,7 +257,7 @@ export function Lambert(__model__: GIModel, name: string, emissive: Txyz): void 
  * @param shininess The shininess, between 0 and 100.
  * @returns void
  */
-export function Phong(__model__: GIModel, name: string,
+export function Phong(__model__: SIModel, name: string,
             emissive: Txyz,
             specular: Txyz,
             shininess: number
@@ -298,7 +298,7 @@ export function Phong(__model__: GIModel, name: string,
  * @param reflectivity The reflectivity, between 0 (non-reflective) and 1 (reflective).
  * @returns void
  */
-export function Standard(__model__: GIModel, name: string,
+export function Standard(__model__: SIModel, name: string,
             emissive: Txyz,
             roughness: number,
             metalness: number
@@ -339,7 +339,7 @@ export function Standard(__model__: GIModel, name: string,
  * @param reflectivity The reflectivity, between 0 (non-reflective) and 1 (reflective).
  * @returns void
  */
-export function Physical(__model__: GIModel, name: string,
+export function Physical(__model__: SIModel, name: string,
             emissive: Txyz,
             roughness: number,
             metalness: number,

@@ -1,29 +1,29 @@
-import { GIGeom } from './geom/Geom';
-import { GIAttribs } from './attribs/Attribs';
+import { Geom } from './geom/Geom';
+import { Attribs } from './attribs/Attribs';
 import { IModelData, IGeomPack, Txy, Txyz } from './common';
 import { GICalc } from './SIModelCalc';
-import { GIModelComparator } from './SIModelComparator';
-import { GIModelThreejs } from './SIModelThreejs';
+import { SIModelComparator } from './SIModelComparator';
+import { SIModelThreejs } from './SIModelThreejs';
 
 /**
  * Geo-info model class.
  */
-export class GIModel {
+export class SIModel {
     [x: string]: any; // TODO: What is this???
-    public geom: GIGeom;
-    public attribs: GIAttribs;
+    public geom: Geom;
+    public attribs: Attribs;
     public calc: GICalc;
-    public comparator: GIModelComparator;
-    public threejs: GIModelThreejs;
+    public comparator: SIModelComparator;
+    public threejs: SIModelThreejs;
     /**
      * Constructor
      */
     constructor(model_data?: IModelData) {
-        this.geom = new GIGeom(this);
-        this.attribs = new GIAttribs(this);
+        this.geom = new Geom(this);
+        this.attribs = new Attribs(this);
         this.calc = new GICalc(this.geom, this.attribs);
-        this.comparator = new GIModelComparator(this);
-        this.threejs = new GIModelThreejs(this);
+        this.comparator = new SIModelComparator(this);
+        this.threejs = new SIModelThreejs(this);
         if (model_data) {
             this.setData(model_data);
         }
@@ -33,7 +33,7 @@ export class GIModel {
      * The existing data in this model is not deleted.
      * @param model_data The GI model.
      */
-    public merge(model: GIModel): void {
+    public merge(model: SIModel): void {
         this.attribs.io.merge(model.attribs._attribs_maps); // warning: must be before this.geom.io.merge()
         this.geom.io.merge(model.geom._geom_arrays);
     }
@@ -72,7 +72,7 @@ export class GIModel {
      * ~
      * @param model The model to compare with.
      */
-    public compare(model: GIModel, normalize: boolean, check_geom_equality: boolean, check_attrib_equality: boolean):
+    public compare(model: SIModel, normalize: boolean, check_geom_equality: boolean, check_attrib_equality: boolean):
             {percent: number, score: number, total: number, comment: string} {
         return this.comparator.compare(model, normalize, check_geom_equality, check_attrib_equality);
     }

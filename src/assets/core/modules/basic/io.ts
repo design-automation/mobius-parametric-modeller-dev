@@ -6,7 +6,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { importObj, exportObj } from '@assets/libs/sim/io/io_obj';
 import { importDae, exportDae } from '@assets/libs/sim/io/io_dae';
 import { importGeojson } from '@assets/libs/sim/io/io_geojson';
@@ -46,7 +46,7 @@ export enum _EIODataTarget {
  * @param data The data to be read (from URL or from Local Storage).
  * @returns the data.
  */
-export function ReadData(__model__: GIModel, data: string): string {
+export function ReadData(__model__: SIModel, data: string): string {
     return data;
 }
 // ================================================================================================
@@ -58,7 +58,7 @@ export function ReadData(__model__: GIModel, data: string): string {
  * @param data_target Enum, where the data is to be exported to.
  * @returns whether the data is successfully saved.
  */
-export function WriteData(__model__: GIModel, data: string, file_name: string, data_target: _EIODataTarget): Boolean {
+export function WriteData(__model__: SIModel, data: string, file_name: string, data_target: _EIODataTarget): Boolean {
     try {
         if (data_target === _EIODataTarget.DEFAULT) {
             return download(data, file_name);
@@ -80,7 +80,7 @@ export function WriteData(__model__: GIModel, data: string, file_name: string, d
  * @example util.ImportData (file1_data, obj)
  * @example_info Imports the data from file1 (defining the .obj file uploaded in 'Start' node).
  */
-export function ImportToModel(__model__: GIModel, model_data: string, data_format: _EIODataFormat): TId[] {
+export function ImportToModel(__model__: SIModel, model_data: string, data_format: _EIODataFormat): TId[] {
     let geom_pack: IGeomPack;
     switch (data_format) {
         case _EIODataFormat.GI:
@@ -89,7 +89,7 @@ export function ImportToModel(__model__: GIModel, model_data: string, data_forma
             break;
         case _EIODataFormat.OBJ:
             throw new Error('Not implemented');
-            // const obj_model: GIModel = importObj(model_data);
+            // const obj_model: SIModel = importObj(model_data);
             // geom_pack = __merge__(__model__, obj_model);
             break;
         case _EIODataFormat.GEOJSON:
@@ -128,7 +128,7 @@ export enum _EIOExportDataFormat {
  * @example util.ExportData ('my_model.obj', obj)
  * @example_info Exports all the data in the model as an OBJ.
  */
-export function ExportFromModel(__model__: GIModel, entities: TId|TId[]|TId[][],
+export function ExportFromModel(__model__: SIModel, entities: TId|TId[]|TId[][],
         file_name: string, data_format: _EIOExportDataFormat, data_target: _EIODataTarget): boolean {
     // TODO implement export of entities
     switch (data_format) {

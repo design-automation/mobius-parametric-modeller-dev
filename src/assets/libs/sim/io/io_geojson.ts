@@ -1,4 +1,4 @@
-import { GIModel } from '../SIModel';
+import { SIModel } from '../SIModel';
 import { TNormal, TTexture, EAttribNames, Txyz, EEntType, EAttribDataTypeStrs, TAttribDataTypes, LONGLAT, IGeomPack } from '../common';
 import { getArrDepth } from '../id';
 import proj4 from 'proj4';
@@ -16,7 +16,7 @@ enum EGeojsoFeatureType {
  /**
  * Import geojson
  */
-export function importGeojson(model: GIModel, geojson_str: string, elevation: number): IGeomPack {
+export function importGeojson(model: SIModel, geojson_str: string, elevation: number): IGeomPack {
     // parse the json data str
     const geojson_obj: any = JSON.parse(geojson_str);
     const proj_obj: proj4.Converter = _createProjection(model, geojson_obj);
@@ -106,7 +106,7 @@ export function importGeojson(model: GIModel, geojson_str: string, elevation: nu
  * @param model The model.
  * @param point The features to add.
  */
-function _createProjection(model: GIModel, geojson_obj: any): proj4.Converter {
+function _createProjection(model: SIModel, geojson_obj: any): proj4.Converter {
         // create the function for transformation
         const proj_str_a = '+proj=tmerc +lat_0=';
         const proj_str_b = ' +lon_0=';
@@ -175,7 +175,7 @@ function _createProjection(model: GIModel, geojson_obj: any): proj4.Converter {
  * @param model The model.
  * @param point The features to add.
  */
-function _addPointToModel(model: GIModel, point: any, proj_obj: proj4.Converter, elevation: number): number {
+function _addPointToModel(model: SIModel, point: any, proj_obj: proj4.Converter, elevation: number): number {
     // add feature
     const xyz: Txyz = _xformLongLat(point.geometry.coordinates, proj_obj, elevation) as Txyz;
     // create the posi
@@ -201,7 +201,7 @@ function _addPointToModel(model: GIModel, point: any, proj_obj: proj4.Converter,
  * @param model The model
  * @param linestrings The features to add.
  */
-function _addPlineToModel(model: GIModel, linestring: any, proj_obj: proj4.Converter, elevation: number): number {
+function _addPlineToModel(model: SIModel, linestring: any, proj_obj: proj4.Converter, elevation: number): number {
     // add feature
     let xyzs: Txyz[] = _xformLongLat(linestring.geometry.coordinates, proj_obj, elevation) as Txyz[];
     const first_xyz: Txyz = xyzs[0];
@@ -236,7 +236,7 @@ function _addPlineToModel(model: GIModel, linestring: any, proj_obj: proj4.Conve
  * @param model The model
  * @param polygons The features to add.
  */
-function _addPgonToModel(model: GIModel, polygon: any, proj_obj: proj4.Converter, elevation: number): number {
+function _addPgonToModel(model: SIModel, polygon: any, proj_obj: proj4.Converter, elevation: number): number {
     // add feature
     const rings: number[][] = [];
     for (const ring of polygon.geometry.coordinates) {
@@ -272,7 +272,7 @@ function _addPgonToModel(model: GIModel, polygon: any, proj_obj: proj4.Converter
  * @param model The model
  * @param multipoint The features to add.
  */
-function _addPointCollToModel(model: GIModel, multipoint: any, proj_obj: proj4.Converter, elevation: number): [number[], number] {
+function _addPointCollToModel(model: SIModel, multipoint: any, proj_obj: proj4.Converter, elevation: number): [number[], number] {
     // add features
     const points_i: number[] = [];
     for (const coordinates of multipoint.geometry.coordinates) {
@@ -301,7 +301,7 @@ function _addPointCollToModel(model: GIModel, multipoint: any, proj_obj: proj4.C
  * @param multilinestrings The features to add.
  * @param model The model
  */
-function _addPlineCollToModel(model: GIModel, multilinestring: any, proj_obj: proj4.Converter, elevation: number): [number[], number] {
+function _addPlineCollToModel(model: SIModel, multilinestring: any, proj_obj: proj4.Converter, elevation: number): [number[], number] {
     // add features
     const plines_i: number[] = [];
     for (const coordinates of multilinestring.geometry.coordinates) {
@@ -335,7 +335,7 @@ function _addPlineCollToModel(model: GIModel, multilinestring: any, proj_obj: pr
  * @param model The model
  * @param multipolygons The features to add.
  */
-function _addPgonCollToModel(model: GIModel, multipolygon: any, proj_obj: proj4.Converter, elevation: number): [number[], number] {
+function _addPgonCollToModel(model: SIModel, multipolygon: any, proj_obj: proj4.Converter, elevation: number): [number[], number] {
     // add features
     const pgons_i: number[] = [];
     for (const coordinates of multipolygon.geometry.coordinates) {
@@ -354,7 +354,7 @@ function _addPgonCollToModel(model: GIModel, multipolygon: any, proj_obj: proj4.
  * Adds attributes to the model
  * @param model The model
  */
-function _addAttribsToModel(model: GIModel, ent_type: EEntType, ent_i: number, feature: any): void {
+function _addAttribsToModel(model: SIModel, ent_type: EEntType, ent_i: number, feature: any): void {
     // add attribs
     if (! feature.hasOwnProperty('properties')) { return; }
     for (const name of Object.keys(feature.properties)) {

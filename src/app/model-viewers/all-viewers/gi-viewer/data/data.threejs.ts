@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as OrbitControls from 'three-orbit-controls';
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { IThreeJS } from '@libs/sim/ThreejsJSON';
 import { EEntTypeStr, EEntType } from '@libs/sim/common';
 import { Vector3 } from 'three';
@@ -48,7 +48,7 @@ export class DataThreejs {
     hemisphere_light: THREE.HemisphereLight;
     groundObj: THREE.Mesh;
     // the GI model to display
-    public _model: GIModel;
+    public _model: SIModel;
 
     public sceneObjs: THREE.Object3D[] = [];
     public sceneObjsSelected: Map<string, THREE.Object3D> = new Map();
@@ -153,7 +153,7 @@ export class DataThreejs {
      * @param model
      * @param container
      */
-    public addGeometry(model: GIModel, container): void {
+    public addGeometry(model: SIModel, container): void {
         this._scene.background = new THREE.Color(this.settings.colors.viewer_bg);
         while (this._scene.children.length > 0) {
             DataThreejs.disposeObjectProperty(this._scene.children[0], 'geometry');

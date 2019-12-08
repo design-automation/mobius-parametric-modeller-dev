@@ -1,20 +1,20 @@
-import { GIGeom } from './Geom';
+import { Geom } from './Geom';
 import { IGeomArrays, TTri, TEdge, TPoint } from '../common';
 import { GIAttribMap } from '../attribs/AttribMap';
 import * as THREE from 'three';
-import { GIGeomData } from './data/GeomData';
+import { GeomData } from './data/GeomData';
 
 /**
  * Class for geometry.
  */
-export class GIGeomThreejs {
-    private _geom: GIGeom;
+export class GeomThreejs {
+    private _geom: Geom;
     private _geom_arrays: IGeomArrays;
-    public _data: GIGeomData;
+    public _data: GeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays, data: GeomData) {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
         this._data = data;

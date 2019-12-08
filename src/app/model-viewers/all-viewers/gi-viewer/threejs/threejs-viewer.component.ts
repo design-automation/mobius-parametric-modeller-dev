@@ -1,4 +1,4 @@
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 // import @angular stuff
 import {
     Component, OnInit, Input, Output, EventEmitter,
@@ -26,7 +26,7 @@ import { KeyboardService } from '@shared/services';
 export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDestroy {
     @Output() eventClicked = new EventEmitter<Event>();
     @Output() resetTableEvent = new EventEmitter<number>();
-    @Input() model: GIModel;
+    @Input() model: SIModel;
     @Input() attr_table_select: { action: string, ent_type: string, id: number | number[] };
     @Input() selectSwitch: Boolean;
     @Input() attribLabel: string;
@@ -425,7 +425,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
         this.render();
     }
 
-    getGISummary(model: GIModel) {
+    getGISummary(model: SIModel) {
         let colls = 0, pgons = 0, plines = 0, points = 0, faces = 0, wires = 0, edges = 0, vertices = 0, positions = 0;
         if (this) {
             colls = model.geom.data.numEnts(EEntType.COLL, false);
@@ -453,7 +453,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
     /**
      * Update the model in the viewer.
      */
-    public async updateModel(model: GIModel) {
+    public async updateModel(model: SIModel) {
         this._data_threejs = this.dataService.getThreejsScene();
         if (!model) {
             console.warn('Model or Scene not defined.');

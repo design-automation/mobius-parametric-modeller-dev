@@ -3,10 +3,10 @@ import {
   ViewChildren, QueryList, Output, EventEmitter, ViewChild, DoCheck
 } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { DataService } from '../data/data.service';
 import { EEntType, EEntTypeStr } from '@libs/sim/common';
-import { GIAttribsThreejs } from '@assets/libs/sim/attribs/AttribsThreejs';
+import { AttribsThreejs } from '@assets/libs/sim/attribs/AttribsThreejs';
 import { ATabsComponent } from './tabs.component';
 import { sortByKey } from '@libs/util/maps';
 
@@ -25,7 +25,7 @@ enum SORT_STATE {
 export class AttributeComponent implements OnChanges, DoCheck {
   @ViewChild(ATabsComponent) child: ATabsComponent;
 
-  @Input() data: GIModel;
+  @Input() data: SIModel;
   @Input() refresh: Event;
   @Input() reset: Event;
   @Output() attrTableSelect = new EventEmitter<Object>();
@@ -139,7 +139,7 @@ export class AttributeComponent implements OnChanges, DoCheck {
       if (Number(tabIndex) === 9) {
         this.displayData = ThreeJSData.getModelAttribsForTable();
       } else {
-        const ready = this.data.attribs.threejs instanceof GIAttribsThreejs;
+        const ready = this.data.attribs.threejs instanceof AttribsThreejs;
         this.selected_ents = this.dataService.selected_ents.get(EEntTypeStr[this.tab_map[tabIndex]]);
 
         if (!ready) { return; }

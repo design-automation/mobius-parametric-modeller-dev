@@ -1,20 +1,20 @@
-import { GIModel } from '../SIModel';
+import { SIModel } from '../SIModel';
 import { IGeomArrays, TEntTypeIdx } from '../common';
-import { GIGeomAdd } from './GeomAdd';
-import { GIGeomModify } from './GeomModify';
-import { GIGeomThreejs } from './GeomThreejs';
-import { GIGeomIO } from './GeomIO';
-import { GIGeomDel } from './GeomDel';
-import { GIGeomCheck } from './data/GeomCheck';
-import { GIGeomCompare } from './GeomCompare';
-import { GIGeomData } from './data/GeomData';
-import { GIGeomDelVert } from './GeomDelVert';
+import { GeomAdd } from './GeomAdd';
+import { GeomModify } from './GeomModify';
+import { GeomThreejs } from './GeomThreejs';
+import { GeomIO } from './GeomIO';
+import { GeomDel } from './GeomDel';
+import { GeomCheck } from './data/GeomCheck';
+import { GeomCompare } from './GeomCompare';
+import { GeomData } from './data/GeomData';
+import { GeomDelVert } from './GeomDelVert';
 
 /**
  * Class for geometry.
  */
-export class GIGeom {
-    public model: GIModel;
+export class Geom {
+    public model: SIModel;
     public selected: TEntTypeIdx[]; // entities that should become selected
     //  all arrays
     public _geom_arrays: IGeomArrays = {  // TODO this should not be public
@@ -42,30 +42,30 @@ export class GIGeom {
         up_pgons_colls: []
     };
     // daga with low level methods
-    public data: GIGeomData;
+    public data: GeomData;
     // classes with user methods
-    public io: GIGeomIO;
-    public add: GIGeomAdd;
-    public del: GIGeomDel;
-    public del_vert: GIGeomDelVert;
-    public modify: GIGeomModify;
-    public checker: GIGeomCheck;
-    public comparator: GIGeomCompare;
-    public threejs: GIGeomThreejs;
+    public io: GeomIO;
+    public add: GeomAdd;
+    public del: GeomDel;
+    public del_vert: GeomDelVert;
+    public modify: GeomModify;
+    public checker: GeomCheck;
+    public comparator: GeomCompare;
+    public threejs: GeomThreejs;
     /**
      * Constructor
      */
-    constructor(model: GIModel) {
+    constructor(model: SIModel) {
         this.model = model;
-        this.data = new GIGeomData(this, this._geom_arrays);
-        this.io = new GIGeomIO(this, this._geom_arrays, this.data);
-        this.add = new GIGeomAdd(this);
-        this.del = new GIGeomDel(this);
-        this.del_vert = new GIGeomDelVert(this);
-        this.modify = new GIGeomModify(this);
-        this.checker = new GIGeomCheck(this, this._geom_arrays, this.data);
-        this.comparator = new GIGeomCompare(this, this._geom_arrays, this.data);
-        this.threejs = new GIGeomThreejs(this, this._geom_arrays, this.data);
+        this.data = new GeomData(this, this._geom_arrays);
+        this.io = new GeomIO(this, this._geom_arrays, this.data);
+        this.add = new GeomAdd(this);
+        this.del = new GeomDel(this);
+        this.del_vert = new GeomDelVert(this);
+        this.modify = new GeomModify(this);
+        this.checker = new GeomCheck(this, this._geom_arrays, this.data);
+        this.comparator = new GeomCompare(this, this._geom_arrays, this.data);
+        this.threejs = new GeomThreejs(this, this._geom_arrays, this.data);
         this.selected = [];
     }
 }

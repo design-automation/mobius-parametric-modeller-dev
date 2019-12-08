@@ -1,20 +1,20 @@
 import { TTri, TVert, TEdge, TWire, TFace,
     TColl, IGeomData, TPoint, TPline, TPgon, IGeomArrays, IGeomPack } from '../common';
-import { GIGeom } from './Geom';
-import { GIGeomData } from './data/GeomData';
+import { Geom } from './Geom';
+import { GeomData } from './data/GeomData';
 import { ConditionalExpr } from '@angular/compiler';
 
 /**
  * Class for geometry.
  */
-export class GIGeomIO {
-    private geom: GIGeom;
+export class GeomIO {
+    private geom: Geom;
     private _geom_arrays: IGeomArrays;
-    public _data: GIGeomData;
+    public _data: GeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays, data: GeomData) {
         this.geom = geom;
         this._geom_arrays = geom_arrays;
         this._data = data;

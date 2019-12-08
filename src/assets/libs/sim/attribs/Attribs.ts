@@ -1,10 +1,10 @@
-import { GIAttribsAdd } from './AttribsAdd';
-import { GIAttribsThreejs } from './AttribsThreejs';
-import { GIAttribsQuery } from './AttribsQuery';
-import { GIModel } from '../SIModel';
+import { AttribsAdd } from './AttribsAdd';
+import { AttribsThreejs } from './AttribsThreejs';
+import { AttribsQuery } from './AttribsQuery';
+import { SIModel } from '../SIModel';
 import { EEntType, EAttribNames,  IAttribsData, EAttribDataTypeStrs, IAttribsMaps } from '../common';
-import { GIAttribsIO } from './AttribsIO';
-import { GIAttribsModify } from './AttribModify';
+import { AttribsIO } from './AttribsIO';
+import { AttribsModify } from './AttribModify';
 import { strictEqual } from 'assert';
 
 function hashCode(s: string) {
@@ -19,8 +19,8 @@ function hashCode(s: string) {
 /**
  * Class for attributes.
  */
-export class GIAttribs {
-    private _model: GIModel;
+export class Attribs {
+    private _model: SIModel;
     // maps, the key is the name, the value is the attrib map clas
     public _attribs_maps: IAttribsMaps = { // TODO this should not be public
         ps: new Map(),
@@ -35,22 +35,22 @@ export class GIAttribs {
         mo: new Map()
     };
     // sub classes with methods
-    public io: GIAttribsIO;
-    public add: GIAttribsAdd;
-    public modify: GIAttribsModify;
-    public query: GIAttribsQuery;
-    public threejs: GIAttribsThreejs;
+    public io: AttribsIO;
+    public add: AttribsAdd;
+    public modify: AttribsModify;
+    public query: AttribsQuery;
+    public threejs: AttribsThreejs;
    /**
      * Creates an object to store the attribute data.
      * @param model The JSON data
      */
-    constructor(model: GIModel) {
+    constructor(model: SIModel) {
         this._model = model;
-        this.io = new GIAttribsIO(model, this._attribs_maps);
-        this.add = new GIAttribsAdd(model, this._attribs_maps);
-        this.modify = new GIAttribsModify(model, this._attribs_maps);
-        this.query = new GIAttribsQuery(model, this._attribs_maps);
-        this.threejs = new GIAttribsThreejs(model, this._attribs_maps);
+        this.io = new AttribsIO(model, this._attribs_maps);
+        this.add = new AttribsAdd(model, this._attribs_maps);
+        this.modify = new AttribsModify(model, this._attribs_maps);
+        this.query = new AttribsQuery(model, this._attribs_maps);
+        this.threejs = new AttribsThreejs(model, this._attribs_maps);
         this.add.addAttrib(EEntType.POSI, EAttribNames.COORDS, EAttribDataTypeStrs.LIST);
     }
     /**
@@ -64,7 +64,7 @@ export class GIAttribs {
      * ~
      * @param other_model The model to compare with.
      */
-    compare(other_model: GIModel, result: {score: number, total: number, comment: any[]}): void {
+    compare(other_model: SIModel, result: {score: number, total: number, comment: any[]}): void {
         result.comment.push('Comparing attribute names and types.');
         const eny_type_array: EEntType[] = [
             EEntType.POSI,

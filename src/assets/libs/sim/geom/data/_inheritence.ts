@@ -1,7 +1,7 @@
 /**
  * Typescript does not support multipple inheritence.
  * Instead, the same can be achieved using mixins, as shown below.
- * The GIGeom classes in the folder follow this approach.
+ * The Geom classes in the folder follow this approach.
  */
 
 class Base {

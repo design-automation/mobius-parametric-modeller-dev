@@ -1,4 +1,4 @@
-import { GIModel } from '../SIModel';
+import { SIModel } from '../SIModel';
 import { TAttribDataTypes, EEntType, IAttribsMaps, EAttribNames, EEntTypeStr } from '../common';
 import { GIAttribMap } from './AttribMap';
 import { isString } from 'util';
@@ -7,14 +7,14 @@ import { sortByKey } from '../../util/maps';
 /**
  * Class for attributes.
  */
-export class GIAttribsThreejs {
-    private _model: GIModel;
+export class AttribsThreejs {
+    private _model: SIModel;
     private _attribs_maps: IAttribsMaps;
    /**
      * Creates an object to store the attribute data.
      * @param model The JSON data
      */
-    constructor(model: GIModel, attribs_maps: IAttribsMaps) {
+    constructor(model: SIModel, attribs_maps: IAttribsMaps) {
         this._model = model;
         this._attribs_maps = attribs_maps;
     }

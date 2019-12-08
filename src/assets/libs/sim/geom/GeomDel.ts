@@ -1,15 +1,15 @@
 import { EEntType, TFace, TColl } from '../common';
-import { GIGeom } from './Geom';
+import { Geom } from './Geom';
 
 /**
  * Class for deleting geometry.
  */
-export class GIGeomDel {
-    private geom: GIGeom;
+export class GeomDel {
+    private geom: Geom;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom) {
+    constructor(geom: Geom) {
         this.geom = geom;
     }
     // ============================================================================

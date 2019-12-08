@@ -1,15 +1,15 @@
-import { GIModel } from './SIModel';
+import { SIModel } from './SIModel';
 import { EEntType, Txyz, TAttribDataTypes } from './common';
 /**
  * Geo-info model class.
  */
-export class GIModelComparator {
-    private _model: GIModel;
+export class SIModelComparator {
+    private _model: SIModel;
 
    /**
      * Constructor
      */
-    constructor(model: GIModel) {
+    constructor(model: SIModel) {
         this._model = model;
     }
 
@@ -23,7 +23,7 @@ export class GIModelComparator {
      * ~
      * @param model The model to compare with.
      */
-    public compare(model: GIModel, normalize: boolean, check_geom_equality: boolean, check_attrib_equality: boolean):
+    public compare(model: SIModel, normalize: boolean, check_geom_equality: boolean, check_attrib_equality: boolean):
             {percent: number, score: number, total: number, comment: string} {
         // create the result object
         const result: {percent: number, score: number, total: number, comment: any} = {percent: 0, score: 0, total: 0, comment: []};
@@ -215,7 +215,7 @@ export class GIModelComparator {
     /**
      * Compare the objects
      */
-    private compareObjs(other_model: GIModel, result: {score: number, total: number, comment: any[]}):
+    private compareObjs(other_model: SIModel, result: {score: number, total: number, comment: any[]}):
             [Map<EEntType, Map<number, number>>, Map<EEntType, Map<number, number>>] {
         result.comment.push('Comparing objects in the two models.');
         const data_comments: string [] = [];
@@ -292,7 +292,7 @@ export class GIModelComparator {
     /**
      * Compare the collections
      */
-    private compareColls(other_model: GIModel, result: {score: number, total: number, comment: any[]},
+    private compareColls(other_model: SIModel, result: {score: number, total: number, comment: any[]},
             idx_maps: [Map<EEntType, Map<number, number>>, Map<EEntType, Map<number, number>>]): void {
         result.comment.push('Comparing collections in the two models.');
         const data_comments: string [] = [];
@@ -333,7 +333,7 @@ export class GIModelComparator {
     /**
      * Compare the model attribs
      */
-    private compareModelAttribs(other_model: GIModel, result: {score: number, total: number, comment: any[]}): void {
+    private compareModelAttribs(other_model: SIModel, result: {score: number, total: number, comment: any[]}): void {
         result.comment.push('Comparing model attributes in the two models.');
         const data_comments: string [] = [];
         // set attrib names to check when comparing objects and collections
@@ -377,7 +377,7 @@ export class GIModelComparator {
     /**
      * Check to see if there are any common errors.
      */
-    private checkForErrors(other_model: GIModel, result: {score: number, total: number, comment: any[]},
+    private checkForErrors(other_model: SIModel, result: {score: number, total: number, comment: any[]},
             idx_maps: [Map<EEntType, Map<number, number>>, Map<EEntType, Map<number, number>>]): void {
         // set precision of comparing vectors
         // this precision should be a little higher than the precision used in

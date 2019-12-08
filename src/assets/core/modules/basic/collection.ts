@@ -6,7 +6,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { TId, EEntType, TEntTypeIdx, EFilterOperatorTypes } from '@libs/sim/common';
 import { isPoint, isPline, isPgon, isColl, idsMake, getArrDepth, isEmptyArr } from '@libs/sim/id';
 import { __merge__} from '../_model';
@@ -30,7 +30,7 @@ import { arrMakeFlat } from '@libs/util/arrs';
  * @example collections = collection.Create([[point1,polyine1],[polygon1]], ['coll1', 'coll2'])
  * @example_info Creates two collections, the first containing point1 and polyline1, the second containing polygon1.
  */
-export function Create(__model__: GIModel, entities: TId|TId[]|TId[][], name: string|string[]): TId|TId[] {
+export function Create(__model__: SIModel, entities: TId|TId[]|TId[][], name: string|string[]): TId|TId[] {
     // --- Error Check ---
     const fn_name = 'collection.Create';
     const ents_arr = checkIDs(fn_name, 'entities', entities,
@@ -62,7 +62,7 @@ export function Create(__model__: GIModel, entities: TId|TId[]|TId[][], name: st
     // return the collection id
     return idsMake(new_ent_arrs) as TId|TId[];
 }
-function _create(__model__: GIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][]): TEntTypeIdx | TEntTypeIdx[] {
+function _create(__model__: SIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][]): TEntTypeIdx | TEntTypeIdx[] {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 1) {
         ents_arr = [ents_arr] as TEntTypeIdx[];
@@ -97,7 +97,7 @@ function _create(__model__: GIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEn
  * @param names The name of the collection to get.
  * @returns The collection, or a list of collections.
  */
-export function Get(__model__: GIModel, names: string|string[]): TId|TId[] {
+export function Get(__model__: SIModel, names: string|string[]): TId|TId[] {
     // --- Error Check ---
     const fn_name = 'collection.Get';
     checkArgTypes(fn_name, 'names', names, [TypeCheckObj.isString, TypeCheckObj.isStringList]);
@@ -105,7 +105,7 @@ export function Get(__model__: GIModel, names: string|string[]): TId|TId[] {
     const new_ent_arrs: TEntTypeIdx | TEntTypeIdx[] = _get(__model__, names);
     return idsMake(new_ent_arrs) as TId|TId[];
 }
-function _get(__model__: GIModel, names: string|string[]): TEntTypeIdx | TEntTypeIdx[] {
+function _get(__model__: SIModel, names: string|string[]): TEntTypeIdx | TEntTypeIdx[] {
     if (!Array.isArray(names)) {
         const colls_i: number[] = __model__.geom.data.getEnts(EEntType.COLL, false);
         const query_result: number[] = __model__.attribs.query.filterByAttribs(
@@ -127,7 +127,7 @@ function _get(__model__: GIModel, names: string|string[]): TEntTypeIdx | TEntTyp
  * @param entities Points, polylines, polygons, and collections to add.
  * @returns void
  */
-export function Add(__model__: GIModel, coll: TId, entities: TId|TId[]): void {
+export function Add(__model__: SIModel, coll: TId, entities: TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -141,7 +141,7 @@ export function Add(__model__: GIModel, coll: TId, entities: TId|TId[]): void {
     }
 }
 
-function _collectionAdd(__model__: GIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
+function _collectionAdd(__model__: SIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
     for (const [ent_type, ent_i] of ents_arr) {
         switch (ent_type) {
             case EEntType.POINT:
@@ -171,7 +171,7 @@ function _collectionAdd(__model__: GIModel, coll_i: number, ents_arr: TEntTypeId
  * @param entities Points, polylines, polygons, and collections to add.
  * @returns void
  */
-export function Remove(__model__: GIModel, coll: TId, entities: TId|TId[]): void {
+export function Remove(__model__: SIModel, coll: TId, entities: TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -190,7 +190,7 @@ export function Remove(__model__: GIModel, coll: TId, entities: TId|TId[]): void
         _collectionRemove(__model__, coll_arr[1], ents_arr);
     }
 }
-function _collectionRemove(__model__: GIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
+function _collectionRemove(__model__: SIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
     for (const [ent_type, ent_i] of ents_arr) {
         switch (ent_type) {
             case EEntType.POINT:
@@ -211,7 +211,7 @@ function _collectionRemove(__model__: GIModel, coll_i: number, ents_arr: TEntTyp
         }
     }
 }
-function _collectionEmpty(__model__: GIModel, coll_i: number): void {
+function _collectionEmpty(__model__: SIModel, coll_i: number): void {
     const points_i: number[] = __model__.geom.data.navCollToPoint(coll_i);
     points_i.forEach(point_i => __model__.geom.data.collRemovePoint(coll_i, point_i));
     const plines_i: number[] = __model__.geom.data.navCollToPline(coll_i);

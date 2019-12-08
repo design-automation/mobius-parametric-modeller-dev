@@ -1,16 +1,16 @@
 import { IGeomArrays, TVert, TEdge, TWire, TFace, TPoint, TPline, TPgon, TColl, } from '../../common';
-import { GIGeom } from '../Geom';
-import { GIGeomNav } from './GeomNav';
+import { Geom } from '../Geom';
+import { GeomNav } from './GeomNav';
 
 /**
  * Inserting entities, thereby replacing existing entities.
  *
  */
-export class GIGeomIns extends GIGeomNav {
+export class GeomIns extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
     // ============================================================================

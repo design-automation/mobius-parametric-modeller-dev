@@ -1,19 +1,19 @@
-import { GIModel } from '../SIModel';
+import { SIModel } from '../SIModel';
 import { IGeomArrays, EEntType, TFace } from '../common';
-import { GIGeom } from './Geom';
-import { GIGeomData } from './data/GeomData';
+import { Geom } from './Geom';
+import { GeomData } from './data/GeomData';
 
 /**
  * Class for comparing the geometry in two models.
  */
-export class GIGeomCompare {
-    private _geom: GIGeom;
+export class GeomCompare {
+    private _geom: Geom;
     private _geom_arrays: IGeomArrays;
-    public _data: GIGeomData;
+    public _data: GeomData;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays, data: GIGeomData) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays, data: GeomData) {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
         this._data = data;
@@ -28,7 +28,7 @@ export class GIGeomCompare {
      * ~
      * @param other_model The model to compare with.
      */
-    compare(other_model: GIModel, result: {score: number, total: number, comment: any[]}): void {
+    compare(other_model: SIModel, result: {score: number, total: number, comment: any[]}): void {
         result.comment.push('Comparing number of geometric entities.');
         const eny_types: EEntType[] = [
             EEntType.POINT,

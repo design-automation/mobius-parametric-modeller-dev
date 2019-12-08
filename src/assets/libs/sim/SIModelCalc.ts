@@ -1,17 +1,17 @@
 import {  EEntType, IGeomArrays,  Txyz } from './common';
-import { GIGeom } from './geom/Geom';
+import { Geom } from './geom/Geom';
 import { vecFromTo, vecCross, vecDiv } from '../geom/vectors';
-import { GIAttribs } from './attribs/Attribs';
+import { Attribs } from './attribs/Attribs';
 /**
  * Class for calculating stuff that requires bothe geometry and attributes.
  */
 export class GICalc {
-    private _geom: GIGeom;
-    public _attribs: GIAttribs;
+    private _geom: Geom;
+    public _attribs: Attribs;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, attribs: GIAttribs) {
+    constructor(geom: Geom, attribs: Attribs) {
         this._geom = geom;
         this._attribs = attribs;
     }

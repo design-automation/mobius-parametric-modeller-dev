@@ -1,4 +1,4 @@
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { isDevMode, ViewChild } from '@angular/core';
 import { DefaultSettings, SettingsColorMap, Locale } from './gi-viewer.settings';
 // import @angular stuff
@@ -25,7 +25,7 @@ import { Vector3, GridHelper } from 'three';
 export class GIViewerComponent implements OnInit {
     dataservice: DataService;
     // model data passed to the viewer
-    @Input() data: GIModel;
+    @Input() data: SIModel;
 
     settings: Settings = DefaultSettings;
 

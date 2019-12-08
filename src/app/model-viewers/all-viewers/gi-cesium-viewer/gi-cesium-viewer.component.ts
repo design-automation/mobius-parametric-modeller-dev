@@ -1,4 +1,4 @@
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { Locale, CesiumSettings } from './gi-cesium-viewer.settings';
 import { isDevMode } from '@angular/core';
 
@@ -24,8 +24,8 @@ import { ColorPickerService } from 'ngx-color-picker';
 export class GICesiumViewerComponent implements OnInit {
     public dataservice: DataCesiumService;
     // model data passed to the viewer
-    @Input() data: GIModel;
-    public modelData: GIModel;
+    @Input() data: SIModel;
+    public modelData: SIModel;
     public settings: CesiumSettings;
     public clickedEvent: Event;
 

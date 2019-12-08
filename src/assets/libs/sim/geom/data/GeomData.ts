@@ -1,33 +1,33 @@
 // classes to extend
-import { GIGeomNav } from './GeomNav';
+import { GeomNav } from './GeomNav';
 // classes to inherit from via mixins
-import { GIGeomAdd } from './GeomAdd';
-import { GIGeomColl } from './GeomColl';
-import { GIGeomEnt } from './GeomEnt';
-import { GIGeomFace } from './GeomFace';
-import { GIGeomIns } from './GeomIns';
-import { GIGeomLink } from './GeomLink';
-import { GIGeomPack } from './GeomPack';
-import { GIGeomPosi } from './GeomPosi';
-import { GIGeomRem } from './GeomRem';
-import { GIGeomRev } from './GeomRev';
-import { GIGeomTree } from './GeomTree';
-import { GIGeomVert } from './GeomVert';
-import { GIGeomWire } from './GeomWire';
+import { GeomAdd } from './GeomAdd';
+import { GeomColl } from './GeomColl';
+import { GeomEnt } from './GeomEnt';
+import { GeomFace } from './GeomFace';
+import { GeomIns } from './GeomIns';
+import { GeomLink } from './GeomLink';
+import { GeomPack } from './GeomPack';
+import { GeomPosi } from './GeomPosi';
+import { GeomRem } from './GeomRem';
+import { GeomRev } from './GeomRev';
+import { GeomTree } from './GeomTree';
+import { GeomVert } from './GeomVert';
+import { GeomWire } from './GeomWire';
 // others
 import { IGeomArrays, TFace, Txyz, TTri } from '../../common';
-import { GIGeom } from '../Geom';
+import { Geom } from '../Geom';
 import { triangulate } from '@assets/libs/triangulate/triangulate';
 
 /**
  * Class that inherits all the other classes using mixins
  *
  */
-export class GIGeomData extends GIGeomNav {
+export class GeomData extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
 
@@ -140,17 +140,17 @@ export class GIGeomData extends GIGeomNav {
     }
 }
 
-export interface GIGeomData extends
-    GIGeomAdd, GIGeomColl, GIGeomEnt, GIGeomFace,
-    GIGeomIns, GIGeomLink, GIGeomPack, GIGeomPosi,
-    GIGeomRem, GIGeomRev, GIGeomTree, GIGeomVert,
-    GIGeomWire {}
+export interface GeomData extends
+    GeomAdd, GeomColl, GeomEnt, GeomFace,
+    GeomIns, GeomLink, GeomPack, GeomPosi,
+    GeomRem, GeomRev, GeomTree, GeomVert,
+    GeomWire {}
 
-applyMixins(GIGeomData, [
-    GIGeomAdd, GIGeomColl, GIGeomEnt, GIGeomFace,
-    GIGeomIns, GIGeomLink, GIGeomPack, GIGeomPosi,
-    GIGeomRem, GIGeomRev, GIGeomTree, GIGeomVert,
-    GIGeomWire
+applyMixins(GeomData, [
+    GeomAdd, GeomColl, GeomEnt, GeomFace,
+    GeomIns, GeomLink, GeomPack, GeomPosi,
+    GeomRem, GeomRev, GeomTree, GeomVert,
+    GeomWire
 ]);
 
 export function applyMixins(derivedCtor: any, baseCtors: any[]) {

@@ -1,18 +1,18 @@
 import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert } from '../common';
-import { GIGeom } from './Geom';
+import { Geom } from './Geom';
 import { arrRem, arrIdxAdd } from '../../util/arrs';
 import { vecDot } from '../../geom/vectors';
-import { GIGeomData } from './data/GeomData';
+import { GeomData } from './data/GeomData';
 
 /**
  * Class for geometry.
  */
-export class GIGeomModify {
-    private geom: GIGeom;
+export class GeomModify {
+    private geom: Geom;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom) {
+    constructor(geom: Geom) {
         this.geom = geom;
     }
     // ============================================================================

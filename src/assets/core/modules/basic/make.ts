@@ -7,7 +7,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { EAttribNames, TId, EEntType, Txyz, TEntTypeIdx, TPlane, Txy } from '@libs/sim/common';
 import { isPoint, isPline, isPgon, isDim0, isDim2, isColl, isPosi,
     isEdge, isFace, idsMake, idIndicies, getArrDepth, isEmptyArr, isWire } from '@libs/sim/id';
@@ -24,7 +24,7 @@ import { listZip } from '@assets/core/inline/_list';
 
 // ================================================================================================
 // Utility functions
-function _copyGeom(__model__: GIModel,
+function _copyGeom(__model__: SIModel,
     ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][], copy_attributes: boolean): TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][] {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 1) {
@@ -53,7 +53,7 @@ function _copyGeom(__model__: GIModel,
         return ents_arr.map(ents_arr_item => _copyGeom(__model__, ents_arr_item, copy_attributes)) as TEntTypeIdx[][];
     }
 }
-function _copyGeomPosis(__model__: GIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][],
+function _copyGeomPosis(__model__: SIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][],
         copy_attributes: boolean, vector: Txyz): void {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 1) {
@@ -126,7 +126,7 @@ export enum _EExtrudeMethod {
  * @example_info Creates three positions, with coordinates [1,2,3],[3,4,5] and [5,6,7].
  * @example_link make.Position.mob&node=1
  */
-export function Position(__model__: GIModel, coords: Txyz|Txyz[]|Txyz[][]): TId|TId[]|TId[][] {
+export function Position(__model__: SIModel, coords: Txyz|Txyz[]|Txyz[][]): TId|TId[]|TId[][] {
     if (isEmptyArr(coords)) { return []; }
     // --- Error Check ---
     checkArgTypes('make.Position', 'coords', coords, [TypeCheckObj.isCoord, TypeCheckObj.isCoordList, TypeCheckObj.isCoordList_List]);
@@ -134,7 +134,7 @@ export function Position(__model__: GIModel, coords: Txyz|Txyz[]|Txyz[][]): TId|
     const new_ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] = _position(__model__, coords);
     return idsMake(new_ents_arr);
 }
-function _position(__model__: GIModel, coords: Txyz|Txyz[]|Txyz[][]): TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
+function _position(__model__: SIModel, coords: Txyz|Txyz[]|Txyz[][]): TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
     const depth: number = getArrDepth(coords);
     if (depth === 1) {
         const coord1: Txyz = coords as Txyz;
@@ -159,7 +159,7 @@ function _position(__model__: GIModel, coords: Txyz|Txyz[]|Txyz[][]): TEntTypeId
  * @example_info Creates a point at position1.
  * @example_link make.Point.mob&node=1
  */
-export function Point(__model__: GIModel, entities: TId|TId[]|TId[][]): TId|TId[]|TId[][] {
+export function Point(__model__: SIModel, entities: TId|TId[]|TId[][]): TId|TId[]|TId[][] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const ents_arr = checkIDs('make.Point', 'entities', entities,
@@ -170,7 +170,7 @@ export function Point(__model__: GIModel, entities: TId|TId[]|TId[][]): TId|TId[
     const new_ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] =  _point(__model__, ents_arr);
     return idsMake(new_ents_arr) as TId|TId[]|TId[][];
 }
-function _point(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
+function _point(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 1) {
         const [ent_type, index]: TEntTypeIdx = ents_arr as TEntTypeIdx; // either a posi or something else
@@ -201,7 +201,7 @@ function _point(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntType
  * @example_info Creates a closed polyline with vertices position1, position2, position3 in sequence.
  * @example_link make.Polyline.mob&node=1
  */
-export function Polyline(__model__: GIModel, entities: TId|TId[]|TId[][], close: _EClose): TId|TId[] {
+export function Polyline(__model__: SIModel, entities: TId|TId[]|TId[][], close: _EClose): TId|TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const ents_arr = checkIDs('make.Polyline', 'entities', entities,
@@ -224,7 +224,7 @@ export enum _EClose {
     OPEN = 'open',
     CLOSE = 'close'
 }
-function _polyline(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][], close: _EClose): TEntTypeIdx|TEntTypeIdx[] {
+function _polyline(__model__: SIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][], close: _EClose): TEntTypeIdx|TEntTypeIdx[] {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 2) {
         const bool_close: boolean = (close === _EClose.CLOSE);
@@ -236,7 +236,7 @@ function _polyline(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][], 
         return ents_arr.map(ents_arr_item => _polyline(__model__, ents_arr_item, close)) as TEntTypeIdx[];
     }
 }
-function _getPlinePosisFromEnts(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx[][] {
+function _getPlinePosisFromEnts(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx[][] {
     // check if this is a single object ID
     if (getArrDepth(ents_arr) === 1) {
         ents_arr =  [ents_arr] as TEntTypeIdx[];
@@ -302,7 +302,7 @@ function _getPlinePosisFromEnts(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTy
  * @example_info Creates two polygons, the first with vertices at [pos1,pos2,pos3], and the second with vertices at [pos3,pos4,pos5].
  * @example_link make.Polygon.mob&node=1
  */
-export function Polygon(__model__: GIModel, entities: TId|TId[]|TId[][]): TId|TId[] {
+export function Polygon(__model__: SIModel, entities: TId|TId[]|TId[][]): TId|TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const ents_arr = checkIDs('make.Polygon', 'entities', entities,
@@ -319,7 +319,7 @@ export function Polygon(__model__: GIModel, entities: TId|TId[]|TId[][]): TId|TI
         return idsMake(new_ents_arr) as TId|TId[];
     }
 }
-function _polygon(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx|TEntTypeIdx[] {
+function _polygon(__model__: SIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx|TEntTypeIdx[] {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 2) {
         const posis_i: number[] = idIndicies(ents_arr as TEntTypeIdx[]);
@@ -330,7 +330,7 @@ function _polygon(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): 
         return ents_arr.map(ents_arr_item => _polygon(__model__, ents_arr_item)) as TEntTypeIdx[];
     }
 }
-function _getPgonPosisFromEnts(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx[][] {
+function _getPgonPosisFromEnts(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx[][] {
     // check if this is a single object ID
     if (getArrDepth(ents_arr) === 1) {
         ents_arr = [ents_arr] as TEntTypeIdx[];
@@ -391,7 +391,7 @@ function _getPgonPosisFromEnts(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTyp
  * @param entities List or nested lists of positions, or entities from which positions can be extracted.
  * @returns Entities, a list of new polygons.
  */
-export function _Tin(__model__: GIModel, entities: TId[]|TId[][]): TId[] {
+export function _Tin(__model__: SIModel, entities: TId[]|TId[][]): TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const ents_arr = checkIDs('make.Tin', 'entities', entities,
@@ -401,7 +401,7 @@ export function _Tin(__model__: GIModel, entities: TId[]|TId[][]): TId[] {
     const posis_arrs: TEntTypeIdx[][] = _getPgonPosisFromEnts(__model__, ents_arr);
     return null;
 }
-function _tin(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx|TEntTypeIdx[] {
+function _tin(__model__: SIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx|TEntTypeIdx[] {
     const depth: number = getArrDepth(ents_arr);
     if (depth === 2) {
         const posis_i: number[] = idIndicies(ents_arr as TEntTypeIdx[]);
@@ -429,7 +429,7 @@ function _tin(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEnt
  * @example copies = make.Copy([position1,polyine1,polygon1])
  * @example_info Creates a copy of position1, polyine1, and polygon1.
  */
-export function Copy(__model__: GIModel, entities: TId|TId[]|TId[][], vector: Txyz): TId|TId[]|TId[][] {
+export function Copy(__model__: SIModel, entities: TId|TId[]|TId[][], vector: Txyz): TId|TId[]|TId[][] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'make.Copy';
@@ -461,7 +461,7 @@ export function Copy(__model__: GIModel, entities: TId|TId[]|TId[][], vector: Tx
  * @param entities List of positions, or nested lists of positions, or entities from which positions can be extracted.
  * @returns Entities, a list of wires resulting from the hole(s).
  */
-export function Hole(__model__: GIModel, pgon: TId, entities: TId|TId[]|TId[][]): TId[] {
+export function Hole(__model__: SIModel, pgon: TId, entities: TId|TId[]|TId[][]): TId[] {
     if (isEmptyArr(entities)) { return []; }
     if (!Array.isArray(entities)) { entities = [entities]; }
     // --- Error Check ---
@@ -481,7 +481,7 @@ export function Hole(__model__: GIModel, pgon: TId, entities: TId|TId[]|TId[][])
     return idsMake(new_ents_arr) as TId[];
 }
 // Hole modelling operation
-function _hole(__model__: GIModel, pgon_i: number, holes_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx[] {
+function _hole(__model__: SIModel, pgon_i: number, holes_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx[] {
     if (getArrDepth(holes_ents_arr) === 2) {
         holes_ents_arr = [holes_ents_arr] as TEntTypeIdx[][];
     }
@@ -494,7 +494,7 @@ function _hole(__model__: GIModel, pgon_i: number, holes_ents_arr: TEntTypeIdx[]
     const wires_i: number[] = __model__.geom.modify.cutPgonHoles(pgon_i, holes_posis_i);
     return wires_i.map(wire_i => [EEntType.WIRE, wire_i]) as TEntTypeIdx[];
 }
-function _getHolePosisFromEnts(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): void {
+function _getHolePosisFromEnts(__model__: SIModel, ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): void {
     for (let i = 0; i < ents_arr.length; i++) {
         const depth: number = getArrDepth(ents_arr[i]);
         if (depth === 1) {
@@ -541,7 +541,7 @@ function _getHolePosisFromEnts(__model__: GIModel, ents_arr: TEntTypeIdx[]|TEntT
  * @example quads = make.Loft([ [polyline1,polyline2], [polyline3,polyline4] ] , 1, 'open_quads')
  * @example_info Creates quad polygons lofting first between polyline1 and polyline2, and then between polyline3 and polyline4.
  */
-export function Loft(__model__: GIModel, entities: TId[]|TId[][], divisions: number, method: _ELoftMethod): TId[] {
+export function Loft(__model__: SIModel, entities: TId[]|TId[][], divisions: number, method: _ELoftMethod): TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const ents_arr = checkIDs('make.Loft', 'entities', entities,
@@ -560,7 +560,7 @@ export enum _ELoftMethod {
     CLOSED_RIBS = 'closed_ribs',
     COPIES = 'copies'
 }
-function _loftQuads(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
+function _loftQuads(__model__: SIModel, ents_arr: TEntTypeIdx[], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
     const edges_arrs_i: number[][] = [];
     let num_edges = 0;
     for (const ents of ents_arr) {
@@ -626,7 +626,7 @@ function _loftQuads(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: numb
     }
     return new_pgons_i.map( pgon_i => [EEntType.PGON, pgon_i]) as TEntTypeIdx[];
 }
-function _loftStringers(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
+function _loftStringers(__model__: SIModel, ents_arr: TEntTypeIdx[], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
     const posis_arrs_i: number[][] = [];
     let num_posis = 0;
     for (const ents of ents_arr) {
@@ -666,7 +666,7 @@ function _loftStringers(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: 
     }
     return stringer_plines_i.map( pline_i => [EEntType.PLINE, pline_i]) as TEntTypeIdx[];
 }
-function _loftRibs(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
+function _loftRibs(__model__: SIModel, ents_arr: TEntTypeIdx[], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
     const posis_arrs_i: number[][] = [];
     let num_posis = 0;
     for (const ents of ents_arr) {
@@ -728,7 +728,7 @@ function _loftRibs(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: numbe
     }
     return rib_plines_i.map( pline_i => [EEntType.PLINE, pline_i]) as TEntTypeIdx[];
 }
-function _loftCopies(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: number): TEntTypeIdx[] {
+function _loftCopies(__model__: SIModel, ents_arr: TEntTypeIdx[], divisions: number): TEntTypeIdx[] {
     const posis_arrs_i: number[][] = [];
     let num_posis = 0;
     for (const ents of ents_arr) {
@@ -767,7 +767,7 @@ function _loftCopies(__model__: GIModel, ents_arr: TEntTypeIdx[], divisions: num
     copies.push(ents_arr[ents_arr.length - 1]);
     return copies;
 }
-function _loft(__model__: GIModel, ents_arrs: TEntTypeIdx[]|TEntTypeIdx[][], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
+function _loft(__model__: SIModel, ents_arrs: TEntTypeIdx[]|TEntTypeIdx[][], divisions: number, method: _ELoftMethod): TEntTypeIdx[] {
     const depth: number = getArrDepth(ents_arrs);
     if (depth === 2) {
         const ents_arr: TEntTypeIdx[] = ents_arrs as TEntTypeIdx[];
@@ -819,7 +819,7 @@ function _loft(__model__: GIModel, ents_arrs: TEntTypeIdx[]|TEntTypeIdx[][], div
  * @example extrusion2 = make.Extrude(polygon1, [0,5,0], 1, 'quads')
  * @example_info Extrudes polygon1 by 5 in the y-direction, creating a list of quad surfaces.
  */
-export function Extrude(__model__: GIModel, entities: TId|TId[],
+export function Extrude(__model__: SIModel, entities: TId|TId[],
         dist: number|Txyz, divisions: number, method: _EExtrudeMethod): TId|TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
@@ -838,7 +838,7 @@ export function Extrude(__model__: GIModel, entities: TId|TId[],
         return idsMake(new_ents_arr) as TId|TId[];
     }
 }
-function _extrudeColl(__model__: GIModel, index: number,
+function _extrudeColl(__model__: SIModel, index: number,
         extrude_vec: Txyz, divisions: number, method: _EExtrudeMethod): TEntTypeIdx[] {
     const points_i: number[] = __model__.geom.data.navCollToPoint(index);
     const res1 = points_i.map( point_i => _extrude(__model__, [EEntType.POINT, point_i], extrude_vec, divisions, method));
@@ -848,7 +848,7 @@ function _extrudeColl(__model__: GIModel, index: number,
     const res3 = pgons_i.map( pgon_i => _extrude(__model__, [EEntType.PGON, pgon_i], extrude_vec, divisions, method));
     return [].concat(res1, res2, res3);
 }
-function _extrudeDim0(__model__: GIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
+function _extrudeDim0(__model__: SIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
     const extrude_vec_div: Txyz = vecDiv(extrude_vec, divisions);
     const exist_posi_i: number = __model__.geom.data.navAnyToPosi(ent_type, index)[0];
     const xyz: Txyz = __model__.attribs.query.getPosiCoords(exist_posi_i);
@@ -862,7 +862,7 @@ function _extrudeDim0(__model__: GIModel, ent_type: number, index: number, extru
     const pline_i: number = __model__.geom.add.addPline(strip_posis_i);
     return [[EEntType.PLINE, pline_i]];
 }
-function _extrudeQuads(__model__: GIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
+function _extrudeQuads(__model__: SIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
     const new_pgons_i: number[] = [];
     const extrude_vec_div: Txyz = vecDiv(extrude_vec, divisions);
     const edges_i: number[] = __model__.geom.data.navAnyToEdge(ent_type, index);
@@ -903,7 +903,7 @@ function _extrudeQuads(__model__: GIModel, ent_type: number, index: number, extr
     }
     return new_pgons_i.map(pgon_i => [EEntType.PGON, pgon_i] as TEntTypeIdx);
 }
-function _extrudeStringers(__model__: GIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
+function _extrudeStringers(__model__: SIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
     const new_plines_i: number[] = [];
     const extrude_vec_div: Txyz = vecDiv(extrude_vec, divisions);
     const edges_i: number[] = __model__.geom.data.navAnyToEdge(ent_type, index);
@@ -933,7 +933,7 @@ function _extrudeStringers(__model__: GIModel, ent_type: number, index: number, 
     // return the stringers
     return new_plines_i.map(pline_i => [EEntType.PLINE, pline_i] as TEntTypeIdx);
 }
-function _extrudeRibs(__model__: GIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
+function _extrudeRibs(__model__: SIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
     const new_plines_i: number[] = [];
     const extrude_vec_div: Txyz = vecDiv(extrude_vec, divisions);
     const edges_i: number[] = __model__.geom.data.navAnyToEdge(ent_type, index);
@@ -995,7 +995,7 @@ function _extrudeRibs(__model__: GIModel, ent_type: number, index: number, extru
     // return the ribs
     return new_plines_i.map(pline_i => [EEntType.PLINE, pline_i] as TEntTypeIdx);
 }
-function _extrudeCopies(__model__: GIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
+function _extrudeCopies(__model__: SIModel, ent_type: number, index: number, extrude_vec: Txyz, divisions: number): TEntTypeIdx[] {
     const copies: TEntTypeIdx[] = [[ent_type, index]];
     const vec: Txyz = vecDiv(extrude_vec, divisions);
     const posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, index);
@@ -1015,7 +1015,7 @@ function _extrudeCopies(__model__: GIModel, ent_type: number, index: number, ext
     // return the copies
     return copies;
 }
-function _extrudeCap(__model__: GIModel, index: number, strip_posis_map: Map<number, number[]>, divisions: number): number {
+function _extrudeCap(__model__: SIModel, index: number, strip_posis_map: Map<number, number[]>, divisions: number): number {
     const face_i: number = __model__.geom.data.navPgonToFace(index);
     // get positions on boundary
     const old_wire_i: number = __model__.geom.data.getFaceBoundary(face_i);
@@ -1033,7 +1033,7 @@ function _extrudeCap(__model__: GIModel, index: number, strip_posis_map: Map<num
     const pgon_i: number = __model__.geom.add.addPgon( new_posis_i, new_holes_posis_i );
     return pgon_i;
 }
-function _extrude(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
+function _extrude(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
         dist: number|Txyz, divisions: number, method: _EExtrudeMethod): TEntTypeIdx[] {
     const extrude_vec: Txyz = (Array.isArray(dist) ? dist : [0, 0, dist]) as Txyz;
     if (getArrDepth(ents_arr) === 1) {
@@ -1079,7 +1079,7 @@ function _extrude(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
  * @param method Enum, select the method for sweeping.
  * @returns Entities, a list of new polygons or polylines resulting from the sweep.
  */
-export function Sweep(__model__: GIModel, entities: TId|TId[], xsextion: TId, divisions: number, method: _EExtrudeMethod): TId[] {
+export function Sweep(__model__: SIModel, entities: TId|TId[], xsextion: TId, divisions: number, method: _EExtrudeMethod): TId[] {
     entities = arrMakeFlat(entities) as TId[];
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
@@ -1116,7 +1116,7 @@ export function Sweep(__model__: GIModel, entities: TId|TId[], xsextion: TId, di
     const new_ents: TEntTypeIdx[] = _sweep(__model__, backbone_wires_i, xsection_wire_i, divisions, method);
     return idsMake(new_ents) as TId[];
 }
-function _sweep(__model__: GIModel, backbone_wires_i: number|number[], xsection_wire_i: number,
+function _sweep(__model__: SIModel, backbone_wires_i: number|number[], xsection_wire_i: number,
         divisions: number, method: _EExtrudeMethod): TEntTypeIdx[] {
     if (!Array.isArray(backbone_wires_i)) {
         // extrude edges -> polygons
@@ -1143,7 +1143,7 @@ function _sweep(__model__: GIModel, backbone_wires_i: number|number[], xsection_
         return new_ents;
     }
 }
-function _sweepQuads(__model__: GIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
+function _sweepQuads(__model__: SIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
     const strips_posis_i: number[][] = _sweepPosis(__model__, backbone_wire_i, xsection_wire_i, divisions);
     const backbone_is_closed: boolean = __model__.geom.data.wireIsClosed(backbone_wire_i);
     const xsection_is_closed: boolean = __model__.geom.data.wireIsClosed(xsection_wire_i);
@@ -1173,7 +1173,7 @@ function _sweepQuads(__model__: GIModel, backbone_wire_i: number, xsection_wire_
     }
     return new_pgons;
 }
-function _sweepStringers(__model__: GIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
+function _sweepStringers(__model__: SIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
     const backbone_is_closed: boolean = __model__.geom.data.wireIsClosed(backbone_wire_i);
     const ribs_posis_i: number[][] = _sweepPosis(__model__, backbone_wire_i, xsection_wire_i, divisions);
     const stringers_posis_i: number[][] = listZip(ribs_posis_i);
@@ -1184,7 +1184,7 @@ function _sweepStringers(__model__: GIModel, backbone_wire_i: number, xsection_w
     }
     return plines;
 }
-function _sweepRibs(__model__: GIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
+function _sweepRibs(__model__: SIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
     const xsection_is_closed: boolean = __model__.geom.data.wireIsClosed(xsection_wire_i);
     const ribs_posis_i: number[][] = _sweepPosis(__model__, backbone_wire_i, xsection_wire_i, divisions);
     const plines: TEntTypeIdx[] = [];
@@ -1194,13 +1194,13 @@ function _sweepRibs(__model__: GIModel, backbone_wire_i: number, xsection_wire_i
     }
     return plines;
 }
-function _sweepCopies(__model__: GIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
+function _sweepCopies(__model__: SIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): TEntTypeIdx[] {
     const posis_i: number[][] = _sweepPosis(__model__, backbone_wire_i, xsection_wire_i, divisions);
     // TODO
     throw new Error('Not implemented');
     // TODO
 }
-function _sweepPosis(__model__: GIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): number[][] {
+function _sweepPosis(__model__: SIModel, backbone_wire_i: number, xsection_wire_i: number, divisions: number): number[][] {
     // get the xyzs of the cross section
     const xsextion_xyzs: Txyz[] = __model__.attribs.query.getEntCoords(EEntType.WIRE, xsection_wire_i);
     // get the xyzs of the backbone
@@ -1269,7 +1269,7 @@ function _sweepPosis(__model__: GIModel, backbone_wire_i: number, xsection_wire_
  * @example segments2 = make.Divide(edge1, 5, by_length)
  * @example_info If edge1 has length 13, creates from edge a list of two segments of length 5 and one segment of length 3.
  */
-export function Divide(__model__: GIModel, entities: TId|TId[], divisor: number, method: _EDivisorMethod): TId[] {
+export function Divide(__model__: SIModel, entities: TId|TId[], divisor: number, method: _EDivisorMethod): TId[] {
     entities = arrMakeFlat(entities) as TId[];
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
@@ -1294,7 +1294,7 @@ export function Divide(__model__: GIModel, entities: TId|TId[], divisor: number,
     // return the ids
     return idsMake(new_ents_arr) as TId[];
 }
-function _divide(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], divisor: number, method: _EDivisorMethod): TEntTypeIdx[] {
+function _divide(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], divisor: number, method: _EDivisorMethod): TEntTypeIdx[] {
     if (getArrDepth(ents_arr) === 1) {
         const [ent_type, index]: TEntTypeIdx = ents_arr as TEntTypeIdx;
         let exist_edges_i: number[];
@@ -1313,7 +1313,7 @@ function _divide(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], diviso
         return [].concat(...(ents_arr as TEntTypeIdx[]).map(one_edge => _divide(__model__, one_edge, divisor, method)));
     }
 }
-function _divideEdge(__model__: GIModel, edge_i: number, divisor: number, method: _EDivisorMethod): number[] {
+function _divideEdge(__model__: SIModel, edge_i: number, divisor: number, method: _EDivisorMethod): number[] {
     const posis_i: number[] = __model__.geom.data.navAnyToPosi(EEntType.EDGE, edge_i);
     const start = __model__.attribs.query.getPosiCoords(posis_i[0]);
     const end = __model__.attribs.query.getPosiCoords(posis_i[1]);
@@ -1366,7 +1366,7 @@ function _divideEdge(__model__: GIModel, edge_i: number, divisor: number, method
 
 
 // // ================================================================================================
-// function _polygonHoles(__model__: GIModel, ents_arr: TEntTypeIdx[],
+// function _polygonHoles(__model__: SIModel, ents_arr: TEntTypeIdx[],
 //     holes_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][]): TEntTypeIdx {
 // if (getArrDepth(holes_ents_arr) === 2) {
 //     holes_ents_arr = [holes_ents_arr] as TEntTypeIdx[][];
@@ -1388,7 +1388,7 @@ function _divideEdge(__model__: GIModel, edge_i: number, divisor: number, method
 // * @example polygon1 = make.Polygon([position1,position2,position3], [position4,position5,position6])
 // * @example_info Creates a polygon with  a hole, with vertices in sequence from position1 to position6.
 // */
-// function _PolygonHoles(__model__: GIModel, positions: TId[], hole_positions: TId[]|TId[][]): TId {
+// function _PolygonHoles(__model__: SIModel, positions: TId[], hole_positions: TId[]|TId[][]): TId {
 // // --- Error Check ---
 // const pgon_ents_arr = checkIDs('make.Polygon', 'positions', positions, [IDcheckObj.isIDList], [EEntType.POSI]) as TEntTypeIdx[];
 // const holes_ents_arr = checkIDs('make.Polygon', 'positions', hole_positions,
@@ -1410,7 +1410,7 @@ function _divideEdge(__model__: GIModel, edge_i: number, divisor: number, method
 //  * @example joined1 = make.Join([polyline1,polyline2])
 //  * @example_info Creates a new polyline by joining polyline1 and polyline2. Geometries must be of the same type.
 //  */
-// export function _Join(__model__: GIModel, geometry: TId[]): TId {
+// export function _Join(__model__: SIModel, geometry: TId[]): TId {
 //     // --- Error Check ---
 //     // const ents_arr =  checkIDs('make.Join', 'geometry', geometry, [IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON]);
 //     // --- Error Check ---

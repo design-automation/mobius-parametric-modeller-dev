@@ -1,4 +1,4 @@
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 // import @angular stuff
 import {
     Component, OnInit, Input, Output, EventEmitter,
@@ -24,7 +24,7 @@ import { ModalService } from '../html/modal-window.service';
 })
 export class CesiumViewerComponent implements OnInit, DoCheck, OnChanges {
     @Output() eventClicked = new EventEmitter<Event>();
-    @Input() model: GIModel;
+    @Input() model: SIModel;
 
     // protected modalWindow: ModalService;
     public container = null;
@@ -147,7 +147,7 @@ export class CesiumViewerComponent implements OnInit, DoCheck, OnChanges {
     /**
      * Update the model in the viewer.
      */
-    public async updateModel(model: GIModel) {
+    public async updateModel(model: SIModel) {
         this._data_cesium = this.dataService.getCesiumScene();
         if (!model) {
             console.warn('Model or Scene not defined.');

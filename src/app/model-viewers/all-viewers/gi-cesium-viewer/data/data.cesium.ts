@@ -1,4 +1,4 @@
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { CesiumSettings } from '../gi-cesium-viewer.settings';
 import { EEntType, Txyz, TAttribDataTypes, LONGLAT } from '@libs/sim/common';
 // import { HereMapsImageryProvider } from './HereMapsImageryProvider.js';
@@ -8,7 +8,7 @@ import { EEntType, Txyz, TAttribDataTypes, LONGLAT } from '@libs/sim/common';
 export class DataCesium {
     public _viewer: any;
     // the GI model to display
-    public _model: GIModel;
+    public _model: SIModel;
     // Cesium Settings
     public settings: CesiumSettings;
     // Cesium scene
@@ -136,7 +136,7 @@ export class DataCesium {
      * @param model
      * @param container
      */
-    public addGeometry(model: GIModel, container: any): void { // TODO delete container
+    public addGeometry(model: SIModel, container: any): void { // TODO delete container
         this._viewer.scene.primitives.removeAll();
         // the origin of the model
         let longitude = LONGLAT[0];

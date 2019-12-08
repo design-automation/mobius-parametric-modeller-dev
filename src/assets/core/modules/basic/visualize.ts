@@ -7,7 +7,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { Txyz, TColor, EAttribNames, EAttribDataTypeStrs, EAttribPush, TRay, TPlane, TBBox } from '@libs/sim/common';
 import { TId, EEntType, ESort, TEntTypeIdx } from '@libs/sim/common';
 import { isEmptyArr, getArrDepth, idsMake } from '@libs/sim/id';
@@ -34,7 +34,7 @@ export enum _Ecolors {
  * @param color The color, [0,0,0] is black, [1,1,1] is white.
  * @returns void
  */
-export function Color(__model__: GIModel, entities: TId|TId[], color: TColor): void {
+export function Color(__model__: SIModel, entities: TId|TId[], color: TColor): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -47,7 +47,7 @@ export function Color(__model__: GIModel, entities: TId|TId[], color: TColor): v
         _color(__model__, ents_arr, color);
     }
 }
-function _color(__model__: GIModel, ents_arr: TEntTypeIdx[], color: TColor): void {
+function _color(__model__: SIModel, ents_arr: TEntTypeIdx[], color: TColor): void {
     if (!__model__.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.COLOR)) {
         __model__.attribs.add.addAttrib(EEntType.VERT, EAttribNames.COLOR, EAttribDataTypeStrs.LIST);
     }
@@ -77,7 +77,7 @@ function _color(__model__: GIModel, ents_arr: TEntTypeIdx[], color: TColor): voi
  * @param method Enum
  * @returns void
  */
-export function Gradient(__model__: GIModel, entities: TId|TId[], attrib: string|[string, number]|[string, string],
+export function Gradient(__model__: SIModel, entities: TId|TId[], attrib: string|[string, number]|[string, string],
         range: number|[number, number], method: _EColorRampMethod): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
@@ -120,7 +120,7 @@ export enum _EColorRampMethod {
     GREY_SCALE = 'grey_scale',
     BLACK_BODY = 'black_body'
 }
-function _gradient(__model__: GIModel, ents_arr: TEntTypeIdx[], attrib_name: string, idx_or_key: number|string, range: [number, number],
+function _gradient(__model__: SIModel, ents_arr: TEntTypeIdx[], attrib_name: string, idx_or_key: number|string, range: [number, number],
         method: _EColorRampMethod): void {
     if (!__model__.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.COLOR)) {
         __model__.attribs.add.addAttrib(EEntType.VERT, EAttribNames.COLOR, EAttribDataTypeStrs.LIST);
@@ -182,7 +182,7 @@ function _gradient(__model__: GIModel, ents_arr: TEntTypeIdx[], attrib_name: str
  * @returns entities, a line representing the ray.
  * @example ray1 = virtual.visRay([[1,2,3],[0,0,1]])
  */
-export function Ray(__model__: GIModel, rays: TRay|TRay[], scale: number): TId[] {
+export function Ray(__model__: SIModel, rays: TRay|TRay[], scale: number): TId[] {
     // --- Error Check ---
     const fn_name = 'visualize.Ray';
     checkArgTypes(fn_name, 'ray', rays, [TypeCheckObj.isRay, TypeCheckObj.isRayList]);
@@ -190,7 +190,7 @@ export function Ray(__model__: GIModel, rays: TRay|TRay[], scale: number): TId[]
     // --- Error Check ---
    return idsMake(_visRay(__model__, rays, scale)) as TId[];
 }
-function _visRay(__model__: GIModel, rays: TRay|TRay[], scale: number): TEntTypeIdx[] {
+function _visRay(__model__: SIModel, rays: TRay|TRay[], scale: number): TEntTypeIdx[] {
     if (getArrDepth(rays) === 2) {
         const ray: TRay = rays as TRay;
         const origin: Txyz = ray[0];
@@ -243,7 +243,7 @@ function _visRay(__model__: GIModel, rays: TRay|TRay[], scale: number): TEntType
  * @example plane1 = virtual.visPlane(position1, vector1, [0,1,0])
  * @example_info Creates a plane with position1 on it and normal = cross product of vector1 with y-axis.
  */
-export function Plane(__model__: GIModel, planes: TPlane|TPlane[], scale: number): TId[] {
+export function Plane(__model__: SIModel, planes: TPlane|TPlane[], scale: number): TId[] {
     // --- Error Check ---
     const fn_name = 'visualize.Plane';
     checkArgTypes(fn_name, 'planes', planes, [TypeCheckObj.isPlane]); // TODO planes can be a list // add isPlaneList to enable check
@@ -251,7 +251,7 @@ export function Plane(__model__: GIModel, planes: TPlane|TPlane[], scale: number
     // --- Error Check ---
     return idsMake(_visPlane(__model__, planes, scale)) as TId[];
 }
-function _visPlane(__model__: GIModel, planes: TPlane|TPlane[], scale: number): TEntTypeIdx[] {
+function _visPlane(__model__: SIModel, planes: TPlane|TPlane[], scale: number): TEntTypeIdx[] {
     if (getArrDepth(planes) === 2) {
         const plane: TPlane = planes as TPlane;
         const origin: Txyz = plane[0];
@@ -314,14 +314,14 @@ function _visPlane(__model__: GIModel, planes: TPlane|TPlane[], scale: number): 
  * @example bbox1 = virtual.viBBox(position1, vector1, [0,1,0])
  * @example_info Creates a plane with position1 on it and normal = cross product of vector1 with y-axis.
  */
-export function BBox(__model__: GIModel, bboxes: TBBox|TBBox): TId[] {
+export function BBox(__model__: SIModel, bboxes: TBBox|TBBox): TId[] {
     // --- Error Check ---
     const fn_name = 'visualize.BBox';
     checkArgTypes(fn_name, 'bbox', bboxes, [TypeCheckObj.isBBox]); // TODO bboxs can be a list // add isBBoxList to enable check
     // --- Error Check ---
     return  idsMake(_visBBox(__model__, bboxes)) as TId[];
 }
-function _visBBox(__model__: GIModel, bboxs: TBBox|TBBox[]): TEntTypeIdx[] {
+function _visBBox(__model__: SIModel, bboxs: TBBox|TBBox[]): TEntTypeIdx[] {
     if (getArrDepth(bboxs) === 2) {
         const bbox: TBBox = bboxs as TBBox;
         const _min: Txyz = bbox[1];

@@ -1,18 +1,18 @@
 import { EEntType, TTri, TFace, Txyz, IGeomArrays, TAttribDataTypes, TEdge, TCollTree, TColl } from '../common';
 import { triangulate } from '../../triangulate/triangulate';
-import { GIGeom } from './Geom';
+import { Geom } from './Geom';
 import { vecAdd } from '../../geom/vectors';
-import { GIGeomData } from './data/GeomData';
+import { GeomData } from './data/GeomData';
 
 /**
  * Class for geometry.
  */
-export class GIGeomAdd {
-    private geom: GIGeom;
+export class GeomAdd {
+    private geom: Geom;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom) {
+    constructor(geom: Geom) {
         this.geom = geom;
     }
     // ============================================================================

@@ -15,7 +15,7 @@ import { vecAdd, vecFromTo, vecDiv, vecMult } from '@libs/geom/vectors';
 import { xfromSourceTargetMatrix, multMatrix } from '@libs/geom/matrix';
 import { Matrix4 } from 'three';
 import { __merge__ } from '../_model';
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import * as THREE from 'three';
 import * as VERB from '@assets/libs/verb/verb';
 import { arrFill, arrMakeFlat } from '@assets/libs/util/arrs';
@@ -28,7 +28,7 @@ import { arrFill, arrMakeFlat } from '@assets/libs/util/arrs';
  * @param size Size of the line.
  * @returns Entities, a list of four positions.
  */
-export function Line(__model__: GIModel, origin: Txyz|TPlane, size: number, num_positions: number): TId[] {
+export function Line(__model__: SIModel, origin: Txyz|TPlane, size: number, num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Line';
     checkArgTypes(fn_name, 'origin', origin, [TypeCheckObj.isCoord, TypeCheckObj.isPlane]);
@@ -73,7 +73,7 @@ export function Line(__model__: GIModel, origin: Txyz|TPlane, size: number, num_
  * @example coordinates1 = pattern.Rectangle([0,0,0], [10,20])
  * @example_info Creates a list of 4 coords, being the vertices of a 10 by 20 rectangle.
  */
-export function Rectangle(__model__: GIModel, origin: Txyz|TPlane, size: number|[number, number]): TId[] {
+export function Rectangle(__model__: SIModel, origin: Txyz|TPlane, size: number|[number, number]): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Rectangle';
     checkArgTypes(fn_name, 'origin', origin, [TypeCheckObj.isCoord, TypeCheckObj.isPlane]);
@@ -124,7 +124,7 @@ export function Rectangle(__model__: GIModel, origin: Txyz|TPlane, size: number|
 * @example coordinates1 = pattern.Grid([0,0,0], [10,20], [2,4])
 * @example_info Creates a list of 8 XYZ coordinates on a 2x4 grid of length 10 by 20.
 */
-export function Grid(__model__: GIModel, origin: Txyz|TPlane, size: number|[number, number],
+export function Grid(__model__: SIModel, origin: Txyz|TPlane, size: number|[number, number],
         num_positions: number|[number, number], method: _EGridMethod): TId[]|TId[][] {
     // --- Error Check ---
     const fn_name = 'pattern.Grid';
@@ -215,7 +215,7 @@ export enum _EGridMethod {
  * @param method Enum
  * @returns Entities, a list of 6 positions.
  */
-export function Box(__model__: GIModel, origin: Txyz | TPlane,
+export function Box(__model__: SIModel, origin: Txyz | TPlane,
     size: number | [number, number] | [number, number, number],
     num_positions: number | [number, number] | [number, number, number],
     method: _EBoxMethod): TId[] | TId[][] {
@@ -471,7 +471,7 @@ export enum _EBoxMethod {
  * @param method Enum
  * @returns Entities, a list of positions.
  */
-export function Polyhedron(__model__: GIModel, origin: Txyz | TPlane, radius: number, detail: number,
+export function Polyhedron(__model__: SIModel, origin: Txyz | TPlane, radius: number, detail: number,
         method: _EPolyhedronMethod): TId[]|TId[][] {
     // --- Error Check ---
     const fn_name = 'pattern.Polyhedron';
@@ -505,7 +505,7 @@ export enum _EPolyhedronMethod {
     FACE_ICOSA = 'face_icosa',
     FACE_DODECA = 'face_dodeca'
 }
-export function _polyhedron(__model__: GIModel, matrix: Matrix4, radius: number, detail: number,
+export function _polyhedron(__model__: SIModel, matrix: Matrix4, radius: number, detail: number,
     method: _EPolyhedronMethod): number[]|number[][] {
     // create the posis
     let hedron_tjs: THREE.TetrahedronGeometry|THREE.OctahedronGeometry|THREE.IcosahedronGeometry|THREE.DodecahedronGeometry = null;
@@ -573,7 +573,7 @@ export function _polyhedron(__model__: GIModel, matrix: Matrix4, radius: number,
  * @example coordinates1 = pattern.Arc([0,0,0], 10, 12, PI)
  * @example_info Creates a list of 12 positions distributed equally along a semicircle of radius 10.
  */
-export function Arc(__model__: GIModel, origin: Txyz|TPlane, radius: number, num_positions: number, arc_angle: number): TId[] {
+export function Arc(__model__: SIModel, origin: Txyz|TPlane, radius: number, num_positions: number, arc_angle: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Arc';
     checkArgTypes(fn_name, 'origin', origin, [TypeCheckObj.isCoord, TypeCheckObj.isPlane]);
@@ -628,7 +628,7 @@ export function Arc(__model__: GIModel, origin: Txyz|TPlane, radius: number, num
  * @example coordinates1 = pattern.Bezier([[0,0,0], [10,0,50], [20,0,10]], 20)
  * @example_info Creates a list of 20 positions distributed along a Bezier curve pattern.
  */
-export function Bezier(__model__: GIModel, coords: Txyz[], num_positions: number): TId[] {
+export function Bezier(__model__: SIModel, coords: Txyz[], num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Bezier';
     checkArgTypes(fn_name, 'coords', coords, [TypeCheckObj.isCoordList]);
@@ -683,7 +683,7 @@ export function Bezier(__model__: GIModel, coords: Txyz[], num_positions: number
  * @example coordinates1 = pattern.Nurbs([[0,0,0], [10,0,50], [20,0,10]], 20)
  * @example_info Creates a list of 20 positions distributed along a Bezier curve pattern.
  */
-export function Nurbs(__model__: GIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
+export function Nurbs(__model__: SIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Nurbs';
     checkArgTypes(fn_name, 'coords', coords, [TypeCheckObj.isCoordList]);
@@ -760,7 +760,7 @@ export function Nurbs(__model__: GIModel, coords: Txyz[], degree: number, close:
  * @example coordinates1 = pattern.Nurbs([[0,0,0], [10,0,50], [20,0,10]], 20)
  * @example_info Creates a list of 20 positions distributed along a Bezier curve pattern.
  */
-export function _Interpolate(__model__: GIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
+export function _Interpolate(__model__: SIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern._Interpolate';
     checkArgTypes(fn_name, 'coords', coords, [TypeCheckObj.isCoordList]);
@@ -790,7 +790,7 @@ export function _Interpolate(__model__: GIModel, coords: Txyz[], degree: number,
     const posis_i: number[] = nurbsToPosis(__model__, curve_verb, degree, closed, num_positions, coords[0]);
     return idsMakeFromIndicies(EEntType.POSI, posis_i) as TId[];
 }
-function nurbsToPosis(__model__: GIModel, curve_verb: any, degree: number, closed: boolean,
+function nurbsToPosis(__model__: SIModel, curve_verb: any, degree: number, closed: boolean,
         num_positions: number, start: Txyz, ): number[] {
     // create positions
     const posis_i: number[] = [];
@@ -865,7 +865,7 @@ export enum _EClose {
  * @example coordinates1 = pattern.Spline([[0,0,0], [10,0,50], [20,0,0], [30,0,20], [40,0,10]], 'chordal','close', 0.2, 50)
  * @example_info Creates a list of 50 positions distributed along a spline curve pattern.
  */
-export function Interpolate(__model__: GIModel, coords: Txyz[], type: _ECurveCatRomType, tension: number, close: _EClose,
+export function Interpolate(__model__: SIModel, coords: Txyz[], type: _ECurveCatRomType, tension: number, close: _EClose,
     num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Interpolate';

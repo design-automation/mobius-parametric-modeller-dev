@@ -1,16 +1,16 @@
 import {  IGeomArrays } from '../../common';
-import { GIGeom } from '../Geom';
-import { GIGeomNav } from './GeomNav';
+import { Geom } from '../Geom';
+import { GeomNav } from './GeomNav';
 
 /**
  * Working with verts.
  *
  */
-export class GIGeomVert extends GIGeomNav {
+export class GeomVert extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
     // ============================================================================

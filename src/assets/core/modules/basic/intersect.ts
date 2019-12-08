@@ -8,7 +8,7 @@
 
 import { TId, Txyz, EEntType, TPlane, TRay, TEntTypeIdx, TBBox } from '@libs/sim/common';
 import { checkArgTypes, checkIDs, TypeCheckObj, IDcheckObj } from '../_check_args';
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { getArrDepth } from '@libs/sim/id';
 import { vecCross} from '@libs/geom/vectors';
 import { _normal } from './calc';
@@ -32,7 +32,7 @@ import * as THREE from 'three';
  * @example coords = virtual.Intersect(plane, polyline1)
  * @example_info Returns a list of coordinates where the plane intersects with polyline1.
  */
-export function RayFace(__model__: GIModel, ray: TRay, entities: TId|TId[]): Txyz[] {
+export function RayFace(__model__: SIModel, ray: TRay, entities: TId|TId[]): Txyz[] {
     // --- Error Check ---
     const fn_name = 'intersect.RayFace';
     checkArgTypes(fn_name, 'ray', ray, [TypeCheckObj.isRay]);
@@ -44,7 +44,7 @@ export function RayFace(__model__: GIModel, ray: TRay, entities: TId|TId[]): Txy
     const ray_tjs: THREE.Ray = new THREE.Ray(new THREE.Vector3(...ray[0]), new THREE.Vector3(...ray[1]));
     return _intersectRay(__model__, ents_arr, ray_tjs);
 }
-function _intersectRay(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], ray_tjs: THREE.Ray): Txyz[] {
+function _intersectRay(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], ray_tjs: THREE.Ray): Txyz[] {
     if (getArrDepth(ents_arr) === 1) {
         const [ent_type, index]: [EEntType, number] = ents_arr as TEntTypeIdx;
         const posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, index);
@@ -97,7 +97,7 @@ function _intersectRay(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], 
  * @example coords = virtual.Intersect(plane, polyline1)
  * @example_info Returns a list of coordinates where the plane intersects with polyline1.
  */
-export function PlaneEdge(__model__: GIModel, plane: TRay|TPlane, entities: TId|TId[]): Txyz[] {
+export function PlaneEdge(__model__: SIModel, plane: TRay|TPlane, entities: TId|TId[]): Txyz[] {
     // --- Error Check ---
     const fn_name = 'intersect.PlaneEdge';
     checkArgTypes(fn_name, 'plane', plane, [TypeCheckObj.isPlane]);
@@ -111,7 +111,7 @@ export function PlaneEdge(__model__: GIModel, plane: TRay|TPlane, entities: TId|
     plane_tjs.setFromNormalAndCoplanarPoint( new THREE.Vector3(...plane_normal), new THREE.Vector3(...plane[0]) );
     return _intersectPlane(__model__, ents_arr, plane_tjs);
 }
-function _intersectPlane(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], plane_tjs: THREE.Plane): Txyz[] {
+function _intersectPlane(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], plane_tjs: THREE.Plane): Txyz[] {
     if (getArrDepth(ents_arr) === 1) {
         const [ent_type, index]: [EEntType, number] = ents_arr as TEntTypeIdx;
         const isect_xyzs: Txyz[] = [];

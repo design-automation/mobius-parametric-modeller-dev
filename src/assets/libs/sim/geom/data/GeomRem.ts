@@ -1,16 +1,16 @@
 import {  EEntType, IGeomArrays, TVert, TEdge, TWire, TTri, TFace, TPoint, TPline, TPgon, TColl } from '../../common';
-import { GIGeom } from '../Geom';
-import { GIGeomNav } from './GeomNav';
+import { Geom } from '../Geom';
+import { GeomNav } from './GeomNav';
 
 /**
  * Removing entities
  *
  */
-export class GIGeomRem extends GIGeomNav {
+export class GeomRem extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
     // ============================================================================

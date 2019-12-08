@@ -1,6 +1,6 @@
 
 import {  IGeomArrays, TWire, TColl } from '../../common';
-import { GIGeom } from '../Geom';
+import { Geom } from '../Geom';
 
 /**
  * Class for interacting with the core data.
@@ -25,13 +25,13 @@ import { GIGeom } from '../Geom';
  * Note that triangles are mostly hoddent from the user.
  *
  */
-export class GIGeomCore {
-    protected geom: GIGeom;
+export class GeomCore {
+    protected geom: Geom;
     protected _geom_arrays: IGeomArrays;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         this.geom = geom;
         this._geom_arrays = geom_arrays;
     }

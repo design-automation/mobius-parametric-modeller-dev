@@ -1,14 +1,14 @@
 import { EEntType, TEdge, TWire } from '../common';
-import { GIGeom } from './Geom';
+import { Geom } from './Geom';
 /**
  * Class for deleting geometry.
  */
-export class GIGeomDelVert {
-    private geom: GIGeom;
+export class GeomDelVert {
+    private geom: Geom;
     /**
      * Constructor
      */
-    constructor(geom: GIGeom) {
+    constructor(geom: Geom) {
         this.geom = geom;
     }
     /**

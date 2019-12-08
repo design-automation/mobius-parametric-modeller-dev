@@ -8,7 +8,7 @@
  *
  */
 
-import { GIModel } from '@assets/libs/sim/SIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack, IObjPack} from '@libs/sim/common';
 import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/sim/id';
 import { vecAdd, vecSum, vecDiv, vecFromTo, vecNorm, vecCross, vecSetLen, vecLen, vecDot } from '@libs/geom/vectors';
@@ -42,7 +42,7 @@ import { INode } from '@models/node';
  * @example modify.Move([pgon1, pgon2], [1,2,3] )
  * @example_info Moves both pgon1 and pgon2 by [1,2,3].
  */
-export function Move(__model__: GIModel, entities: TId|TId[], vectors: Txyz|Txyz[]): void {
+export function Move(__model__: SIModel, entities: TId|TId[], vectors: Txyz|Txyz[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -55,7 +55,7 @@ export function Move(__model__: GIModel, entities: TId|TId[], vectors: Txyz|Txyz
         _move(__model__, ents_arr, vectors);
     }
 }
-function _move(__model__: GIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]): void {
+function _move(__model__: SIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]): void {
     if (getArrDepth(vectors) === 1) {
         const posis_i: number[] = [];
         const vec: Txyz = vectors as Txyz;
@@ -112,7 +112,7 @@ function _move(__model__: GIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]
  * @example modify.Rotate(polyline1, plane1, PI)
  * @example_info Rotates polyline1 around the z-axis of plane1 by PI (i.e. 180 degrees).
  */
-export function Rotate(__model__: GIModel, entities: TId|TId[], ray: Txyz|TRay|TPlane|TId|TId[], angle: number): void {
+export function Rotate(__model__: SIModel, entities: TId|TId[], ray: Txyz|TRay|TPlane|TId|TId[], angle: number): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -126,7 +126,7 @@ export function Rotate(__model__: GIModel, entities: TId|TId[], ray: Txyz|TRay|T
         _rotate(__model__, ents_arr, ray, angle);
     }
 }
-function _rotate(__model__: GIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: number): void {
+function _rotate(__model__: SIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: number): void {
     // rotate all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
@@ -159,7 +159,7 @@ function _rotate(__model__: GIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: 
  * @example modify.Scale(entities, plane1, [0.5, 1, 1])
  * @example_info Scales entities by 0.5 along the x axis of plane1, with no scaling along the y and z axes.
  */
-export function Scale(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[], scale: number|Txyz): void {
+export function Scale(__model__: SIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[], scale: number|Txyz): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -173,7 +173,7 @@ export function Scale(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay|
         _scale(__model__, ents_arr, plane, scale);
     }
 }
-function _scale(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scale: number|Txyz): void {
+function _scale(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scale: number|Txyz): void {
     // handle scale type
     if (!Array.isArray(scale)) {
         scale = [scale, scale, scale];
@@ -207,7 +207,7 @@ function _scale(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scal
  * @example modify.Mirror(polygon1, plane1)
  * @example_info Mirrors polygon1 across plane1.
  */
-export function Mirror(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[]): void {
+export function Mirror(__model__: SIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -220,7 +220,7 @@ export function Mirror(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay
         _mirror(__model__, ents_arr, plane);
     }
 }
-function _mirror(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane): void {
+function _mirror(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane): void {
     // mirror all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
@@ -255,7 +255,7 @@ function _mirror(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane): vo
  * @example modify.XForm(polygon1, plane1, plane2)
  * @example_info Transforms polygon1 from plane1 to plane2.
  */
-export function XForm(__model__: GIModel, entities: TId|TId[],
+export function XForm(__model__: SIModel, entities: TId|TId[],
         from_plane: Txyz|TRay|TPlane|TId|TId[], to_plane: Txyz|TRay|TPlane|TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
@@ -270,7 +270,7 @@ export function XForm(__model__: GIModel, entities: TId|TId[],
         _xform(__model__, ents_arr, from_plane, to_plane);
     }
 }
-function _xform(__model__: GIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: TPlane): void {
+function _xform(__model__: SIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: TPlane): void {
     // xform all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
@@ -296,7 +296,7 @@ function _xform(__model__: GIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: T
  * @example modify.Offset(polygon1, 10)
  * @example_info Offsets the wires inside polygon1 by 10 units. Holes will also be offset.
  */
-export function Offset(__model__: GIModel, entities: TId|TId[], dist: number): void {
+export function Offset(__model__: SIModel, entities: TId|TId[], dist: number): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -308,7 +308,7 @@ export function Offset(__model__: GIModel, entities: TId|TId[], dist: number): v
         _offset(__model__, ents_arr, dist);
     }
 }
-function _offset(__model__: GIModel, ents_arr: TEntTypeIdx[], dist: number): void {
+function _offset(__model__: SIModel, ents_arr: TEntTypeIdx[], dist: number): void {
     // get all wires and offset
     const pgons_i: number[] = [];
     for (const ents of ents_arr) {
@@ -331,7 +331,7 @@ function _offset(__model__: GIModel, ents_arr: TEntTypeIdx[], dist: number): voi
         __model__.geom.data.faceTri(face_i);
     }
 }
-function _offsetWire(__model__: GIModel, wire_i: number, dist: number): void {
+function _offsetWire(__model__: SIModel, wire_i: number, dist: number): void {
     // get the normal of the wire
     let vec_norm: Txyz = __model__.calc.getWireNormal(wire_i);
     if (vecLen(vec_norm) === 0) {
@@ -429,7 +429,7 @@ function _offsetWire(__model__: GIModel, wire_i: number, dist: number): void {
  * @example modify.Reverse(polyline1)
  * @example_info Reverses the order of vertices to reverse the direction of the polyline.
  */
-export function Reverse(__model__: GIModel, entities: TId|TId[]): void {
+export function Reverse(__model__: SIModel, entities: TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -440,7 +440,7 @@ export function Reverse(__model__: GIModel, entities: TId|TId[]): void {
         _reverse(__model__, ents_arr);
     }
 }
-function _reverse(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
+function _reverse(__model__: SIModel, ents_arr: TEntTypeIdx[]): void {
     for (const [ent_type, index] of ents_arr) {
         const wires_i: number[] = __model__.geom.data.navAnyToWire(ent_type, index);
         wires_i.forEach( wire_i => __model__.geom.data.wireReverse(wire_i) );
@@ -465,7 +465,7 @@ function _reverse(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
  * @example_info Shifts the edges in the closed polyline wire, so that every edge moves back by one position
  * in the ring. The first edge will become the last edge.
  */
-export function Shift(__model__: GIModel, entities: TId|TId[], offset: number): void {
+export function Shift(__model__: SIModel, entities: TId|TId[], offset: number): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -476,7 +476,7 @@ export function Shift(__model__: GIModel, entities: TId|TId[], offset: number): 
         _shift(__model__, ents_arr, offset);
     }
 }
-function _shift(__model__: GIModel, ents_arr: TEntTypeIdx[], offset: number): void {
+function _shift(__model__: SIModel, ents_arr: TEntTypeIdx[], offset: number): void {
     for (const [ent_type, index] of ents_arr) {
         const wires_i: number[] = __model__.geom.data.navAnyToWire(ent_type, index);
         wires_i.forEach( wire_i => __model__.geom.data.wireShift(wire_i, offset) );
@@ -492,7 +492,7 @@ function _shift(__model__: GIModel, ents_arr: TEntTypeIdx[], offset: number): vo
  * @example modify.Close([polyline1,polyline2,...], method='close')
  * @example_info If open, polylines are changed to closed; if already closed, nothing happens.
  */
-export function Ring(__model__: GIModel, entities: TId|TId[], method: _ERingMethod): void {
+export function Ring(__model__: SIModel, entities: TId|TId[], method: _ERingMethod): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -507,7 +507,7 @@ export enum _ERingMethod {
     OPEN =  'open',
     CLOSE  =  'close',
 }
-function _ring(__model__: GIModel, ents_arr: TEntTypeIdx[], method: _ERingMethod): void {
+function _ring(__model__: SIModel, ents_arr: TEntTypeIdx[], method: _ERingMethod): void {
     for (const [ent_type, ent_i] of ents_arr) {
         switch (method) {
             case _ERingMethod.CLOSE:
@@ -532,7 +532,7 @@ function _ring(__model__: GIModel, ents_arr: TEntTypeIdx[], method: _ERingMethod
  * @example mod.Unweld(polyline1)
  * @example_info Unwelds the vertices of polyline1 from all other vertices that shares the same position.
  */
-export function Weld(__model__: GIModel, entities: TId|TId[], method: _EWeldMethod): void {
+export function Weld(__model__: SIModel, entities: TId|TId[], method: _EWeldMethod): void {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
     const fn_name = 'modify.Weld';
@@ -546,7 +546,7 @@ export enum _EWeldMethod {
     MERGE_POSITIONS =  'merge_positions',
     CLONE_POSITIONS  =  'clone_positions',
 }
-export function _weld(__model__: GIModel, ents_arr: TEntTypeIdx[], method: _EWeldMethod): void {
+export function _weld(__model__: SIModel, ents_arr: TEntTypeIdx[], method: _EWeldMethod): void {
     // get verts_i
     const all_verts_i: number[] = []; // count number of posis
     for (const ents of ents_arr) {
@@ -579,7 +579,7 @@ export function _weld(__model__: GIModel, ents_arr: TEntTypeIdx[], method: _EWel
  * @example modify.Remesh(polygon1)
  * @example_info Remeshs the face of the polygon.
  */
-export function Remesh(__model__: GIModel, entities: TId[]): void {
+export function Remesh(__model__: SIModel, entities: TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -589,7 +589,7 @@ export function Remesh(__model__: GIModel, entities: TId[]): void {
         _remesh(__model__, ents_arr);
     }
 }
-function _remesh(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
+function _remesh(__model__: SIModel, ents_arr: TEntTypeIdx[]): void {
     for (const [ent_type, ent_i] of ents_arr) {
         if (ent_type === EEntType.FACE) {
             __model__.geom.data.faceTri(ent_i);
@@ -619,7 +619,7 @@ function _remesh(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
  * @example modify.Delete(polygon1)
  * @example_info Deletes polygon1 from the model.
  */
-export function Delete(__model__: GIModel, entities: TId|TId[], method: _EDeleteMethod  ): void {
+export function Delete(__model__: SIModel, entities: TId|TId[], method: _EDeleteMethod  ): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -644,7 +644,7 @@ export enum _EDeleteMethod {
     DELETE_SELECTED  =  'delete_selected',
     KEEP_SELECTED =  'keep_selected'
 }
-function _delete(__model__: GIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
+function _delete(__model__: SIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
     // get the ents
     const geom_pack: IGeomPack = __model__.geom.data.getGeomPackFromEnts(ents_arr, invert);
     const obj_pack: IObjPack = invert ? __model__.geom.data.invertObjPack(geom_pack) : geom_pack;
@@ -785,7 +785,7 @@ function _delete(__model__: GIModel, ents_arr: TEntTypeIdx[], invert: boolean): 
 //  * Note that in order to create an attribute at the collection level, the two polygons should be part of a
 //  * collection. If they are not part of the collection, then no attribute values will be push.
 //  */
-// export function PushAttribs(__model__: GIModel, entities: TId|TId[], attrib_name: string,
+// export function PushAttribs(__model__: SIModel, entities: TId|TId[], attrib_name: string,
 //         to_level: _EPromoteTarget, method: _EPromoteMethod): void {
 //     // --- Error Check ---
 //     let ents_arr: TEntTypeIdx|TEntTypeIdx[];

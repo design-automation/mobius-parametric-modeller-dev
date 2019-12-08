@@ -1,16 +1,16 @@
 import { EAttribNames, EEntType } from './common';
 import { IThreeJS } from './ThreejsJSON';
-import { GIModel } from './SIModel';
+import { SIModel } from './SIModel';
 /**
  * Geo-info model class.
  */
-export class GIModelThreejs {
-    private _model: GIModel;
+export class SIModelThreejs {
+    private _model: SIModel;
 
    /**
      * Constructor
      */
-    constructor(model: GIModel) {
+    constructor(model: SIModel) {
         this._model = model;
     }
     /**

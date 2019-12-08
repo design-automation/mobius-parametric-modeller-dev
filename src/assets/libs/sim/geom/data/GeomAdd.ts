@@ -1,16 +1,16 @@
 import { IGeomArrays, TVert, TEdge, TWire, TTri, TFace, TPoint, TPline, TPgon, TColl } from '../../common';
-import { GIGeom } from '../Geom';
-import { GIGeomNav } from './GeomNav';
+import { Geom } from '../Geom';
+import { GeomNav } from './GeomNav';
 
 /**
  * Adding entities, thereby creating a ew ID
  *
  */
-export class GIGeomAdd extends GIGeomNav {
+export class GeomAdd extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
     // ============================================================================

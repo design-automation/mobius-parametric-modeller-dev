@@ -1,17 +1,17 @@
 import { EEntType, IGeomArrays, TColl } from '../../common';
 import { isPosi, isVert, isPoint, isEdge, isWire, isPline, isFace, isPgon, isColl, isTri } from '../../id';
-import { GIGeom } from '../Geom';
-import { GIGeomCore } from './GeomBase';
+import { Geom } from '../Geom';
+import { GeomCore } from './GeomBase';
 
 /**
  * Class for navigating the datastructure
  * This is parent of all the other classes
  */
-export class GIGeomNav extends GIGeomCore { // extends GIGeomBase
+export class GeomNav extends GeomCore { // extends GeomBase
     /**
      * Constructor
      */
-    constructor(geom: GIGeom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom, geom_arrays: IGeomArrays) {
         super(geom, geom_arrays);
     }
     // ============================================================================
@@ -567,5 +567,5 @@ export class GIGeomNav extends GIGeomCore { // extends GIGeomBase
     }
 }
 
-// export interface GIGeomNav extends GIGeomColl, GIGeomWire {}
-// applyMixins(GIGeomNav, [GIGeomColl, GIGeomWire]);
+// export interface GeomNav extends GeomColl, GeomWire {}
+// applyMixins(GeomNav, [GeomColl, GeomWire]);
