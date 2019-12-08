@@ -1,11 +1,11 @@
 
-import {  IGeomArrays, TWire, TColl } from '../../common';
+import {  IGeomArrays, TWire, TColl, TCollParent } from '../../common';
 import { Geom } from '../Geom';
 
 /**
- * Class for interacting with the core data.
+ * The base class for the geometry data..
  *
- * The data conssists of a set of sparse arrays.
+ * The data consists of a set of sparse arrays.
  *
  * Posis are stored in the up_posis_verts array.
  * The up_posis_verts array must contain an entry for each posi that is not deleted.
@@ -25,115 +25,208 @@ import { Geom } from '../Geom';
  * Note that triangles are mostly hoddent from the user.
  *
  */
-export class GeomCore {
+export class GeomBase {
     protected geom: Geom;
-    protected _geom_arrays: IGeomArrays;
+    //  all arrays
+    protected _geom_arrays: IGeomArrays = {
+        // down
+        dn_verts_posis: [],  // flat array
+        dn_tris_verts: [],   // reg nested array
+        dn_edges_verts: [],  // reg nested array
+        dn_wires_edges: [],  // irreg nested array
+        dn_faces_tris: [],   // irreg nested array
+        dn_faces_wires: [],  // irreg nested array
+        dn_points_verts: [], // flat array
+        dn_plines_wires: [], // flat array
+        dn_pgons_faces: [],  // flat array
+        dn_colls_parents: [], // flat array
+        dn_colls_points: [], // irreg nested array
+        dn_colls_plines: [], // irreg nested array
+        dn_colls_pgons: [],  // irreg nested array
+        // up
+        up_posis_verts: [],  // irreg nested array
+        up_tris_faces: [],   // flat array
+        up_verts_edges: [],  // reg nested array
+        up_verts_tris: [],   // irreg nested array
+        up_verts_points: [], // flat array
+        up_edges_wires: [],  // flat array
+        up_wires_faces: [],  // flat array
+        up_wires_plines: [], // flat array
+        up_faces_pgons: [],  // flat array
+        up_points_colls: [], // irreg nested array
+        up_plines_colls: [], // irreg nested array
+        up_pgons_colls: []   // irreg nested array
+    };
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
+    constructor(geom: Geom) {
         this.geom = geom;
-        this._geom_arrays = geom_arrays;
     }
     // ============================================================================
     // Utility methods
     // ============================================================================
     // single value
-    protected _set(arr: any[], arr_idxs: number|number[], item: number): void {
-        if (!Array.isArray(arr_idxs)) {
-            arr[arr_idxs] = item;
+    /**
+     * Set values in an array, given a list of indexes
+     * @param arr The array
+     * @param val_idxs The list of indexes
+     * @param val The value
+     */
+    protected _setValsInArr(arr: any[], val_idxs: number|number[], val: number): void {
+        if (!Array.isArray(val_idxs)) {
+            arr[val_idxs] = val;
         } else {
-            arr_idxs.forEach( arr_idx => this._set(arr, arr_idx, item) );
+            val_idxs.forEach( val_idx => this._setValsInArr(arr, val_idx, val) );
         }
     }
-    protected _clear(arr: any[], arr_idxs: number|number[], del: boolean): void {
-        if (!Array.isArray(arr_idxs)) {
+    /**
+     * Clear values in an array, given a list of indexes.
+     * Either delete or set to null.
+     * @param arr The array
+     * @param val_idxs The list of indexes
+     * @param del Delete or set to null.
+     */
+    protected _clearValsInArr(arr: any[], val_idxs: number|number[], del: boolean): void {
+        if (!Array.isArray(val_idxs)) {
             if (del) {
-                delete arr[arr_idxs];
+                delete arr[val_idxs];
             } else {
-                arr[arr_idxs] = null;
+                arr[val_idxs] = null;
             }
         } else {
-            arr_idxs.forEach( arr_idx => this._clear(arr, arr_idx, del) );
+            val_idxs.forEach( val_idx => this._clearValsInArr(arr, val_idx, del) );
         }
     }
-    protected _clearIf(arr: any[], arr_idxs: number|number[], val: number, del: boolean): void {
-        if (!Array.isArray(arr_idxs)) {
-            if (arr[arr_idxs] === val) {
+    /**
+     * Clear values in an array, given a list of indexes, and only if teh current value is equal to val.
+     * Either delete or set to null.
+     * @param arr The array
+     * @param val_idxs The list of indexes
+     * @param current_val The existing value
+     * @param del Delete or set to null.
+     */
+    protected _clearValsInArrIf(arr: any[], val_idxs: number|number[], current_val: number, del: boolean): void {
+        if (!Array.isArray(val_idxs)) {
+            if (arr[val_idxs] === current_val) {
                 if (del) {
-                    delete arr[arr_idxs];
+                    delete arr[val_idxs];
                 } else {
-                    arr[arr_idxs] = null;
+                    arr[val_idxs] = null;
                 }
             }
         } else {
-            arr_idxs.forEach( arr_idx => this._clear(arr, arr_idx, del) );
+            val_idxs.forEach( val_idx => this._clearValsInArr(arr, val_idx, del) );
         }
     }
     // set of unique values, stored as arrays
-    protected _addToSet(arr: any[], arr_idxs: number|number[], item: number): void {
-        if (item === undefined) { return; }
-        if (!Array.isArray(arr_idxs)) {
-            if (!arr[arr_idxs]) { arr[arr_idxs] = []; }
-            if (arr[arr_idxs].indexOf(item) === -1) { arr[arr_idxs].push(item); }
+    /**
+     * Add a value to a sub-array in a container array, if it is not already in the array.
+     * @param cont_arr The container array.
+     * @param set_idxs The sub-array indexes.
+     * @param val The value to add.
+     */
+    protected _addValToSetInArr(cont_arr: any[], set_idxs: number|number[], val: number): void {
+        if (val === undefined) { return; }
+        if (!Array.isArray(set_idxs)) {
+            if (!cont_arr[set_idxs]) { cont_arr[set_idxs] = []; }
+            if (cont_arr[set_idxs].indexOf(val) === -1) { cont_arr[set_idxs].push(val); }
         } else {
-            arr_idxs.forEach( arr_idx => this._addToSet(arr, arr_idx, item) );
+            set_idxs.forEach( set_idx => this._addValToSetInArr(cont_arr, set_idx, val) );
         }
     }
-    protected _remFromSet(arr: any[], arr_idxs: number|number[], item: number, del: boolean): void {
-        if (item === undefined) { return; }
-        if (!Array.isArray(arr_idxs)) {
-            const idx: number = arr[arr_idxs].indexOf(item);
+    /**
+     * Remove a value from a sub-array in a container array.
+     * @param cont_arr The container array.
+     * @param set_idxs The sub-array indexes.
+     * @param val The value to remove.
+     * @param del Delete or set to null.
+     */
+    protected _remValFromSetInArr(cont_arr: any[], set_idxs: number|number[], val: number, del: boolean): void {
+        if (val === undefined) { return; }
+        if (!Array.isArray(set_idxs)) {
+            const idx: number = cont_arr[set_idxs].indexOf(val);
             if (idx === -1) { return; }
-            arr[arr_idxs].splice(idx, 1);
-            if (del && arr[arr_idxs].length === 0) {
-                delete arr[arr_idxs];
+            cont_arr[set_idxs].splice(idx, 1);
+            if (del && cont_arr[set_idxs].length === 0) {
+                delete cont_arr[set_idxs];
             }
         } else {
-            arr_idxs.forEach( arr_idx => this._remFromSet(arr, arr_idx, item, del) );
+            set_idxs.forEach( set_idx => this._remValFromSetInArr(cont_arr, set_idx, val, del) );
         }
     }
     // arrays of values
-    protected _appToArr(arr: any[], arr_idxs: number|number[], item: number): void {
-        if (!Array.isArray(arr_idxs)) {
-            if (!arr[arr_idxs]) { arr[arr_idxs] = []; }
-            arr[arr_idxs].push(item);
+    /**
+     * Appends a value to a sub-array in a container array.
+     * @param cont_arr The container array.
+     * @param sub_arr_idxs The indexes to the sub-arrays.
+     * @param val The value.
+     */
+    protected _appendValToArrInArr(cont_arr: any[], sub_arr_idxs: number|number[], val: number): void {
+        if (!Array.isArray(sub_arr_idxs)) {
+            if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
+            cont_arr[sub_arr_idxs].push(val);
         } else {
-            arr_idxs.forEach( arr_idx => this._appToArr(arr, arr_idx, item) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._appendValToArrInArr(cont_arr, sub_arr_idx, val) );
         }
     }
-    protected _insToArr(arr: any[], arr_idxs: number|number[], item: number, idx: number): void {
-        if (!Array.isArray(arr_idxs)) {
-            if (!arr[arr_idxs]) { arr[arr_idxs] = []; }
-            arr[arr_idxs][idx] = item;
+    /**
+     * Set a value in one or more sub-arrays in a container array, given an index.
+     * @param cont_arr The container array.
+     * @param sub_arr_idxs The indexes to the sub-arrays.
+     * @param val The value.
+     * @param val_idx The value index.
+     */
+    protected _setValInArrInArr(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, val: number): void {
+        if (!Array.isArray(sub_arr_idxs)) {
+            if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
+            cont_arr[sub_arr_idxs][val_idx] = val;
         } else {
-            arr_idxs.forEach( arr_idx => this._insToArr(arr, arr_idx, item, idx) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._setValInArrInArr(cont_arr, sub_arr_idx, val_idx, val) );
         }
     }
-    protected _remFromArr(arr: any[], arr_idxs: number|number[], idx: number, del: boolean): void {
-        if (!Array.isArray(arr_idxs)) {
-            if (!arr[arr_idxs]) { arr[arr_idxs] = []; }
+    /**
+     * Remove a value from one or more sub-arrays in a container array, given an index.
+     * Delete or set to null.
+     * @param cont_arr The container array.
+     * @param sub_arr_idxs The indexes to the sub-arrays.
+     * @param val_idx The index in the sub-arrays.
+     * @param del Delete or set to null.
+     */
+    protected _remValFromArrInArr(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, del: boolean): void {
+        if (!Array.isArray(sub_arr_idxs)) {
+            if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
             if (del) {
-                delete arr[arr_idxs][idx];
+                delete cont_arr[sub_arr_idxs][val_idx];
             } else {
-                arr[arr_idxs][idx] = null;
+                cont_arr[sub_arr_idxs][val_idx] = null;
             }
         } else {
-            arr_idxs.forEach( arr_idx => this._remFromArr(arr, arr_idx, idx, del) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._remValFromArrInArr(cont_arr, sub_arr_idx, val_idx, del) );
         }
     }
-    protected _remFromArrIf(arr: any[], arr_idxs: number|number[], idx: number, val: number, del: boolean): void {
-        if (!Array.isArray(arr_idxs)) {
-            if (!arr[arr_idxs]) { arr[arr_idxs] = []; }
-            if (arr[arr_idxs][idx] === val) {
+    /**
+     * 
+     * Delete or set to null/
+     * @param cont_arr The container array.
+     * @param sub_arr_idxs The indexes to the sub-arrays.
+     * @param val_idx The index in the sub-arrays.
+     * @param current_val The current value.
+     * @param del Delete or set to null.
+     */
+    protected _remValFromArrInArrIf(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, 
+            current_val: number, del: boolean): void {
+        if (!Array.isArray(sub_arr_idxs)) {
+            if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
+            if (cont_arr[sub_arr_idxs][val_idx] === current_val) {
                 if (del) {
-                    delete arr[arr_idxs][idx];
+                    delete cont_arr[sub_arr_idxs][val_idx];
                 } else {
-                    arr[arr_idxs][idx] = null;
+                    cont_arr[sub_arr_idxs][val_idx] = null;
                 }
             }
         } else {
-            arr_idxs.forEach( arr_idx => this._remFromArr(arr, arr_idx, idx, del) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._remValFromArrInArr(cont_arr, sub_arr_idx, val_idx, del) );
         }
     }
     // ============================================================================
@@ -168,10 +261,10 @@ export class GeomCore {
      * Returns true if the first coll is a descendent of the second coll.
      */
     public isCollDescendent(coll1_i: number, coll2_i: number): boolean {
-        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll1_i][0][0];
-        while (parent_coll_i !== undefined) {
-            if (parent_coll_i === coll2_i) { return true; }
-            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0][0];
+        let coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[coll1_i];
+        while (coll_parent !== undefined && coll_parent !== null) {
+            if (coll_parent !== undefined && coll_parent !== null && coll_parent === coll2_i) { return true; }
+            coll_parent = this._geom_arrays.dn_colls_parents[coll_parent];
         }
         return false;
     }
@@ -180,9 +273,9 @@ export class GeomCore {
      */
     public collGetChildren(coll_i: number): number[] {
         const children: number[] = [];
-        for (let i = 0; i < this._geom_arrays.dn_colls_objs.length; i++) {
-            const coll: TColl = this._geom_arrays.dn_colls_objs[i];
-            if (coll !== null && coll[0][0] === coll_i) {
+        for (let i = 0; i < this._geom_arrays.dn_colls_parents.length; i++) {
+            const coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[i];
+            if (coll_parent !== undefined && coll_parent !== null && coll_parent === coll_i) {
                 children.push(i);
             }
         }
@@ -193,10 +286,10 @@ export class GeomCore {
      */
     public collGetDescendents(coll_i: number): number[] {
         const descendent_colls_i: number[] = [];
-        for (let i = 0; i < this._geom_arrays.dn_colls_objs.length; i++) {
+        for (let i = 0; i < this._geom_arrays.dn_colls_parents.length; i++) {
             if (i === coll_i) { continue; }
-            const coll: TColl = this._geom_arrays.dn_colls_objs[i];
-            if (coll !== null && coll[0][0] !== undefined) {
+            const coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[i];
+            if (coll_parent !== undefined && coll_parent !== null) {
                 if (this.isCollDescendent(i, coll_i)) {
                     descendent_colls_i.push(i);
                 }

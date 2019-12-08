@@ -184,7 +184,7 @@ export class GeomDelVert {
         const new_edges_i: TWire = wire_edges_i.slice();
         new_edges_i.splice(idx_a, 1, new_edge_i);
         new_edges_i.splice(idx_b, 1);
-        this.geom.data.insWireEnt(new_edges_i, wire_i);
+        this.geom.data.updateWireEnt(new_edges_i, wire_i);
         // delete the two old edges
         this.geom.data.remEdgeEnt(old_edges_i[0]);
         this.geom.data.remEdgeEnt(old_edges_i[1]);

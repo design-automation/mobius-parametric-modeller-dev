@@ -1,22 +1,16 @@
-import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TPoint } from '../../common';
+import { TVert, TWire, TPline, TEdge, TFace, TPgon, TPoint, TFaceWire, TCollPgons, TCollPlines, TCollPoints } from '../../common';
 import { Geom } from '../Geom';
-import { GeomData } from './GeomData';
-
+import { GeomNav } from './GeomNav';
 
 /**
  * Class for geometry.
  */
-export class GeomCheck {
-    private _geom: Geom;
-    private _geom_arrays: IGeomArrays;
-    public _data: GeomData;
+export class GeomCheck  extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays, data: GeomData) {
-        this._geom = geom;
-        this._geom_arrays = geom_arrays;
-        this._data = data;
+    constructor(geom: Geom) {
+        super(geom);
     }
     /**
      * Checks geometry for internal consistency
@@ -69,7 +63,7 @@ export class GeomCheck {
             }
             // check if the parent is a popint or edge
             const point_i: number = this._geom_arrays.up_verts_points[vert_i];
-            const edges_a_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+            const edges_a_i: [number, number] = this._geom_arrays.up_verts_edges[vert_i];
             if (point_i !== undefined && edges_a_i !== undefined) {
                 errors.push('Vert ' + vert_i + ': Both Vert->Edge and Vert->Point.');
             }
@@ -100,27 +94,10 @@ export class GeomCheck {
                 if (edges_a_i.length > 2) { errors.push('Vert ' + vert_i + ': Vert->Edge has more than two edges.'); }
                 for (let i = 0; i < 2; i++) {
                     // get one edge
-                    const edge_a_i: number[]  = edges_a_i[i];
-                    if (edge_a_i === undefined || edge_a_i === null) {
-                        errors.push('Vert ' + vert_i + ': Vert->Edge array undefined or null when it should be [].');
+                    const edge_a_i: number  = edges_a_i[i];
+                    if (edge_a_i === undefined) {
+                        errors.push('Vert ' + vert_i + ': Vert->Edge array undefined when it should be null.');
                     }
-                    // else if (edge_a_i[0] === undefined || edge_a_i[0] === null) {
-                    //     errors.push('Vert ' + vert_i + ': Vert->Edge undefined or null.');
-                    // }
-                    // else {
-                    //     // down for edges
-                    //     const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_a_i[0]];
-                    //     if (edge === undefined) {
-                    //         errors.push('Vert ' + vert_i + ': Edge->Vert undefined.');
-                    //     } else if (edge === null) {
-                    //         errors.push('Vert ' + vert_i + ': Edge->Vert null.');
-                    //     } else {
-                    //         // check the egde points down to this vertex
-                    //         if (edge.indexOf(vert_i) === -1) {
-                    //             errors.push('Vert ' + vert_i + ': Edge->Vert index is missing.');
-                    //         }
-                    //     }
-                    // }
                 }
             } else {
                 errors.push('Vert ' + vert_i + ': Both Vert->Edge and Vert->Point undefined.');
@@ -147,12 +124,12 @@ export class GeomCheck {
                     errors.push('Edge ' + edge_i + ': Edge->Vert null.');
                 } else {
                     // check the verts link up to this edge
-                    const vert_edges_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+                    const vert_edges_i: [number, number] = this._geom_arrays.up_verts_edges[vert_i];
                     if (vert_edges_i === undefined) {
                         errors.push('Edge ' + edge_i + ': Vert->Edge index is undefined.');
-                    } else if (i === 0 && vert_edges_i[1][0] !== edge_i) {
+                    } else if (i === 0 && vert_edges_i[1] !== edge_i) {
                         errors.push('Edge ' + edge_i + ': Vert->Edge start vertex is incorrect.');
-                    } else if (i === 1 && vert_edges_i[0][0] !== edge_i) {
+                    } else if (i === 1 && vert_edges_i[0] !== edge_i) {
                         errors.push('Edge ' + edge_i + ': Vert->Edge end vertex is incorrect.');
                     }
                 }
@@ -210,14 +187,14 @@ export class GeomCheck {
                     errors.push('Wire ' + wire_i + ': Wire->Face null.');
                 }
                 // down from face to wires (and tris)
-                const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-                if (face === undefined) {
+                const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+                if (face_wires === undefined) {
                     errors.push('Wire ' + wire_i + ': Face->Wire undefined.');
-                } else if (face === null) {
+                } else if (face_wires === null) {
                     errors.push('Wire ' + wire_i + ': Face->Wire null.');
                 } else {
                     // check that this face points down to the wire
-                    if (face[0].indexOf(wire_i) === -1) {
+                    if (face_wires.indexOf(wire_i) === -1) {
                         errors.push('Wire ' + wire_i + ': Face->Wire index is missing.');
                     }
                 }
@@ -245,14 +222,16 @@ export class GeomCheck {
     }
     private _checkFaces(): string[] {
         const errors: string[] = [];
-        for (let face_i = 0; face_i < this._geom_arrays.dn_faces_wirestris.length; face_i++) {
+        for (let face_i = 0; face_i < this._geom_arrays.dn_faces_wires.length; face_i++) {
             // check this face itself
-            const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-            if (face === undefined) { errors.push('Face ' + face_i + ': Face->WireTri undefined.'); }
-            if (face === null) { continue; } // deleted
+            const face_wires_i: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+            const face_tris_i: TFaceWire = this._geom_arrays.dn_faces_tris[face_i];
+            if (face_wires_i === undefined) { errors.push('Face ' + face_i + ': Face->Wire undefined.'); }
+            if (face_tris_i === undefined) { errors.push('Face ' + face_i + ': Face->Tri undefined.'); }
+            if (face_wires_i === null) { continue; } // deleted
+            if (face_tris_i === null) { errors.push('Face ' + face_i + ': Face tris deleted but face wires not deleted.'); }
             // down from face to wires
-            const wires_i: number[] = face[0];
-            for (const wire_i of wires_i) {
+            for (const wire_i of face_wires_i) {
                 // check the wire
                 if (wire_i === undefined) {
                     errors.push('Face ' + face_i + ': Face->Wire undefined.');
@@ -267,8 +246,7 @@ export class GeomCheck {
                 }
             }
             // down from face to triangles
-            const tris_i: number[] = face[1];
-            for (const tri_i of tris_i) {
+            for (const tri_i of face_tris_i) {
                 // check the wire
                 if (tri_i === undefined) {
                     errors.push('Face ' + face_i + ': Face->Tri undefined.');
@@ -329,11 +307,11 @@ export class GeomCheck {
                     errors.push('Point ' + point_i + ': Point->Coll null.');
                 }
                 // down from coll to points
-                const coll: TColl = this._geom_arrays.dn_colls_objs[coll_i];
-                if (coll === undefined) { errors.push('Point ' + point_i + ': Coll->Objs undefined.'); }
-                if (coll === null) { errors.push('Point ' + point_i + ': Coll->Objs null.'); }
-                if (coll[1].indexOf(point_i) === -1) {
-                    errors.push('Point ' + point_i + ': Coll->Point missing.');
+                const coll_points: TCollPoints = this._geom_arrays.dn_colls_points[coll_i];
+                if (coll_points === undefined) { errors.push('Point ' + point_i + ': Coll->Points undefined.'); }
+                if (coll_points === null) { errors.push('Point ' + point_i + ': Coll->Points null.'); }
+                if (coll_points.indexOf(point_i) === -1) {
+                    errors.push('Point ' + point_i + ': Coll->Points missing.');
                 }
             }
         }
@@ -364,10 +342,10 @@ export class GeomCheck {
                     errors.push('Pline ' + pline_i + ': Pline->Coll null.');
                 }
                 // down from coll to plines
-                const coll: TColl = this._geom_arrays.dn_colls_objs[coll_i];
-                if (coll === undefined) { errors.push('Pline ' + pline_i + ': Coll->Objs undefined.'); }
-                if (coll === null) { errors.push('Pline ' + pline_i + ': Coll->Objs null.'); }
-                if (coll[2].indexOf(pline_i) === -1) {
+                const coll_plines: TCollPlines = this._geom_arrays.dn_colls_plines[coll_i];
+                if (coll_plines === undefined) { errors.push('Pline ' + pline_i + ': Coll->Plines undefined.'); }
+                if (coll_plines === null) { errors.push('Pline ' + pline_i + ': Coll->Plines null.'); }
+                if (coll_plines.indexOf(pline_i) === -1) {
                     errors.push('Pline ' + pline_i + ': Coll->Pline missing.');
                 }
             }
@@ -399,10 +377,10 @@ export class GeomCheck {
                     errors.push('Pgon ' + pgon_i + ': Pgon->Coll null.');
                 }
                 // down from coll to pgons
-                const coll: TColl = this._geom_arrays.dn_colls_objs[coll_i];
-                if (coll === undefined) { errors.push('Pgon ' + pgon_i + ': Coll->Objs undefined.'); }
-                if (coll === null) { errors.push('Pgon ' + pgon_i + ': Coll->Objs null.'); }
-                if (coll[3].indexOf(pgon_i) === -1) {
+                const coll_pgons: TCollPgons = this._geom_arrays.dn_colls_pgons[coll_i];
+                if (coll_pgons === undefined) { errors.push('Pgon ' + pgon_i + ': Coll->Pgond undefined.'); }
+                if (coll_pgons === null) { errors.push('Pgon ' + pgon_i + ': Coll->Pgons null.'); }
+                if (coll_pgons.indexOf(pgon_i) === -1) {
                     errors.push('Pgon ' + pgon_i + ': Coll->Pgon missing.');
                 }
             }
@@ -429,19 +407,19 @@ export class GeomCheck {
                 const edge_start_vert_i: number = edge[0];
                 const edge_end_vert_i: number = edge[1];
                 if (!is_closed && i === 0) {
-                    if (this._geom_arrays.up_verts_edges[edge_start_vert_i][0].length !== 0) {
+                    if (this._geom_arrays.up_verts_edges[edge_start_vert_i][0] !== null) {
                         errors.push('Open wire ' + wire_i + ': First vertex has incoming edge.');
                     }
                 }
                 if (!is_closed && i === wire.length - 1) {
-                    if (this._geom_arrays.up_verts_edges[edge_end_vert_i][1].length !== 0) {
+                    if (this._geom_arrays.up_verts_edges[edge_end_vert_i][1] !== null) {
                         errors.push('Open wire ' + wire_i + ': Last vertex has an outgoing edge.');
                     }
                 }
-                if (this._geom_arrays.up_verts_edges[edge_start_vert_i][1][0] !== edge_i) {
+                if (this._geom_arrays.up_verts_edges[edge_start_vert_i][1] !== edge_i) {
                     errors.push('Wire ' + wire_i + ': Edge start vertex has wrong outgoing edge.');
                 }
-                if (this._geom_arrays.up_verts_edges[edge_end_vert_i][0][0] !== edge_i) {
+                if (this._geom_arrays.up_verts_edges[edge_end_vert_i][0] !== edge_i) {
                     errors.push('Wire ' + wire_i + ': Edge end vertex has wrong incoming edge.');
                 }
             }

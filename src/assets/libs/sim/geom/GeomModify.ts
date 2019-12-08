@@ -1,8 +1,6 @@
-import { EEntType, TTri, TEdge, TWire, TFace, IGeomArrays, Txyz, TColl, TVert } from '../common';
+import { EEntType, TEdge, TWire, Txyz } from '../common';
 import { Geom } from './Geom';
-import { arrRem, arrIdxAdd } from '../../util/arrs';
 import { vecDot } from '../../geom/vectors';
-import { GeomData } from './data/GeomData';
 
 /**
  * Class for geometry.
@@ -51,7 +49,7 @@ export class GeomModify {
         const wire: TWire = this.geom.data.navWireToEdge(wire_i);
         const idx: number = wire.indexOf(edge_i);
         wire.splice(idx, 1, ...new_edges_i);
-        this.geom.data.insWireEnt(wire, wire_i);
+        this.geom.data.updateWireEnt(wire, wire_i);
         // delete the old edge, but dont delete the vertices
         this.geom.data.remEdgeEnt(edge_i);
         this.geom.data.unlinkEdgeToWire(edge_i, wire_i);
@@ -76,7 +74,7 @@ export class GeomModify {
             this.geom.data.unlinkPosiToVert(old_posi_i, vert_i);
             // insert the new posi
             const new_posi_i: number = new_posis_i[i];
-            this.geom.data.insVertEnt(new_posi_i, vert_i);
+            this.geom.data.updateVertEnt(new_posi_i, vert_i);
         }
     }
     /**
@@ -114,7 +112,7 @@ export class GeomModify {
                 // unlink the old posi
                 this.geom.data.unlinkPosiToVert(old_posi_i, vert_i);
                 // insert the new posi
-                this.geom.data.insVertEnt(new_posi_i, vert_i);
+                this.geom.data.updateVertEnt(new_posi_i, vert_i);
             }
         }
         // return all the new positions
@@ -138,7 +136,7 @@ export class GeomModify {
                 // unlink the existing posi
                 this.geom.data.unlinkPosiToVert(exist_posi_i, vert_i);
                 // insert the new posi
-                this.geom.data.insVertEnt(new_posi_i, vert_i);
+                this.geom.data.updateVertEnt(new_posi_i, vert_i);
                 // add the new posi_i to the list, to be returned later
                 new_posis_i.push(new_posi_i);
             }

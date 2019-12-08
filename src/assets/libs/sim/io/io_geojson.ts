@@ -1,5 +1,5 @@
 import { SIModel } from '../SIModel';
-import { TNormal, TTexture, EAttribNames, Txyz, EEntType, EAttribDataTypeStrs, TAttribDataTypes, LONGLAT, IGeomPack } from '../common';
+import { Txyz, EEntType, TAttribDataTypes, LONGLAT, IGeomPack } from '../common';
 import { getArrDepth } from '../id';
 import proj4 from 'proj4';
 

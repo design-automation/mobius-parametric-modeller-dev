@@ -10,8 +10,8 @@ export class GeomPosi extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Posis

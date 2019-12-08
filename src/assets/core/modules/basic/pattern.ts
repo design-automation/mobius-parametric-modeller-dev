@@ -20,6 +20,11 @@ import * as THREE from 'three';
 import * as VERB from '@assets/libs/verb/verb';
 import { arrFill, arrMakeFlat } from '@assets/libs/util/arrs';
 // import * as VERB from 'verb';
+
+export enum _EClose {
+    OPEN = 'open',
+    CLOSE = 'close'
+}
 // ================================================================================================
 /**
  * Creates a row of positions in a line pattern. Returns a list of new positions.
@@ -108,6 +113,12 @@ export function Rectangle(__model__: SIModel, origin: Txyz|TPlane, size: number|
     return idsMakeFromIndicies(EEntType.POSI, posis_i) as TId[];
 }
 // ================================================================================================
+export enum _EGridMethod {
+    FLAT = 'flat',
+    COLUMNS = 'columns',
+    ROWS = 'rows',
+    QUADS = 'quads'
+}
 /**
 * Creates positions in a grid pattern. Returns a list (or list of lists) of new positions.
 * @param __model__
@@ -197,13 +208,15 @@ export function Grid(__model__: SIModel, origin: Txyz|TPlane, size: number|[numb
     }
     return idsMakeFromIndicies(EEntType.POSI, posis_i2) as TId[][];
 }
-export enum _EGridMethod {
+// ================================================================================================
+export enum _EBoxMethod {
     FLAT = 'flat',
-    COLUMNS = 'columns',
     ROWS = 'rows',
+    COLUMNS = 'columns',
+    LAYERS = 'layers',
+    // SIDES = 'sides',
     QUADS = 'quads'
 }
-// ================================================================================================
 /**
  * Creates positions in a box pattern. Returns a list of new positions.
  * @param __model__
@@ -451,14 +464,6 @@ export function Box(__model__: SIModel, origin: Txyz | TPlane,
         return idsMakeFromIndicies(EEntType.POSI, posis_i2) as TId[][];
     }
     return [];
-}
-export enum _EBoxMethod {
-    FLAT = 'flat',
-    ROWS = 'rows',
-    COLUMNS = 'columns',
-    LAYERS = 'layers',
-    // SIDES = 'sides',
-    QUADS = 'quads'
 }
 // ================================================================================================
 /**
@@ -830,10 +835,6 @@ function nurbsToPosis(__model__: SIModel, curve_verb: any, degree: number, close
     const posis_i_sorted: number[] = posis_i_start.concat(posis_i_end);
     // return the list of posis
     return posis_i_sorted;
-}
-export enum _EClose {
-    OPEN = 'open',
-    CLOSE = 'close'
 }
 // ================================================================================================
 /**

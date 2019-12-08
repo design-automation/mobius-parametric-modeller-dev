@@ -2,7 +2,7 @@ import { Geom } from './geom/Geom';
 import { Attribs } from './attribs/Attribs';
 import { IModelData, IGeomPack, Txy, Txyz } from './common';
 import { GICalc } from './SIModelCalc';
-import { SIModelComparator } from './SIModelComparator';
+import { SIModelComparator } from './SIModelCompare';
 import { SIModelThreejs } from './SIModelThreejs';
 
 /**
@@ -34,33 +34,32 @@ export class SIModel {
      * @param model_data The GI model.
      */
     public merge(model: SIModel): void {
-        this.attribs.io.merge(model.attribs._attribs_maps); // warning: must be before this.geom.io.merge()
-        this.geom.io.merge(model.geom._geom_arrays);
+        this.attribs.data.merge(model.attribs); // warning: must be before this.geom.data.merge()
+        this.geom.data.merge(model.geom);
     }
     /**
-     * Sets the data in this model from JSON data.
+     * Sets the data in this model from data.
      * Any existing data in the model is deleted.
-     * @param model_data The JSON data.
+     * @param model_data The data.
      */
-    public setData (model_data: IModelData): IGeomPack {
-        this.attribs.io.setData(model_data.attributes); // warning: must be before this.geom.io.setData()
-        const new_ents_i: IGeomPack = this.geom.io.setData(model_data.geometry);
-        return new_ents_i;
+    public setData (model_data: IModelData): void {
+        this.attribs.data.setData(model_data.attributes); // warning: must be before this.geom.io.setData()
+        this.geom.data.setData(model_data.geometry);
     }
     /**
-     * Returns the JSON data for this model.
+     * Returns the data for this model.
      */
     public getData(): IModelData {
         return {
-            geometry: this.geom.io.getData(),
-            attributes: this.attribs.io.getData()
+            geometry: this.geom.data.getData(),
+            attributes: this.attribs.data.getData()
         };
     }
     /**
      * Check model for internal consistency
      */
     public check(): string[] {
-        return this.geom.checker.check();
+        return this.geom.data.check();
     }
     /**
      * Compares this model and another model.

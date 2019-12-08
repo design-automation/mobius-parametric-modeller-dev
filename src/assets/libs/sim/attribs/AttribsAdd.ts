@@ -1,23 +1,20 @@
-import { SIModel } from '../SIModel';
-import { IAttribsData, IModelData, IAttribData, TAttribDataTypes, EEntType,
-    EAttribDataTypeStrs, IGeomData, IAttribsMaps, EAttribNames, Txyz, EEntTypeStr, EAttribPush } from '../common';
-import { GIAttribMap } from './AttribMap';
-import { vecAdd, vecDiv, vecSum } from '@libs/geom/vectors';
+import { TAttribDataTypes, EEntType,
+    EAttribDataTypeStrs, EAttribNames, Txyz, EEntTypeStr, EAttribPush } from '../common';
+import { GIAttribMap } from './data/AttribMap';
+import { vecAdd } from '@libs/geom/vectors';
 import * as mathjs from 'mathjs';
+import { Attribs } from './Attribs';
 
 /**
  * Class for attributes.
  */
 export class AttribsAdd {
-    private _model: SIModel;
-    private _attribs_maps: IAttribsMaps;
-   /**
-     * Creates an object to store the attribute data.
-     * @param model The JSON data
+    private _attribs: Attribs;
+    /**
+     * Constructor
      */
-    constructor(model: SIModel, attribs_maps: IAttribsMaps) {
-        this._model = model;
-        this._attribs_maps = attribs_maps;
+    constructor(attribs: Attribs) {
+        this._attribs = attribs;
     }
     /**
      * Creates a new attribte, at either the model level or the entity level.
@@ -31,7 +28,7 @@ export class AttribsAdd {
      */
     public addAttrib(ent_type: EEntType, name: string, data_type: EAttribDataTypeStrs): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, any> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, any> = this._attribs._attribs_maps[attribs_maps_key];
         if (ent_type === EEntType.MOD) {
             if (!attribs.has(name)) {
                 attribs.set(name, null);
@@ -55,7 +52,7 @@ export class AttribsAdd {
      */
     public setModelAttribVal(name: string, value: TAttribDataTypes): void {
         const attribs_maps_key: string = EEntTypeStr[EEntType.MOD];
-        const attrib: Map<string, any> = this._attribs_maps[attribs_maps_key];
+        const attrib: Map<string, any> = this._attribs._attribs_maps[attribs_maps_key];
         attrib.set(name, value);
     }
     /**
@@ -67,7 +64,7 @@ export class AttribsAdd {
      */
     public setModelAttribListIdxVal(name: string, idx: number, value: any): void {
         const attribs_maps_key: string = EEntTypeStr[EEntType.MOD];
-        const attrib: Map<string, any> = this._attribs_maps[attribs_maps_key];
+        const attrib: Map<string, any> = this._attribs._attribs_maps[attribs_maps_key];
         const list_value: TAttribDataTypes = attrib.get(name);
         if (list_value === undefined) { throw new Error('Attribute with this name does not exist.'); }
         if (!Array.isArray(list_value)) {
@@ -84,7 +81,7 @@ export class AttribsAdd {
      */
     public setModelAttribDictKeyVal(name: string, key: string, value: any): void {
         const attribs_maps_key: string = EEntTypeStr[EEntType.MOD];
-        const attrib: Map<string, any> = this._attribs_maps[attribs_maps_key];
+        const attrib: Map<string, any> = this._attribs._attribs_maps[attribs_maps_key];
         const dict_value: TAttribDataTypes = attrib.get(name);
         if (dict_value === undefined) { throw new Error('Attribute with this name does not exist.'); }
         if (Array.isArray(dict_value) || typeof dict_value !== 'object') {
@@ -101,7 +98,7 @@ export class AttribsAdd {
      */
     public setAttribVal(ent_type: EEntType, ents_i: number|number[], name: string, value: TAttribDataTypes): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         if (attribs.get(name) === undefined) {
             const new_data_type: EAttribDataTypeStrs = this._checkDataType(value);
             this.addAttrib(ent_type, name, new_data_type);
@@ -118,7 +115,7 @@ export class AttribsAdd {
     public setAttribListIdxVal(ent_type: EEntType, ents_i: number|number[], name: string,
             idx: number, value: any): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         const attrib: GIAttribMap = attribs.get(name);
         if (attrib === undefined) { throw new Error('Attribute does not exist.'); }
         if (attrib.getDataType() !== EAttribDataTypeStrs.LIST) {
@@ -136,7 +133,7 @@ export class AttribsAdd {
     public setAttribDictKeyVal(ent_type: EEntType, ents_i: number|number[], name: string,
         key: string, value: any): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         const attrib: GIAttribMap = attribs.get(name);
         if (attrib === undefined) { throw new Error('Attribute does not exist.'); }
         if (attrib.getDataType() !== EAttribDataTypeStrs.DICT) {
@@ -154,7 +151,7 @@ export class AttribsAdd {
     public delEntFromAttribs(ent_type: EEntType, ents_i: number|number[]): void {
         // get the attrib names
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         attribs.forEach( attrib => attrib.delEnt(ents_i) );
     }
     /**
@@ -163,7 +160,7 @@ export class AttribsAdd {
      * @param value
      */
     public setPosiCoords(index: number, xyz: Txyz): void {
-        this._attribs_maps.ps.get(EAttribNames.COORDS).setEntVal(index, xyz);
+        this._attribs._attribs_maps.ps.get(EAttribNames.COORDS).setEntVal(index, xyz);
     }
     /**
      * Move the xyz position by index
@@ -171,9 +168,9 @@ export class AttribsAdd {
      * @param value
      */
     public movePosiCoords(index: number, xyz: Txyz): void {
-        const old_xyz: Txyz = this._attribs_maps.ps.get(EAttribNames.COORDS).getEntVal(index) as Txyz;
+        const old_xyz: Txyz = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS).getEntVal(index) as Txyz;
         const new_xyz: Txyz = vecAdd(old_xyz, xyz);
-        this._attribs_maps.ps.get(EAttribNames.COORDS).setEntVal(index, new_xyz);
+        this._attribs._attribs_maps.ps.get(EAttribNames.COORDS).setEntVal(index, new_xyz);
     }
     /**
      * Copy all attribs from one entity to another entity
@@ -183,7 +180,7 @@ export class AttribsAdd {
     public copyAttribs(ent_type: EEntType, from_ent_i: number, to_ent_i: number): void {
         // get the attrib names
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         const attrib_names: string[] = Array.from(attribs.keys());
         // copy each attrib
         for (const attrib_name of attrib_names) {
@@ -200,12 +197,12 @@ export class AttribsAdd {
             target_ent_type: EEntType, target_attrib_name: string, target_attrib_idx_key: number|string, method: EAttribPush): void {
         if (source_ent_type === target_ent_type) { return; }
         // check that the attribute exists
-        if (! this._model.attribs.query.hasAttrib(source_ent_type, source_attrib_name)) {
+        if (! this._attribs.query.hasAttrib(source_ent_type, source_attrib_name)) {
             throw new Error('The attribute does not exist.');
         }
         // get the data type and data size of the existing attribute
-        const source_data_type: EAttribDataTypeStrs = this._model.attribs.query.getAttribDataType(source_ent_type, source_attrib_name);
-        const source_data_size: number = this._model.attribs.query.getAttribDataLength(source_ent_type, source_attrib_name);
+        const source_data_type: EAttribDataTypeStrs = this._attribs.query.getAttribDataType(source_ent_type, source_attrib_name);
+        const source_data_size: number = this._attribs.query.getAttribDataLength(source_ent_type, source_attrib_name);
         // get the target data type and size
         let target_data_type: EAttribDataTypeStrs = source_data_type;
         let target_data_size: number = source_data_size;
@@ -220,7 +217,7 @@ export class AttribsAdd {
             }
         } else if (source_attrib_idx_key !== null) {
             // get the first data item as a template to check data type and data size
-            const first_val: TAttribDataTypes = this._model.attribs.query.getAttribValAny(
+            const first_val: TAttribDataTypes = this._attribs.query.getAttribValAny(
                 source_ent_type, source_attrib_name, source_indices[0],
                 source_attrib_idx_key) as TAttribDataTypes;
             target_data_type = this._checkDataType(first_val);
@@ -244,7 +241,7 @@ export class AttribsAdd {
             const attrib_values: TAttribDataTypes[] = [];
             for (const index of source_indices) {
                 const value: TAttribDataTypes =
-                    this._model.attribs.query.getAttribValAny(source_ent_type, source_attrib_name, index,
+                    this._attribs.query.getAttribValAny(source_ent_type, source_attrib_name, index,
                         source_attrib_idx_key) as TAttribDataTypes;
                 attrib_values.push(value);
             }
@@ -258,9 +255,9 @@ export class AttribsAdd {
             }
             return;
         } else if (source_ent_type === EEntType.MOD) {
-            const value: TAttribDataTypes = this._model.attribs.query.getModelAttribValAny(source_attrib_name, source_attrib_idx_key);
+            const value: TAttribDataTypes = this._attribs.query.getModelAttribValAny(source_attrib_name, source_attrib_idx_key);
             this.addAttrib(target_ent_type, target_attrib_name, target_data_type);
-            const target_ents_i: number[] = this._model.geom.data.getEnts(target_ent_type, false);
+            const target_ents_i: number[] = this._attribs.model.geom.data.getEnts(target_ent_type, false);
             for (const target_ent_i of target_ents_i) {
                 if (typeof target_attrib_idx_key === 'number') {
                     this.setAttribListIdxVal(target_ent_type, target_ent_i, target_attrib_name, target_attrib_idx_key, value);
@@ -276,9 +273,9 @@ export class AttribsAdd {
         const attrib_values_map: Map<number, TAttribDataTypes[]> = new Map();
         for (const index of source_indices) {
             const attrib_value: TAttribDataTypes =
-                this._model.attribs.query.getAttribValAny(source_ent_type, source_attrib_name, index,
+                this._attribs.query.getAttribValAny(source_ent_type, source_attrib_name, index,
                     source_attrib_idx_key) as TAttribDataTypes;
-            const target_ents_i: number[] = this._model.geom.data.navAnyToAny(source_ent_type, target_ent_type, index);
+            const target_ents_i: number[] = this._attribs.model.geom.data.navAnyToAny(source_ent_type, target_ent_type, index);
             for (const target_ent_i of target_ents_i) {
                 if (! attrib_values_map.has(target_ent_i)) {
                         attrib_values_map.set(target_ent_i, []);

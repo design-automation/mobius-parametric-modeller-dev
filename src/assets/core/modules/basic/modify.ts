@@ -600,7 +600,10 @@ function _remesh(__model__: SIModel, ents_arr: TEntTypeIdx[]): void {
     }
 }
 // ================================================================================================
-
+export enum _EDeleteMethod {
+    DELETE_SELECTED  =  'delete_selected',
+    KEEP_SELECTED =  'keep_selected'
+}
 /**
  * Deletes geometric entities: positions, points, polylines, polygons, and collections.
  * ~
@@ -639,10 +642,6 @@ export function Delete(__model__: SIModel, entities: TId|TId[], method: _EDelete
                 throw new Error(fn_name + ' : Method not recognised.');
         }
     }
-}
-export enum _EDeleteMethod {
-    DELETE_SELECTED  =  'delete_selected',
-    KEEP_SELECTED =  'keep_selected'
 }
 function _delete(__model__: SIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
     // get the ents

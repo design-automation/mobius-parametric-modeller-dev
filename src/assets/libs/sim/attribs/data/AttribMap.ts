@@ -1,6 +1,6 @@
-import { EFilterOperatorTypes, EAttribDataTypeStrs, TAttribDataTypes, IAttribData, RE_SPACES } from '../common';
-import { arrRem } from '../../util/arrs';
-import { deepCopy } from '../../util/copy';
+import { EFilterOperatorTypes, EAttribDataTypeStrs, TAttribDataTypes, IAttribData, RE_SPACES } from '../../common';
+import { arrRem } from '../../../util/arrs';
+import { deepCopy } from '../../../util/copy';
 
 /**
  * Geo-info attribute class for one attribute.

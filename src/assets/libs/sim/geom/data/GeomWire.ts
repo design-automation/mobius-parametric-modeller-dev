@@ -1,4 +1,4 @@
-import { IGeomArrays, TWire, TFace } from '../../common';
+import { IGeomArrays, TWire, TFace, TFaceWire } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -10,8 +10,8 @@ export class GeomWire extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Wires
@@ -25,8 +25,8 @@ export class GeomWire extends GeomNav {
     public wireIsHole(wire_i: number): boolean {
         const face_i: number = this._geom_arrays.up_wires_faces[wire_i];
         if (face_i === undefined) { return false; }
-        const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-        return face[0].indexOf(wire_i) > 0;
+        const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+        return face_wires.indexOf(wire_i) > 0;
     }
     /**
      * Check if a wire is closed.
@@ -117,23 +117,6 @@ export class GeomWire extends GeomNav {
         wire.unshift.apply( wire, wire.splice( offset, wire.length ) );
     }
 
-
-   // /**
-    //  * Check if a wire belongs to a pline, a pgon or a pgon hole.
-    //  */
-    // public wireGetType(wire_i: number): EWireType {
-    //     // get the wire start and end verts
-    //     const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-    //     if (this.navWireToPline(wire_i) !== undefined) {
-    //         return EWireType.PLINE;
-    //     }
-    //     const face_i: number = this.navWireToFace(wire_i);
-    //     const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-    //     const index: number = face[0].indexOf(wire_i);
-    //     if (index === 0) { return EWireType.PGON; }
-    //     if (index > 0) { return EWireType.PGON_HOLE; }
-    //     throw new Error('Inconsistencies found in the internal data structure.');
-    // }
     /**
      * Replace edges in a wire with new edges.
      *

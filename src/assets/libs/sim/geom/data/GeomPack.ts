@@ -1,4 +1,4 @@
-import { EEntType, IGeomArrays, TFace, TColl, IEntPack, TEntTypeIdx, IGeomPack, IObjPack } from '../../common';
+import { EEntType, IGeomArrays, TFace, TColl, IEntPack, TEntTypeIdx, IGeomPack, IObjPack, TCollPoints, TCollPlines, TCollPgons } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -10,8 +10,8 @@ export class GeomPack extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Get EntPack
@@ -34,13 +34,12 @@ export class GeomPack extends GeomNav {
         return { 'wires_i': [wire_i], 'edges_i': edges_i, 'verts_i': verts_i, 'posis_i': posis_i };
     }
     public getFaceEntPack(face_i: number): IEntPack {
-        const wirestris: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-        const wires_i: number[] = wirestris[0].slice(); // dup
-        const tris_i: number[] = wirestris[1].slice(); // dup
+        const wires_i: number[] = this._geom_arrays.dn_faces_wires[face_i].slice(); // dup
+        const tris_i: number[] = this._geom_arrays.dn_faces_tris[face_i].slice(); // dup
         const edges_i: number[] = [];
         const verts_i: number[] = [];
         const posis_i: number[] = [];
-        for (const wire_i of wirestris[0]) { // ignore the tris
+        for (const wire_i of wires_i) { // ignore the tris
             const wire_edges_i: number[] = this._geom_arrays.dn_wires_edges[wire_i];
             edges_i.push(...wire_edges_i);
             const wire_verts_i: number[] = this.wireGetVerts(wire_i);
@@ -111,11 +110,13 @@ export class GeomPack extends GeomNav {
             return merged_ent_pack;
         }
         const ent_packs: IEntPack[] = [];
-        const coll: TColl = this._geom_arrays.dn_colls_objs[coll_i];
+        const coll_points: TCollPoints = this._geom_arrays.dn_colls_points[coll_i];
+        const coll_plines: TCollPlines = this._geom_arrays.dn_colls_plines[coll_i];
+        const coll_pgons: TCollPgons = this._geom_arrays.dn_colls_pgons[coll_i];
         // objects
-        coll[1].forEach( point_i => ent_packs.push( this.getPointEntPack(point_i)) );
-        coll[2].forEach( pline_i => ent_packs.push( this.getPlineEntPack(pline_i)) );
-        coll[3].forEach( pgon_i =>  ent_packs.push( this.getPgonEntPack(pgon_i)) );
+        coll_points.forEach( point_i => ent_packs.push( this.getPointEntPack(point_i)) );
+        coll_plines.forEach( pline_i => ent_packs.push( this.getPlineEntPack(pline_i)) );
+        coll_pgons.forEach( pgon_i =>  ent_packs.push( this.getPgonEntPack(pgon_i)) );
         // child collections
         const colls_i: number[] = this.collGetChildren(coll_i);
         colls_i.forEach( child_coll_i =>  ent_packs.push( this.getCollEntPack(child_coll_i)) );
@@ -229,7 +230,7 @@ export class GeomPack extends GeomNav {
             points_i: _invSet(pack.points_i, this._geom_arrays.dn_points_verts),
             plines_i: _invSet(pack.plines_i, this._geom_arrays.dn_plines_wires),
             pgons_i:  _invSet(pack.pgons_i,  this._geom_arrays.dn_pgons_faces),
-            colls_i:  _invSet(pack.colls_i,  this._geom_arrays.dn_colls_objs)
+            colls_i:  _invSet(pack.colls_i,  this._geom_arrays.dn_colls_parents)
         };
     }
 }

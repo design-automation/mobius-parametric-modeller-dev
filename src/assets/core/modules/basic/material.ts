@@ -63,7 +63,13 @@ function _clampArr01(vals: number[]): void {
 function _getTjsColor(col: Txyz): THREE.Color {
     return new THREE.Color(col[0], col[1], col[2]);
 }
-
+enum _EMaterialType {
+    BASIC = 'MeshBasicMaterial',
+    LAMBERT = 'MeshLambertMaterial',
+    PHONG = 'MeshPhongMaterial',
+    STANDARD = 'MeshStandardMaterial',
+    PHYSICAL = 'MeshPhysicalMaterial'
+}
 function _setMaterialModelAttrib(__model__: SIModel, name: string, settings_obj: object) {
     // if the material already exists, then existing settings will be added
     // but new settings will take precedence
@@ -86,13 +92,6 @@ function _setMaterialModelAttrib(__model__: SIModel, name: string, settings_obj:
     }
     // const settings_str: string = JSON.stringify(settings_obj);
     __model__.attribs.add.setModelAttribVal(name, settings_obj);
-}
-enum _EMaterialType {
-    BASIC = 'MeshBasicMaterial',
-    LAMBERT = 'MeshLambertMaterial',
-    PHONG = 'MeshPhongMaterial',
-    STANDARD = 'MeshStandardMaterial',
-    PHYSICAL = 'MeshPhysicalMaterial'
 }
 // ================================================================================================
 /**

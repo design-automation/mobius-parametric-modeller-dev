@@ -15,6 +15,15 @@ import { _model } from '..';
 
 
 // ================================================================================================
+export enum _EIOExportParams {
+    YES = 'Add Params',
+    NO = 'No Params'
+}
+export enum _EIOExportContents {
+    BOTH = 'Both',
+    CONSOLE = 'Console Only',
+    MODEL = 'Model Only'
+}
 /**
  * Export data from the model as a file.
  * This will result in a popup in your browser, asking you to save the filel.
@@ -64,15 +73,6 @@ export function ExportIO(__model__: SIModel, __console__: string[], __constList_
     }
 
     return download(JSON.stringify(edxAnswer) , file_name);
-}
-export enum _EIOExportParams {
-    YES = 'Add Params',
-    NO = 'No Params'
-}
-export enum _EIOExportContents {
-    BOTH = 'Both',
-    CONSOLE = 'Console Only',
-    MODEL = 'Model Only'
 }
 function convertString(value) {
     let val;

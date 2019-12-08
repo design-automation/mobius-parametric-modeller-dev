@@ -16,6 +16,18 @@ import { TEntTypeIdx } from '@libs/sim/common';
 
 
 // ================================================================================================
+export enum _EAddMethod {
+    TO_START = 'to_start',
+    TO_END = 'to_end',
+    EXTEND_START = 'extend_start',
+    EXTEND_END = 'extend_end',
+    SORTED_ALPHA = 'alpha_descending',
+    SORTED_REV_ALPHA = 'alpha_ascending',
+    SORTED_NUM = 'numeric_descending',
+    SORTED_REV_NUM = 'numeric_ascending',
+    SORTED_ID = 'ID_descending',
+    SORTED_REV_ID = 'ID_ascending'
+}
 /**
  * Adds an item to a list.
  *
@@ -112,19 +124,14 @@ export function Add(list: any[], item: any|any[], method: _EAddMethod): void {
             break;
     }
 }
-export enum _EAddMethod {
-    TO_START = 'to_start',
-    TO_END = 'to_end',
-    EXTEND_START = 'extend_start',
-    EXTEND_END = 'extend_end',
-    SORTED_ALPHA = 'alpha_descending',
-    SORTED_REV_ALPHA = 'alpha_ascending',
-    SORTED_NUM = 'numeric_descending',
-    SORTED_REV_NUM = 'numeric_ascending',
-    SORTED_ID = 'ID_descending',
-    SORTED_REV_ID = 'ID_ascending'
-}
+
 // ================================================================================================
+export enum _ERemoveMethod {
+    REMOVE_INDEX = 'index',
+    REMOVE_FIRST_VALUE = 'first_value',
+    REMOVE_LAST_VALUE = 'last_value',
+    REMOVE_ALL_VALUES = 'all_values'
+}
 /**
  * Removes items in a list.
  * ~
@@ -171,14 +178,14 @@ export function Remove(list: any[], item: any, method: _ERemoveMethod): void {
             throw new Error('list.Remove: Remove method not recognised.');
     }
 }
-export enum _ERemoveMethod {
-    REMOVE_INDEX = 'index',
-    REMOVE_FIRST_VALUE = 'first_value',
-    REMOVE_LAST_VALUE = 'last_value',
-    REMOVE_ALL_VALUES = 'all_values'
-}
-// ================================================================================================
 
+// ================================================================================================
+export enum _EReplaceMethod {
+    REPLACE_INDEX = 'index',
+    REPLACE_FIRST_VALUE = 'first_value',
+    REPLACE_LAST_VALUE = 'last_value',
+    REPLACE_ALL_VALUES = 'all_values'
+}
 /**
  * Replaces items in a list.
  * ~
@@ -226,12 +233,7 @@ export function Replace(list: any[], old_item: any, new_item: any, method: _ERep
             throw new Error('list.Replace: Replace method not recognised.');
     }
 }
-export enum _EReplaceMethod {
-    REPLACE_INDEX = 'index',
-    REPLACE_FIRST_VALUE = 'first_value',
-    REPLACE_LAST_VALUE = 'last_value',
-    REPLACE_ALL_VALUES = 'all_values'
-}
+
 // ================================================================================================
 /**
  * Sorts an list, based on the values of the items in the list.

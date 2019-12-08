@@ -1,5 +1,5 @@
 import { SIModel } from './SIModel';
-import { EEntType, Txyz, TAttribDataTypes } from './common';
+import { EEntType, Txyz, TAttribDataTypes, EAttribDataTypeStrs, TFace } from './common';
 /**
  * Geo-info model class.
  */
@@ -29,12 +29,12 @@ export class SIModelComparator {
         const result: {percent: number, score: number, total: number, comment: any} = {percent: 0, score: 0, total: 0, comment: []};
         // if check_geom_equality, then check we have exact same number of positions, objects, and colletions
         if (check_geom_equality) {
-            this._model.geom.comparator.compare(model, result);
+            this._compareGeom(model, result);
         }
         // check that the attributes in this model all exist in the other model
         // at the same time get a map of all attribute names in this model
         if (check_attrib_equality) {
-            this._model.attribs.compare(model, result);
+            this._compareAttribs(model, result);
         }
         // normalize the two models
         if (normalize) {
@@ -78,6 +78,182 @@ export class SIModelComparator {
         result.comment = formatted_str;
         // return the result
         return result;
+    }
+    // ============================================================================
+    // Private compare geom
+    // ============================================================================
+    /**
+     * Compares the geom in this model with the geom in another model.
+     * ~
+     * The max total score for this method is equal to 5.
+     * It assigns 1 mark for for each entity type:
+     * points, pline, pgons, and colelctions.
+     * In each case, if the number of entities is equal, 1 mark is given.
+     * ~
+     * @param other_model The model to compare with.
+     */
+    private _compareGeom(other_model: SIModel, result: {score: number, total: number, comment: any[]}): void {
+        result.comment.push('Comparing number of geometric entities.');
+        const eny_types: EEntType[] = [
+            EEntType.POINT,
+            EEntType.PLINE,
+            EEntType.PGON
+        ];
+        const ent_type_strs: Map<EEntType, string> = new Map([
+            [EEntType.POINT, 'points'],
+            [EEntType.PLINE, 'polylines'],
+            [EEntType.PGON, 'polygons']
+        ]);
+        const geom_comments: string[] = [];
+        for (const ent_type of eny_types) {
+            // total marks is not updated, we deduct marks
+            // get the number of entitoes in each model
+            const this_num_ents: number = this._model.geom.data.numEnts(ent_type, false);
+            const other_num_ents: number = other_model.geom.data.numEnts(ent_type, false);
+            if (this_num_ents > other_num_ents) {
+                geom_comments.push([
+                    'Mismatch: Model has too few entities of type:',
+                    ent_type_strs.get(ent_type) + '.',
+                    'There were ' + (this_num_ents - other_num_ents) + ' missing entities.',
+                ].join(' '));
+            } else if (this_num_ents < other_num_ents) {
+                geom_comments.push([
+                    'Mismatch: Model has too many entities of type:',
+                    ent_type_strs.get(ent_type) + '.',
+                    'There were ' + (other_num_ents - this_num_ents) + ' extra entities.',
+                    'A penalty of one mark was deducted from the score.'
+                ].join(' '));
+                // update the score, deduct 1 mark
+                result.score -= 1;
+            } else {
+                // correct
+            }
+        }
+        if (geom_comments.length === 0) {
+            geom_comments.push('Number of entities all match.');
+        }
+        // update the comments in the result
+        result.comment.push(geom_comments);
+    }
+    /**
+     * Set the holes in a face by specifying a list of wires.
+     * Used by the compare function to normalize hole order.
+     */
+    private _setPgonHoles(face_i: number, holes_i: number[]): void {
+        const wires_i: number[] = this._model.geom.data.navFaceToWire(face_i);
+        const tris_i: number[] = this._model.geom.data.navFaceToTri(face_i);
+        const new_wires_i: number[] = [wires_i[0]];
+        for (let i = 0; i < holes_i.length; i++) {
+            wires_i[i + 1] = holes_i[i];
+        }
+        const face: TFace = [new_wires_i, tris_i];
+        this._model.geom.data.updateFaceEnt(face, face_i);
+    }
+    // ============================================================================
+    // Private compare attribs
+    // ============================================================================
+    /**
+     * Compares the attribs in this model with teh attribs in another model.
+     * ~
+     * If check_equality=false, the max total score will be equal to the number of attributes in this model.
+     * It checks that each attribute in this model exists in the other model. If it exists, 1 mark is assigned.
+     * ~
+     * If check_equality=true, the max score will be increased by 10, equal to the number of entity levels.
+     * For each entity level, if the other model contains no additional attributes, then one mark is assigned.
+     * ~
+     * @param other_model The model to compare with.
+     */
+    private _compareAttribs(other_model: SIModel, result: {score: number, total: number, comment: any[]}): void {
+        result.comment.push('Comparing attribute names and types.');
+        const eny_type_array: EEntType[] = [
+            EEntType.POSI,
+            EEntType.VERT,
+            EEntType.EDGE,
+            EEntType.WIRE,
+            EEntType.FACE,
+            EEntType.POINT,
+            EEntType.PLINE,
+            EEntType.PGON,
+            EEntType.COLL,
+            EEntType.MOD
+        ];
+        const ent_type_strs: Map<EEntType, string> = new Map([
+            [EEntType.POSI, 'positions'],
+            [EEntType.VERT, 'vertices'],
+            [EEntType.EDGE, 'edges'],
+            [EEntType.WIRE, 'wires'],
+            [EEntType.FACE, 'faces'],
+            [EEntType.POINT, 'points'],
+            [EEntType.PLINE, 'polylines'],
+            [EEntType.PGON, 'polygons'],
+            [EEntType.COLL, 'collections'],
+            [EEntType.MOD, 'model']
+        ]);
+        // compare all attributes except model attributes
+        // check that this model is a subset of other model
+        // all the attributes in this model must also be in other model
+        const attrib_comments: string[] = [];
+        let matches = true;
+        const attrib_names: Map<EEntType, string[]> = new Map();
+        for (const ent_type of eny_type_array) {
+            // get the attrib names
+            const ent_type_str: string = ent_type_strs.get(ent_type);
+            const this_attrib_names: string[] = this._model.attribs.query.getAttribNames(ent_type);
+            const other_attrib_names: string[] = other_model.attribs.query.getAttribNames(ent_type);
+            attrib_names.set(ent_type, this_attrib_names);
+            // check that each attribute in this model exists in the other model
+            for (const this_attrib_name of this_attrib_names) {
+                // check is this is built in
+                let is_built_in = false;
+                if (this_attrib_name === 'xyz' || this_attrib_name === 'rgb' || this_attrib_name.startsWith('_')) {
+                    is_built_in = true;
+                }
+                // update the total
+                if (!is_built_in) { result.total += 1; }
+                // compare names
+                if (other_attrib_names.indexOf(this_attrib_name) === -1 ) {
+                    matches = false;
+                    attrib_comments.push('The "' + this_attrib_name + '" ' + ent_type_str + ' attribute is missing.');
+                } else {
+                    // get the data types
+                    const data_type_1: EAttribDataTypeStrs = this._model.attribs.query.getAttribDataType(ent_type, this_attrib_name);
+                    const data_type_2: EAttribDataTypeStrs = other_model.attribs.query.getAttribDataType(ent_type, this_attrib_name);
+                    // compare data types
+                    if (data_type_1 !== data_type_2) {
+                        matches = false;
+                        attrib_comments.push('The "' + this_attrib_name + '" ' + ent_type_str + ' attribute datatype is wrong. '
+                            + 'It is "' + data_type_1 + '" but it should be "' + data_type_1 + '".');
+                    } else {
+                        // update the score
+                        if (!is_built_in) { result.score += 1; }
+                    }
+                }
+            }
+            // check if we have exact equality in attributes
+            // total marks is not updated, we deduct marks
+            // check that the other model does not have additional attribs
+            if (other_attrib_names.length > this_attrib_names.length) {
+                const additional_attribs: string[] = [];
+                for (const other_attrib_name of other_attrib_names) {
+                    if (this_attrib_names.indexOf(other_attrib_name) === -1) {
+                        additional_attribs.push(other_attrib_name);
+                    }
+                }
+                attrib_comments.push('There are additional ' + ent_type_str + ' attributes. ' +
+                    'The following attributes are not required: [' + additional_attribs.join(',') + ']. ');
+                // update the score, deduct 1 mark
+                result.score -= 1;
+            } else if (other_attrib_names.length < this_attrib_names.length) {
+                attrib_comments.push('Mismatch: Model has too few entities of type: ' + ent_type_strs.get(ent_type) + '.');
+            } else {
+                // correct
+            }
+        }
+        if (attrib_comments.length === 0) {
+            attrib_comments.push('Attributes all match, both name and data type.');
+        }
+        // add to result
+        result.comment.push(attrib_comments);
     }
     // ============================================================================
     // Private methods for normalizing
@@ -163,7 +339,7 @@ export class SIModelComparator {
                 }
                 fprints.sort();
                 const reordered_holes_i: number[] = fprints.map( fprint => fprint[1] );
-                this._model.geom.comparator.setPgonHoles(face_i, reordered_holes_i);
+                this._setPgonHoles(face_i, reordered_holes_i);
             }
         }
     }

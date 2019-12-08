@@ -3,7 +3,7 @@
  * Instead, the same can be achieved using mixins, as shown below.
  * The Geom classes in the folder follow this approach.
  */
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Base {
     protected data = 0;
     constructor(num: number) {
@@ -54,3 +54,4 @@ export function applyMixins(derivedCtor: any, baseCtors: any[]) {
         });
     });
 }
+~~~~~~~~~~~~~~~~~~~~~~~~~~

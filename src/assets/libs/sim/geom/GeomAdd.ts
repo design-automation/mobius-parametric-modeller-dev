@@ -1,8 +1,6 @@
-import { EEntType, TTri, TFace, Txyz, IGeomArrays, TAttribDataTypes, TEdge, TCollTree, TColl } from '../common';
-import { triangulate } from '../../triangulate/triangulate';
+import { EEntType, TFace, Txyz, TAttribDataTypes } from '../common';
 import { Geom } from './Geom';
 import { vecAdd } from '../../geom/vectors';
-import { GeomData } from './data/GeomData';
 
 /**
  * Class for geometry.
@@ -75,10 +73,7 @@ export class GeomAdd {
      * @param pgons_i
      */
     public addColl(parent_i: number, points_i: number[], plines_i: number[], pgons_i: number[]): number {
-        if (parent_i === null || parent_i === -1) {
-            return this.geom.data.addCollEnt([[], points_i, plines_i, pgons_i]);
-        }
-        return this.geom.data.addCollEnt([[parent_i], points_i, plines_i, pgons_i]);
+        return this.geom.data.addCollEnt([parent_i, points_i, plines_i, pgons_i]);
     }
     // ============================================================================
     // Copy geometry

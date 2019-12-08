@@ -1,6 +1,6 @@
-import { IGeomArrays } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
+import { TCollParent } from '../../common';
 
 /**
  * Working with collections.
@@ -9,8 +9,8 @@ export class GeomColl extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Collections
@@ -21,61 +21,61 @@ export class GeomColl extends GeomNav {
      * Add entities to a collection
      */
     public collAddPoint(coll_i: number, point_i: number): void {
-        this._addToSet(this._geom_arrays.dn_colls_objs[coll_i], 1, point_i);
-        this._addToSet(this._geom_arrays.up_points_colls, point_i, coll_i);
+        this._addValToSetInArr(this._geom_arrays.dn_colls_points, coll_i, point_i);
+        this._addValToSetInArr(this._geom_arrays.up_points_colls, point_i, coll_i);
     }
     /**
      * Add entities to a collection
      */
     public collAddPline(coll_i: number, pline_i: number): void {
-        this._addToSet(this._geom_arrays.dn_colls_objs[coll_i], 2, pline_i);
-        this._addToSet(this._geom_arrays.up_points_colls, pline_i, coll_i);
+        this._addValToSetInArr(this._geom_arrays.dn_colls_plines, coll_i, pline_i);
+        this._addValToSetInArr(this._geom_arrays.up_points_colls, pline_i, coll_i);
     }
     /**
      * Add entities to a collection
      */
     public collAddPgon(coll_i: number, pgon_i: number): void {
-        this._addToSet(this._geom_arrays.dn_colls_objs[coll_i], 3, pgon_i);
-        this._addToSet(this._geom_arrays.up_points_colls, pgon_i, coll_i);
+        this._addValToSetInArr(this._geom_arrays.dn_colls_pgons, coll_i, pgon_i);
+        this._addValToSetInArr(this._geom_arrays.up_points_colls, pgon_i, coll_i);
     }
     /**
      * Add collection to a collection, the first collection is the parent, the second is the child
      */
     public collAddColl(coll0_i: number, coll1_i: number): void {
-        this._insToArr(this._geom_arrays.dn_colls_objs[coll1_i], 0, coll0_i, 0);
+        this._geom_arrays.dn_colls_parents[coll1_i] = coll0_i;
     }
     /**
      * Remove entities from a collection.
      */
     public collRemovePoint(coll_i: number, point_i: number): void {
-        if (this._geom_arrays.dn_colls_objs[coll_i] == null) { return; } // deleted
-        this._remFromSet(this._geom_arrays.dn_colls_objs[coll_i], 1, point_i, false);
-        this._remFromSet(this._geom_arrays.up_points_colls, point_i, coll_i, true);
+        if (this._geom_arrays.dn_colls_points[coll_i] == null) { return; } // deleted
+        this._remValFromSetInArr(this._geom_arrays.dn_colls_points, coll_i, point_i, false);
+        this._remValFromSetInArr(this._geom_arrays.up_points_colls, point_i, coll_i, true);
     }
     /**
      * Remove entities from a collection.
      */
     public collRemovePline(coll_i: number, pline_i: number): void {
-        if (this._geom_arrays.dn_colls_objs[coll_i] == null) { return; } // deleted
-        this._remFromSet(this._geom_arrays.dn_colls_objs[coll_i], 2, pline_i, false);
-        this._remFromSet(this._geom_arrays.up_plines_colls, pline_i, coll_i, true);
+        if (this._geom_arrays.dn_colls_plines[coll_i] == null) { return; } // deleted
+        this._remValFromSetInArr(this._geom_arrays.dn_colls_plines, coll_i, pline_i, false);
+        this._remValFromSetInArr(this._geom_arrays.up_plines_colls, pline_i, coll_i, true);
     }
     /**
      * Remove entities from a collection.
      */
     public collRemovePgon(coll_i: number, pgon_i: number): void {
-        if (this._geom_arrays.dn_colls_objs[coll_i] == null) { return; } // deleted
-        this._remFromSet(this._geom_arrays.dn_colls_objs[coll_i], 3, pgon_i, false);
-        this._remFromSet(this._geom_arrays.up_pgons_colls, pgon_i, coll_i, true);
+        if (this._geom_arrays.dn_colls_pgons[coll_i] == null) { return; } // deleted
+        this._remValFromSetInArr(this._geom_arrays.dn_colls_pgons, coll_i, pgon_i, false);
+        this._remValFromSetInArr(this._geom_arrays.up_pgons_colls, pgon_i, coll_i, true);
     }
     /**
      * Remove entities from a collection.
      * Remove the second collection from the first collection.
      */
     public collRemoveColl(coll0_i: number, coll1_i: number): void {
-        if (this._geom_arrays.dn_colls_objs[coll0_i] == null) { return; } // deleted
-        if (this._geom_arrays.dn_colls_objs[coll1_i][0][0] === coll0_i) {
-            this._geom_arrays.dn_colls_objs[coll1_i][0] = [];
+        if (this._geom_arrays.dn_colls_parents[coll0_i] == null) { return; } // deleted
+        if (this._geom_arrays.dn_colls_parents[coll1_i] === coll0_i) {
+            this._geom_arrays.dn_colls_parents[coll1_i] = null;
         }
     }
     /**
@@ -83,7 +83,7 @@ export class GeomColl extends GeomNav {
      * @param coll_i
      */
     public collGetParent(coll_i: number): number {
-        return this._geom_arrays.dn_colls_objs[coll_i][0][0];
+        return this._geom_arrays.dn_colls_parents[coll_i];
     }
     /**
      * Set the parent of a collection
@@ -91,7 +91,14 @@ export class GeomColl extends GeomNav {
      * @param parent_coll_i
      */
     public collSetParent(coll_i: number, parent_coll_i: number): void {
-        this._geom_arrays.dn_colls_objs[coll_i][0][0] = parent_coll_i;
+        this._geom_arrays.dn_colls_parents[coll_i] = parent_coll_i;
+    }
+    /**
+     * Clears the parent of a collection
+     * @param coll_i The index of teh collection that is the parent
+     */
+    public collClearParent(coll_i: number): void {
+        this._geom_arrays.dn_colls_parents[coll_i] = null;
     }
     /**
      * Get the ancestor collections of a collection.
@@ -99,10 +106,10 @@ export class GeomColl extends GeomNav {
      */
     public collGetAncestors(coll_i: number): number[] {
         const ancestor_colls_i: number[] = [];
-        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll_i][0][0];
-        while (parent_coll_i !== undefined) {
+        let parent_coll_i: number = this._geom_arrays.dn_colls_parents[coll_i];
+        while (parent_coll_i !== undefined && parent_coll_i !== null) {
             ancestor_colls_i.push(parent_coll_i);
-            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0][0];
+            parent_coll_i = this._geom_arrays.dn_colls_parents[parent_coll_i];
         }
         return ancestor_colls_i;
     }
@@ -111,10 +118,10 @@ export class GeomColl extends GeomNav {
      * @param coll_i
      */
     public collIsAncestor(coll1_i: number, coll2_i: number): boolean {
-        let parent_coll_i: number = this._geom_arrays.dn_colls_objs[coll2_i][0][0];
-        while (parent_coll_i !== undefined) {
-            parent_coll_i = this._geom_arrays.dn_colls_objs[parent_coll_i][0][0];
-            if (parent_coll_i === coll1_i) { return true; }
+        let parent_coll: TCollParent = this._geom_arrays.dn_colls_parents[coll2_i];
+        while (parent_coll !== undefined && parent_coll !== null) {
+            parent_coll = this._geom_arrays.dn_colls_parents[parent_coll];
+            if (parent_coll === coll1_i) { return true; }
         }
         return false;
     }

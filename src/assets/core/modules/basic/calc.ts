@@ -22,6 +22,10 @@ import { rayFromPln } from '@assets/core/inline/_ray';
 
 
 // ================================================================================================
+export enum _EDistanceMethod {
+    P_P_DISTANCE = 'p_to_p_distance',
+    MIN_DISTANCE = 'min_distance'
+}
 /**
  * Calculates the distance to one position or a list of positions.
  * ~
@@ -63,10 +67,6 @@ function _distancePtoP(__model__: SIModel, from: number, to: number|number[]): n
     } else  {
         return to.map( to2 => _distancePtoP(__model__, from, to2) ) as number[];
     }
-}
-export enum _EDistanceMethod {
-    P_P_DISTANCE = 'p_to_p_distance',
-    MIN_DISTANCE = 'min_distance'
 }
 // ================================================================================================
 /**

@@ -1,22 +1,17 @@
-import { SIModel } from '../SIModel';
-import { IAttribsData, IModelData, IAttribData, TAttribDataTypes, EEntType,
-    EAttribDataTypeStrs, IGeomData, IAttribsMaps, EAttribNames, Txyz, EEntTypeStr, EAttribPush } from '../common';
-import { GIAttribMap } from './AttribMap';
-import { vecAdd, vecDiv, vecSum } from '@libs/geom/vectors';
+import { EEntType, EEntTypeStr } from '../common';
+import { GIAttribMap } from './data/AttribMap';
+import { Attribs } from './Attribs';
 
 /**
  * Class for attributes.
  */
 export class AttribsModify {
-    private _model: SIModel;
-    private _attribs_maps: IAttribsMaps;
-   /**
-     * Creates an object to store the attribute data.
-     * @param model The JSON data
+    private _attribs: Attribs;
+    /**
+     * Constructor
      */
-    constructor(model: SIModel, attribs_maps: IAttribsMaps) {
-        this._model = model;
-        this._attribs_maps = attribs_maps;
+    constructor(attribs: Attribs) {
+        this._attribs = attribs;
     }
     /**
      * Deletes an existing attribute.
@@ -27,7 +22,7 @@ export class AttribsModify {
      */
     public delAttrib(ent_type: EEntType, name: string): boolean {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         return attribs.delete(name);
     }
     /**
@@ -40,7 +35,7 @@ export class AttribsModify {
      */
     public renameAttrib(ent_type: EEntType, old_name: string, new_name: string): boolean {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         if (!attribs.has(old_name)) { return false; }
         if (attribs.has(new_name)) { return false; }
         if (old_name === new_name) { return false; }

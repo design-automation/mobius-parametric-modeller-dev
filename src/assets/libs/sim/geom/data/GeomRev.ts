@@ -1,4 +1,4 @@
-import { IGeomArrays, TEdge, TWire, TFace, TTri } from '../../common';
+import { IGeomArrays, TEdge, TWire, TFace, TTri, TFaceWire, TFaceTri } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -10,8 +10,8 @@ export class GeomRev extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     /**
      * Reverse an edge
@@ -20,7 +20,7 @@ export class GeomRev extends GeomNav {
         const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
         edge.reverse();
         // the verts pointing up to edges also need to be reversed
-        const edges_i: [number[], number[]] = this._geom_arrays.up_verts_edges[edge[0]];
+        const edges_i: [number, number] = this._geom_arrays.up_verts_edges[edge[0]];
         edges_i.reverse();
     }
     /**
@@ -38,13 +38,14 @@ export class GeomRev extends GeomNav {
      * Reverse a face
      */
     public faceReverse(face_i: number): void {
-        const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
+        const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+        const face_tris: TFaceTri = this._geom_arrays.dn_faces_tris[face_i];
         // reverse the edges
-        for (const wire_i of face[0]) {
+        for (const wire_i of face_wires) {
             this.wireReverse(wire_i);
         }
         // reverse the triangles
-        for (const tri_i of face[1]) {
+        for (const tri_i of face_tris) {
             const tri: TTri = this._geom_arrays.dn_tris_verts[tri_i];
             tri.reverse();
         }

@@ -1,18 +1,18 @@
-import { EEntType, IGeomArrays, TColl } from '../../common';
+import { EEntType, IGeomArrays, TColl, TCollPoints, TCollPlines, TCollPgons } from '../../common';
 import { isPosi, isVert, isPoint, isEdge, isWire, isPline, isFace, isPgon, isColl, isTri } from '../../id';
 import { Geom } from '../Geom';
-import { GeomCore } from './GeomBase';
+import { GeomBase } from './GeomBase';
 
 /**
  * Class for navigating the datastructure
  * This is parent of all the other classes
  */
-export class GeomNav extends GeomCore { // extends GeomBase
+export class GeomNav extends GeomBase { // extends GeomBase
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Navigate down the hierarchy
@@ -37,12 +37,12 @@ export class GeomNav extends GeomCore { // extends GeomBase
         return ents_i;
     }
     public navFaceToWire(face_i: number): number[] {
-        const ents_i: number[] = this._geom_arrays.dn_faces_wirestris[face_i][0];
+        const ents_i: number[] = this._geom_arrays.dn_faces_wires[face_i];
         if (ents_i) { return ents_i.slice(); }
         return ents_i;
     }
     public navFaceToTri(face_i: number): number[] {
-        const ents_i: number[] = this._geom_arrays.dn_faces_wirestris[face_i][1];
+        const ents_i: number[] = this._geom_arrays.dn_faces_tris[face_i];
         if (ents_i) { return ents_i.slice(); }
         return ents_i;
     }
@@ -60,7 +60,7 @@ export class GeomNav extends GeomCore { // extends GeomBase
         all_colls_i.push(coll_i);
         const set_ents_i: Set<number> = new Set();
         for (const coll2_i of all_colls_i) {
-            const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll2_i][1];
+            const ents_i: number[] = this._geom_arrays.dn_colls_points[coll2_i];
             for (const ent_i of ents_i) {
                 set_ents_i.add(ent_i);
             }
@@ -72,7 +72,7 @@ export class GeomNav extends GeomCore { // extends GeomBase
         all_colls_i.push(coll_i);
         const set_ents_i: Set<number> = new Set();
         for (const coll2_i of all_colls_i) {
-            const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll2_i][2];
+            const ents_i: number[] = this._geom_arrays.dn_colls_plines[coll2_i];
             for (const ent_i of ents_i) {
                 set_ents_i.add(ent_i);
             }
@@ -84,7 +84,7 @@ export class GeomNav extends GeomCore { // extends GeomBase
         all_colls_i.push(coll_i);
         const set_ents_i: Set<number> = new Set();
         for (const coll2_i of all_colls_i) {
-            const ents_i: number[] = this._geom_arrays.dn_colls_objs[coll2_i][3];
+            const ents_i: number[] = this._geom_arrays.dn_colls_pgons[coll2_i];
             for (const ent_i of ents_i) {
                 set_ents_i.add(ent_i);
             }
@@ -109,10 +109,10 @@ export class GeomNav extends GeomCore { // extends GeomBase
         return ents_i;
     }
     public navVertToEdge(vert_i: number): [number, number] {
-        const ents_i: [number[], number[]] = this._geom_arrays.up_verts_edges[vert_i];
+        const ents_i: [number, number] = this._geom_arrays.up_verts_edges[vert_i];
         const edges_i: number[] = [];
-        if (ents_i[0][0] !== undefined) {  edges_i.push(ents_i[0][0]); }
-        if (ents_i[1][0] !== undefined) {  edges_i.push(ents_i[1][0]); }
+        if (ents_i[0] !== null) {  edges_i.push(ents_i[0]); }
+        if (ents_i[1] !== null) {  edges_i.push(ents_i[1]); }
         return edges_i as [number, number];
     }
     public navTriToFace(tri_i: number): number {
@@ -501,7 +501,8 @@ export class GeomNav extends GeomCore { // extends GeomBase
     }
     private getFacePosis(face_i: number): number[] {
         const set_posis_i: Set<number> = new Set();
-        for (const wire_i of this._geom_arrays.dn_faces_wirestris[face_i][0]) {
+        const wires_i: number[] = this._geom_arrays.dn_faces_wires[face_i];
+        for (const wire_i of wires_i) {
             this.getWirePosis(wire_i).forEach(posi_i => set_posis_i.add(posi_i));
         }
         return Array.from(set_posis_i);
@@ -519,14 +520,16 @@ export class GeomNav extends GeomCore { // extends GeomBase
     }
     private getCollPosis(coll_i: number): number[] {
         const set_posis_i: Set<number> = new Set();
-        const coll: TColl = this._geom_arrays.dn_colls_objs[coll_i];
-        for (const point_i of coll[1]) {
+        const coll_points: TCollPoints = this._geom_arrays.dn_colls_points[coll_i];
+        const coll_plines: TCollPlines = this._geom_arrays.dn_colls_plines[coll_i];
+        const coll_pgons: TCollPgons = this._geom_arrays.dn_colls_pgons[coll_i];
+        for (const point_i of coll_points) {
             set_posis_i.add(this.getPointPosi(point_i));
         }
-        for (const pline_i of coll[2]) {
+        for (const pline_i of coll_plines) {
             this.getPlinePosis(pline_i).forEach(posi_i => set_posis_i.add(posi_i));
         }
-        for (const pgon_i of coll[3]) {
+        for (const pgon_i of coll_pgons) {
             this.getPgonPosis(pgon_i).forEach(posi_i => set_posis_i.add(posi_i));
         }
         return Array.from(set_posis_i);

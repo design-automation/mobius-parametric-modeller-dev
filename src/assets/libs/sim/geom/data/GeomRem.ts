@@ -1,4 +1,4 @@
-import {  EEntType, IGeomArrays, TVert, TEdge, TWire, TTri, TFace, TPoint, TPline, TPgon, TColl } from '../../common';
+import {  EEntType, IGeomArrays, TVert, TEdge, TWire, TTri, TFace, TPoint, TPline, TPgon, TColl, TFaceWire, TFaceTri, TCollParent, TCollPoints, TCollPlines, TCollPgons } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -10,8 +10,8 @@ export class GeomRem extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Remove entities from the datastructure
@@ -26,7 +26,7 @@ export class GeomRem extends GeomNav {
         const verts_i: number[] = this._geom_arrays.up_posis_verts[posi_i];
         if (verts_i === null) { return null; }
         // remove up
-        this._clear(this._geom_arrays.up_posis_verts, posi_i, false);
+        this._clearValsInArr(this._geom_arrays.up_posis_verts, posi_i, false);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.POSI, posi_i);
         // return
@@ -37,10 +37,10 @@ export class GeomRem extends GeomNav {
         const vert: TVert = this._geom_arrays.dn_verts_posis[vert_i];
         if (vert === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_verts_posis, vert_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_verts_posis, vert_i, false);
         // remove up
         const posi_i: number = vert;
-        this._remFromSet(this._geom_arrays.up_posis_verts, posi_i, vert_i, false);
+        this._remValFromSetInArr(this._geom_arrays.up_posis_verts, posi_i, vert_i, false);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.VERT, vert_i);
         // return
@@ -51,17 +51,11 @@ export class GeomRem extends GeomNav {
         const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
         if (edge === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_edges_verts, edge_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_edges_verts, edge_i, false);
         // remove up
-        // const [start_vert_i, end_vert_i]: [number, number] = edge;
-        // this._remFromArrIf(this._geom_arrays.up_verts_edges, start_vert_i, 1, edge_i, true);
-        // this._remFromArrIf(this._geom_arrays.up_verts_edges, end_vert_i, 0, edge_i, true);
-        if (this._geom_arrays.up_verts_edges[edge[0]][1][0] === edge_i) {
-            this._geom_arrays.up_verts_edges[edge[0]][1] = [];
-        }
-        if (this._geom_arrays.up_verts_edges[edge[1]][0][0] === edge_i) {
-            this._geom_arrays.up_verts_edges[edge[1]][0] = [];
-        }
+        const [start_vert_i, end_vert_i]: [number, number] = edge;
+        this._remValFromArrInArrIf(this._geom_arrays.up_verts_edges, start_vert_i, 1, edge_i, true);
+        this._remValFromArrInArrIf(this._geom_arrays.up_verts_edges, end_vert_i, 0, edge_i, true);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.EDGE, edge_i);
         // return
@@ -72,10 +66,10 @@ export class GeomRem extends GeomNav {
         const tri: TTri = this._geom_arrays.dn_tris_verts[tri_i];
         if (tri === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_tris_verts, tri_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_tris_verts, tri_i, false);
         // remove up
         const verts_i: [number, number, number] = tri;
-        this._remFromSet(this._geom_arrays.up_verts_tris, verts_i, tri_i, true);
+        this._remValFromSetInArr(this._geom_arrays.up_verts_tris, verts_i, tri_i, true);
         // no attribs
         // return
         return tri;
@@ -85,10 +79,10 @@ export class GeomRem extends GeomNav {
         const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
         if (wire === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_wires_edges, wire_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_wires_edges, wire_i, false);
         // remove up
         const edges_i: number[] = wire;
-        this._clearIf(this._geom_arrays.up_edges_wires, edges_i, wire_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_edges_wires, edges_i, wire_i, true);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.WIRE, wire_i);
         // return
@@ -96,29 +90,29 @@ export class GeomRem extends GeomNav {
     }
     public remFaceEnt(face_i: number): TFace {
         // down
-        const face: TFace = this._geom_arrays.dn_faces_wirestris[face_i];
-        if (face === null) { return null; }
+        const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+        const face_tris: TFaceTri = this._geom_arrays.dn_faces_tris[face_i];
+        if (face_wires === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_faces_wirestris, face_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_faces_wires, face_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_faces_tris, face_i, false);
         // remove up
-        const wires_i: number[] = face[0];
-        this._clearIf(this._geom_arrays.up_wires_faces, wires_i, face_i, true);
-        const tris_i: number[] = face[1];
-        this._clearIf(this._geom_arrays.up_tris_faces, tris_i, face_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_wires_faces, face_wires, face_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_tris_faces, face_tris, face_i, true);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.FACE, face_i);
         // return
-        return face;
+        return [face_wires, face_tris];
     }
     public remPointEnt(point_i: number): TPoint {
         // down
         const point: TPoint = this._geom_arrays.dn_points_verts[point_i];
         if (point === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_points_verts, point_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_points_verts, point_i, false);
         // remove up
         const vert_i: number = point;
-        this._clearIf(this._geom_arrays.up_verts_points, vert_i, point_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_verts_points, vert_i, point_i, true);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.POINT, point_i);
         // return
@@ -129,10 +123,10 @@ export class GeomRem extends GeomNav {
         const pline: TPline = this._geom_arrays.dn_plines_wires[pline_i];
         if (pline === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_plines_wires, pline_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_plines_wires, pline_i, false);
         // remove up
         const wire_i: number = pline;
-        this._clearIf(this._geom_arrays.up_wires_plines, wire_i, pline_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_wires_plines, wire_i, pline_i, true);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.PLINE, pline_i);
         // return
@@ -143,10 +137,10 @@ export class GeomRem extends GeomNav {
         const pgon: TPgon = this._geom_arrays.dn_pgons_faces[pgon_i];
         if (pgon === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_pgons_faces, pgon_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_pgons_faces, pgon_i, false);
         // remove up
         const face_i: number = pgon;
-        this._clearIf(this._geom_arrays.up_faces_pgons, face_i, pgon_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_faces_pgons, face_i, pgon_i, true);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.PGON, pgon_i);
         // return
@@ -154,13 +148,19 @@ export class GeomRem extends GeomNav {
     }
     public remCollEnt(coll_i: number): TColl {
         // down
-        const coll: TColl = this._geom_arrays.dn_colls_objs[coll_i];
-        if (coll === null) { return null; }
+        const coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[coll_i];
+        const coll_points: TCollPoints = this._geom_arrays.dn_colls_points[coll_i];
+        const coll_plines: TCollPlines = this._geom_arrays.dn_colls_plines[coll_i];
+        const coll_pgons: TCollPgons = this._geom_arrays.dn_colls_pgons[coll_i];
+        if (coll_parent === null) { return null; }
         // remove down
-        this._clear(this._geom_arrays.dn_colls_objs, coll_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_colls_parents, coll_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_colls_points, coll_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_colls_plines, coll_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_colls_pgons, coll_i, false);
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.COLL, coll_i);
         // return
-        return coll;
+        return [coll_parent, coll_points, coll_plines, coll_pgons];
     }
 }

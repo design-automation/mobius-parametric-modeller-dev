@@ -10,8 +10,8 @@ export class GeomEnt extends GeomNav {
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays) {
-        super(geom, geom_arrays);
+    constructor(geom: Geom) {
+        super(geom);
     }
     // ============================================================================
     // Entities
@@ -54,8 +54,7 @@ export class GeomEnt extends GeomNav {
         const geom_array: any[] = this._geom_arrays[geom_array_key];
         const ents_i: number[] = [];
         if (include_deleted) {
-            let i = 0; const i_max = geom_array.length;
-            for (; i < i_max; i++ ) {
+            for (let i = 0; i < geom_array.length; i++ ) {
                 const ent = geom_array[i];
                 if (ent !== null) {
                     ents_i.push(i);
@@ -64,8 +63,7 @@ export class GeomEnt extends GeomNav {
                 }
             }
         } else {
-            let i = 0; const i_max = geom_array.length;
-            for (; i < i_max; i++ ) {
+            for (let i = 0; i < geom_array.length; i++ ) {
                 const ent = geom_array[i];
                 if (ent !== null) {
                     ents_i.push(i);
@@ -143,62 +141,5 @@ export class GeomEnt extends GeomNav {
             }
         }
         return Array.from(perimeter_ents_i);
-    }
-
-            // ============================================================================
-    // Get num ents
-    //
-    // ============================================================================
-    public numEnts2(ent_type: number): number {
-        switch (ent_type) {
-            case EEntType.POSI:
-                return this.numPosis();
-            case EEntType.VERT:
-                return this.numVerts();
-            case EEntType.EDGE:
-                return this.numEdges();
-            case EEntType.WIRE:
-                return this.numWires();
-            case EEntType.FACE:
-                return this.numFaces();
-            case EEntType.POINT:
-                return this.numPoints();
-            case EEntType.PLINE:
-                return this.numPlines();
-            case EEntType.PGON:
-                return this.numPgons();
-            case EEntType.COLL:
-                return this.numColls();
-        }
-    }
-    public numPosis(): number {
-        return this._geom_arrays.up_posis_verts.length;
-    }
-    public numVerts(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numEdges(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numWires(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numTris(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numFaces(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numPoints(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numPlines(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numPgons(): number {
-        return this._geom_arrays.dn_verts_posis.length;
-    }
-    public numColls(): number {
-        return this._geom_arrays.dn_verts_posis.length;
     }
 }

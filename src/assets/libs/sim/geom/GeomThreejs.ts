@@ -1,6 +1,6 @@
 import { Geom } from './Geom';
-import { IGeomArrays, TTri, TEdge, TPoint } from '../common';
-import { GIAttribMap } from '../attribs/AttribMap';
+import { IGeomArrays, TTri, TEdge, TPoint, EEntType } from '../common';
+import { GIAttribMap } from '../attribs/data/AttribMap';
 import * as THREE from 'three';
 import { GeomData } from './data/GeomData';
 
@@ -9,15 +9,11 @@ import { GeomData } from './data/GeomData';
  */
 export class GeomThreejs {
     private _geom: Geom;
-    private _geom_arrays: IGeomArrays;
-    public _data: GeomData;
     /**
      * Constructor
      */
-    constructor(geom: Geom, geom_arrays: IGeomArrays, data: GeomData) {
+    constructor(geom: Geom) {
         this._geom = geom;
-        this._geom_arrays = geom_arrays;
-        this._data = data;
     }
     // ============================================================================
     // ThreeJS
@@ -30,7 +26,7 @@ export class GeomThreejs {
      * The indices in the list point to the sequential coordinates.
      */
     public get3jsVerts(): number[] {
-        return this._geom_arrays.dn_verts_posis;
+        return this._geom.data.getEnts(EEntType.VERT, false);
     }
     /**
      * Returns that data required for threejs triangles.
@@ -62,15 +58,21 @@ export class GeomThreejs {
         // get the material attribute from polygons
         const material_attrib: GIAttribMap = this._geom.model.attribs._attribs_maps.pg.get('material');
         // loop through all tris
-        let tri_i = 0; const tri_i_max = this._geom_arrays.dn_tris_verts.length;
-        for (; tri_i < tri_i_max; tri_i++) {
-            const tri_verts_i: number[] = this._geom_arrays.dn_tris_verts[tri_i];
+        // const num_tris = this._geom_arrays.dn_tris_verts.length;
+        // const num_tris = this._geom.data.numEnts(EEntType.TRI, true);
+        const tris_i: number[] = this._geom.data.getEnts(EEntType.TRI, false);
+        // for (let tri_i = 0; tri_i < num_tris; tri_i++) {
+        for (const tri_i of tris_i) {
+            // const tri_verts_i: [number, number, number] = this._geom_arrays.dn_tris_verts[tri_i];
+            const tri_verts_i: [number, number, number] =  this._geom.data.navTriToVert(tri_i);
             if (tri_verts_i !== null) {
                 // get the verts, face and the polygon for this tri
                 const new_tri_verts_i: TTri = tri_verts_i.map(v => vertex_map.get(v)) as TTri;
                 // get the materials for this tri from the polygon
-                const tri_face_i: number = this._geom_arrays.up_tris_faces[tri_i];
-                const tri_pgon_i: number = this._geom_arrays.up_faces_pgons[tri_face_i];
+                // const tri_face_i: number = this._geom_arrays.up_tris_faces[tri_i];
+                // const tri_pgon_i: number = this._geom_arrays.up_faces_pgons[tri_face_i];
+                const tri_face_i: number = this._geom.data.navTriToFace(tri_i);
+                const tri_pgon_i: number = this._geom.data.navFaceToPgon(tri_face_i);
                 const tri_mat_indices: number[] = [];
                 if (material_attrib !== undefined) {
                     const mat_attrib_val: string|string[] = material_attrib.getEntVal(tri_pgon_i) as string|string[];
@@ -171,14 +173,16 @@ export class GeomThreejs {
     public get3jsEdges(vertex_map: Map<number, number>): [number[], Map<number, number>] {
         const edges_verts_i_filt: TEdge[] = [];
         const edge_select_map: Map<number, number> = new Map();
-        let gi_i = 0;
-        const l = this._geom_arrays.dn_edges_verts.length;
-        for (; gi_i < l; gi_i++) {
-            const edge_verts_i: TEdge = this._geom_arrays.dn_edges_verts[gi_i];
+        // const num_edges: number = this._geom.data.numEnts(EEntType.EDGE, true); // this._geom_arrays.dn_edges_verts.length;
+        // for (let edge_i = 0; edge_i < num_edges; edge_i++) {
+        const edges_i: number[] = this._geom.data.getEnts(EEntType.EDGE, false);
+        for (const edge_i of edges_i) {
+            // const edge_verts_i: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
+            const edge_verts_i: TEdge = this._geom.data.navEdgeToVert(edge_i);
             if (edge_verts_i !== null) {
                 const new_edge_verts_i: TEdge = edge_verts_i.map(e => vertex_map.get(e)) as TEdge;
                 const tjs_i = edges_verts_i_filt.push(new_edge_verts_i) - 1;
-                edge_select_map.set(tjs_i, gi_i);
+                edge_select_map.set(tjs_i, edge_i);
             }
         }
         // @ts-ignore
@@ -195,14 +199,16 @@ export class GeomThreejs {
     public get3jsPoints(vertex_map: Map<number, number>): [number[], Map<number, number>] {
         const points_verts_i_filt: TPoint[] = [];
         const point_select_map: Map<number, number> = new Map();
-        let gi_i = 0;
-        const l = this._geom_arrays.dn_points_verts.length;
-        for (; gi_i < l; gi_i++) {
-            const point_verts_i: TPoint = this._geom_arrays.dn_points_verts[gi_i];
+        // const num_points = this._geom.data.numEnts(EEntType.POSI, true);  // this._geom_arrays.dn_points_verts.length;
+        // for (let point_i = 0; point_i < num_points; point_i++) {
+        const points_i: number[] = this._geom.data.getEnts(EEntType.POINT, false);
+        for (const point_i of points_i) {
+            // const point_verts_i: TPoint = this._geom_arrays.dn_points_verts[gi_i];
+            const point_verts_i: TPoint = this._geom.data.navPointToVert(point_i); 
             if (point_verts_i !== null) {
                 const new_point_verts_i: TPoint = vertex_map.get(point_verts_i) as TPoint;
                 const tjs_i = points_verts_i_filt.push(new_point_verts_i) - 1;
-                point_select_map.set(tjs_i, gi_i);
+                point_select_map.set(tjs_i, point_i);
             }
         }
         return [points_verts_i_filt, point_select_map];
