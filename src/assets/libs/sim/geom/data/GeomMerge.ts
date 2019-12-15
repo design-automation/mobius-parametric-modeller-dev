@@ -48,7 +48,7 @@ export class GeomMerge extends GeomNav {
             const verts_i: number[] = geom_data.dn_tris_verts[i];
             if (verts_i !== undefined) {
                 const new_triangle: TTri = verts_i.map(v => v + num_verts) as TTri;
-                this._geom_arrays.dn_tris_verts.push[i + num_tris] = new_triangle;
+                this._geom_arrays.dn_tris_verts[i + num_tris] = new_triangle;
             }
         }
         // edges to verts
@@ -80,7 +80,7 @@ export class GeomMerge extends GeomNav {
             const tris_i: number[] = geom_data.dn_faces_tris[i];
             if (tris_i !== undefined) {
                 const new_face_tris: TFaceTris = tris_i.map( t => t + num_tris );
-                this._geom_arrays.dn_faces_tris[i] = new_face_tris;
+                this._geom_arrays.dn_faces_tris[i + num_faces] = new_face_tris;
             }
         }
         // points to verts
@@ -192,7 +192,7 @@ export class GeomMerge extends GeomNav {
             const point_i: number = geom_data.up_verts_points[i];
             if (point_i !== undefined) {
                 const new_point_i: number = point_i + num_points;
-                this._geom_arrays.up_verts_points[i + num_points] = new_point_i;
+                this._geom_arrays.up_verts_points[i + num_verts] = new_point_i;
             }
         }
         // wires to plines
@@ -240,7 +240,7 @@ export class GeomMerge extends GeomNav {
             const coll_parent_i: number = geom_data.up_colls_parents[i];
             if (coll_parent_i !== undefined) { // null means no parent, undefined means deleted
                 const new_coll_parent_i: number = (coll_parent_i === null) ? null : coll_parent_i + num_colls;
-                this._geom_arrays.up_colls_parents[i +  + num_colls] = new_coll_parent_i;
+                this._geom_arrays.up_colls_parents[i + num_colls] = new_coll_parent_i;
             }
         }
     }
