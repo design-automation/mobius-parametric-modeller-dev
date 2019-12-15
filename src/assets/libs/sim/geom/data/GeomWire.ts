@@ -1,4 +1,4 @@
-import { IGeomArrays, TWire, TFace, TFaceWire } from '../../common';
+import { TWire, TFaceWires } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -13,9 +13,6 @@ export class GeomWire extends GeomNav {
     constructor(geom: Geom) {
         super(geom);
     }
-    // ============================================================================
-    // Wires
-    // ============================================================================
     public wireIsFace(wire_i: number): boolean {
         return this._geom_arrays.up_wires_plines[wire_i] === undefined;
     }
@@ -25,7 +22,7 @@ export class GeomWire extends GeomNav {
     public wireIsHole(wire_i: number): boolean {
         const face_i: number = this._geom_arrays.up_wires_faces[wire_i];
         if (face_i === undefined) { return false; }
-        const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+        const face_wires: TFaceWires = this._geom_arrays.dn_faces_wires[face_i];
         return face_wires.indexOf(wire_i) > 0;
     }
     /**

@@ -20,10 +20,10 @@ export class GeomAdd extends GeomNav {
     //   up - a link from the ent below this ent up to this ent
     // Does not update any links to the ents above, but instead returns the ent_i
     // ============================================================================
-    public addPosiEnt(): number {
+    public pushPosiEnt(): number {
         return this._geom_arrays.up_posis_verts.push([]) - 1;
     }
-    public addVertEnt(vert: TVert): number {
+    public pushVertEnt(vert: TVert): number {
         // down
         const vert_i: number = this._geom_arrays.dn_verts_posis.push(vert) - 1;
         // up
@@ -31,7 +31,7 @@ export class GeomAdd extends GeomNav {
         // return
         return vert_i;
     }
-    public addEdgeEnt(edge: TEdge): number {
+    public pushEdgeEnt(edge: TEdge): number {
         // down
         const edge_i: number =  this._geom_arrays.dn_edges_verts.push(edge) - 1;
         // up
@@ -40,19 +40,19 @@ export class GeomAdd extends GeomNav {
         // return
         return edge_i;
     }
-    public addEdgeEnts(verts_i: number[], is_closed: boolean): number[] {
+    public pushEdgeEnts(verts_i: number[], is_closed: boolean): number[] {
         const edges_i: number[] = [];
         for (let i = 0; i < verts_i.length - 1; i++) {
             const edge: TEdge = [verts_i[i], verts_i[i + 1]];
-            edges_i.push( this.addEdgeEnt(edge) );
+            edges_i.push( this.pushEdgeEnt(edge) );
         }
         if (is_closed) {
             const last_edge: TEdge = [verts_i[verts_i.length - 1], verts_i[0]];
-            edges_i.push( this.addEdgeEnt(last_edge));
+            edges_i.push( this.pushEdgeEnt(last_edge));
         }
         return edges_i;
     }
-    public addTriEnt(tri: TTri): number {
+    public pushTriEnt(tri: TTri): number {
         // down
         const tri_i: number =  this._geom_arrays.dn_tris_verts.push(tri) - 1;
         // up
@@ -60,7 +60,7 @@ export class GeomAdd extends GeomNav {
         // return
         return tri_i;
     }
-    public addWireEnt(wire: TWire): number {
+    public pushWireEnt(wire: TWire): number {
         // down
         const wire_i: number =  this._geom_arrays.dn_wires_edges.push(wire) - 1;
         // up
@@ -68,7 +68,7 @@ export class GeomAdd extends GeomNav {
         // return
         return wire_i;
     }
-    public addFaceEnt(face: TFace): number {
+    public pushFaceEnt(face: TFace): number {
         // down
         const face_i: number =  this._geom_arrays.dn_faces_wires.push(face[0]) - 1;
         this._geom_arrays.dn_faces_tris.push(face[1]);
@@ -78,7 +78,7 @@ export class GeomAdd extends GeomNav {
         // return
         return face_i;
     }
-    public addPointEnt(point: TPoint): number {
+    public pushPointEnt(point: TPoint): number {
         // down
         const point_i: number =  this._geom_arrays.dn_points_verts.push(point) - 1;
         // up
@@ -86,7 +86,7 @@ export class GeomAdd extends GeomNav {
         // return
         return point_i;
     }
-    public addPlineEnt(pline: TPline): number {
+    public pushPlineEnt(pline: TPline): number {
         // down
         const pline_i: number =  this._geom_arrays.dn_plines_wires.push(pline) - 1;
         // up
@@ -94,7 +94,7 @@ export class GeomAdd extends GeomNav {
         // return
         return pline_i;
     }
-    public addPgonEnt(pgon: TPgon): number {
+    public pushPgonEnt(pgon: TPgon): number {
         // down
         const pgon_i: number =  this._geom_arrays.dn_pgons_faces.push(pgon) - 1;
         // up
@@ -102,9 +102,9 @@ export class GeomAdd extends GeomNav {
         // return
         return pgon_i;
     }
-    public addCollEnt(coll: TColl): number {
+    public pushCollEnt(coll: TColl): number {
         // down
-        const coll_i: number = this._geom_arrays.dn_colls_parents.push(coll[0]) - 1;
+        const coll_i: number = this._geom_arrays.up_colls_parents.push(coll[0]) - 1;
         this._geom_arrays.dn_colls_points.push(coll[1]);
         this._geom_arrays.dn_colls_plines.push(coll[2]);
         this._geom_arrays.dn_colls_pgons.push(coll[3]);

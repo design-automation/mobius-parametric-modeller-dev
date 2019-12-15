@@ -218,7 +218,7 @@ export class GeomPack extends GeomNav {
             const _set_inv_ents: Set<number> = new Set();
             let i = 0; const max = _ga.length;
             for (; i < max; i++) {
-                if (_ga[i] !== null && !_set_ents.has(i)) {
+                if (_ga[i] !== undefined && !_set_ents.has(i)) {
                     _set_inv_ents.add(i);
                 }
             }
@@ -230,7 +230,7 @@ export class GeomPack extends GeomNav {
             points_i: _invSet(pack.points_i, this._geom_arrays.dn_points_verts),
             plines_i: _invSet(pack.plines_i, this._geom_arrays.dn_plines_wires),
             pgons_i:  _invSet(pack.pgons_i,  this._geom_arrays.dn_pgons_faces),
-            colls_i:  _invSet(pack.colls_i,  this._geom_arrays.dn_colls_parents)
+            colls_i:  _invSet(pack.colls_i,  this._geom_arrays.up_colls_parents)
         };
     }
 }

@@ -24,78 +24,51 @@ export class GeomEnt extends GeomNav {
      * If include_deleted=true, it will include ents that are null.
      */
     public getEnts(ent_type: EEntType, include_deleted: boolean): number[] {
-        // get posis indices array from up array: up_posis_verts
-        if (ent_type === EEntType.POSI) {
-            const posis: number[][] = this._geom_arrays.up_posis_verts;
-            const posis_i: number[] = [];
-            if (include_deleted) {
-                let i = 0; const i_max = posis.length;
-                for (; i < i_max; i++ ) {
-                    const posi = posis[i];
-                    if (posi !== null) {
-                        posis_i.push(i);
-                    } else {
-                        posis_i.push(null); // TODO
-                    }
-                }
-            } else {
-                let i = 0; const i_max = posis.length;
-                for (; i < i_max; i++ ) {
-                    const posi = posis[i];
-                    if (posi !== null) {
-                        posis_i.push(i);
-                    }
-                }
-            }
-            return posis_i;
-        }
-        // get ents indices array from down arrays
+        // get the array
         const geom_array_key: string = EEntStrToGeomArray[ent_type];
         const geom_array: any[] = this._geom_arrays[geom_array_key];
-        const ents_i: number[] = [];
         if (include_deleted) {
+            const ents_i: number[] = new Array(geom_array.length); // Preallocate array to correct length
             for (let i = 0; i < geom_array.length; i++ ) {
                 const ent = geom_array[i];
-                if (ent !== null) {
+                if (ent !== undefined) {
                     ents_i.push(i);
-                } else {
-                    ents_i.push(null); // TODO
-                }
+                } 
+                // else {
+                //     ents_i.push(null); // Deleted TODO
+                // }
             }
+            return ents_i;
         } else {
+            const ents_i: number[] = [];
             for (let i = 0; i < geom_array.length; i++ ) {
                 const ent = geom_array[i];
-                if (ent !== null) {
+                if (ent !== undefined) {
                     ents_i.push(i);
                 }
             }
+            return ents_i;
         }
-        return ents_i;
     }
     /**
      * Returns the number of entities
      */
     public numEnts(ent_type: EEntType, include_deleted: boolean): number {
-        return this.getEnts(ent_type, include_deleted).length;
+        if (include_deleted) {
+            const geom_array_key: string = EEntStrToGeomArray[ent_type];
+            return this._geom_arrays[geom_array_key].length;
+        } else {
+            return this.getEnts(ent_type, include_deleted).length;
+        }
     }
-
     /**
      * Check if an entity exists
      * @param ent_type
      * @param index
      */
     public entExists(ent_type: EEntType, index: number): boolean {
-        if (ent_type === EEntType.POSI) {
-            return (
-                this._geom_arrays.up_posis_verts[index] !== undefined &&
-                this._geom_arrays.up_posis_verts[index] !== null
-            );
-        }
         const geom_arrays_key: string = EEntStrToGeomArray[ent_type];
-        return (
-            this._geom_arrays[geom_arrays_key][index] !== undefined &&
-            this._geom_arrays[geom_arrays_key][index] !== null
-        );
+        return this._geom_arrays[geom_arrays_key][index] !== undefined;
     }
    /**
      * Given a set of vertices, get the welded neighbour entities.

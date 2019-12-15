@@ -35,15 +35,15 @@ export class GeomModify {
         let prev_vert_i: number = old_edge_verts_i[0];
         for (const posi_i of posis_i) {
             // create one new vertex and one new edge
-            const new_vert_i: number = this.geom.data.addVertEnt(posi_i);
+            const new_vert_i: number = this.geom.data.pushVertEnt(posi_i);
             const new_edge: TEdge = [prev_vert_i, new_vert_i];
-            const new_edge_i: number = this.geom.data.addEdgeEnt(new_edge);
+            const new_edge_i: number = this.geom.data.pushEdgeEnt(new_edge);
             new_edges_i.push(new_edge_i);
             prev_vert_i = new_vert_i;
         }
         // create the last edge
         const new_last_edge: TEdge = [prev_vert_i, old_edge_verts_i[1]];
-        const new_last_edge_i: number = this.geom.data.addEdgeEnt(new_last_edge);
+        const new_last_edge_i: number = this.geom.data.pushEdgeEnt(new_last_edge);
         new_edges_i.push(new_last_edge_i);
         // update the wire
         const wire: TWire = this.geom.data.navWireToEdge(wire_i);
@@ -175,7 +175,7 @@ export class GeomModify {
         const end_vert_i: number = this.geom.data.navEdgeToVert(end_edge_i)[1];
         // add the edge to the model
         const edge: TEdge = [end_vert_i, start_vert_i];
-        const new_edge_i: number = this.geom.data.addEdgeEnt(edge);
+        const new_edge_i: number = this.geom.data.pushEdgeEnt(edge);
         // link the wire to the new edge
         this.geom.data.linkWireEdge(wire_i, num_edges, new_edge_i);
         // return the new edge
@@ -214,9 +214,9 @@ export class GeomModify {
         // make the wires for the holes
         const hole_wires_i: number[] = [];
         for (const hole_posis_i of posis_i_arr) {
-            const hole_vert_i_arr: number[] = hole_posis_i.map( posi_i => this.geom.data.addVertEnt(posi_i));
-            const hole_edges_i_arr: number[] = this.geom.data.addEdgeEnts(hole_vert_i_arr, true);
-            const hole_wire_i: number = this.geom.data.addWireEnt(hole_edges_i_arr);
+            const hole_vert_i_arr: number[] = hole_posis_i.map( posi_i => this.geom.data.pushVertEnt(posi_i));
+            const hole_edges_i_arr: number[] = this.geom.data.pushEdgeEnts(hole_vert_i_arr, true);
+            const hole_wire_i: number = this.geom.data.pushWireEnt(hole_edges_i_arr);
             // get normal of wire and check if we need to reverse the wire
             const wire_normal: Txyz = this.geom.model.calc.getWireNormal(hole_wire_i);
             if (vecDot(face_normal, wire_normal) > 0) {

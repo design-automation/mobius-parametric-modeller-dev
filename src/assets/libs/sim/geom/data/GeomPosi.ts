@@ -1,4 +1,3 @@
-import { IGeomArrays } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -26,7 +25,7 @@ export class GeomPosi extends GeomNav {
         if (include_deleted) {
             for (let i = 0; i < posis.length; i++ ) {
                 const posi = posis[i];
-                if (posi !== null) {
+                if (posi !== undefined) {
                     if (posi.length === 0) { posis_i.push(i); }
                 } else {
                     posis_i.push(null);
@@ -35,7 +34,7 @@ export class GeomPosi extends GeomNav {
         } else {
             for (let i = 0; i < posis.length; i++ ) {
                 const posi = posis[i];
-                if (posi !== null) {
+                if (posi !== undefined) {
                     if (posi.length === 0) { posis_i.push(i); }
                 }
             }

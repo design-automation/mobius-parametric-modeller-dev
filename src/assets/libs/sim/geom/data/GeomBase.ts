@@ -39,7 +39,6 @@ export class GeomBase {
         dn_points_verts: [], // flat array
         dn_plines_wires: [], // flat array
         dn_pgons_faces: [],  // flat array
-        dn_colls_parents: [], // flat array
         dn_colls_points: [], // irreg nested array
         dn_colls_plines: [], // irreg nested array
         dn_colls_pgons: [],  // irreg nested array
@@ -55,7 +54,8 @@ export class GeomBase {
         up_faces_pgons: [],  // flat array
         up_points_colls: [], // irreg nested array
         up_plines_colls: [], // irreg nested array
-        up_pgons_colls: []   // irreg nested array
+        up_pgons_colls: [],  // irreg nested array
+        up_colls_parents: [] // flat array
     };
     /**
      * Constructor
@@ -244,8 +244,6 @@ export class GeomBase {
      */
     public wireGetVerts(wire_i: number): number[] {
         const edges_i: number[] = this._geom_arrays.dn_wires_edges[wire_i];
-        for (const edge_i of edges_i) {
-        }
         if (this.wireIsCLosed(wire_i)) {
             return edges_i.map(edge_i => this._geom_arrays.dn_edges_verts[edge_i][0]);
         } else {
@@ -260,11 +258,11 @@ export class GeomBase {
     /**
      * Returns true if the first coll is a descendent of the second coll.
      */
-    public isCollDescendent(coll1_i: number, coll2_i: number): boolean {
-        let coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[coll1_i];
+    public collIsDescendent(coll1_i: number, coll2_i: number): boolean {
+        let coll_parent: TCollParent = this._geom_arrays.up_colls_parents[coll1_i];
         while (coll_parent !== undefined && coll_parent !== null) {
             if (coll_parent !== undefined && coll_parent !== null && coll_parent === coll2_i) { return true; }
-            coll_parent = this._geom_arrays.dn_colls_parents[coll_parent];
+            coll_parent = this._geom_arrays.up_colls_parents[coll_parent];
         }
         return false;
     }
@@ -273,8 +271,8 @@ export class GeomBase {
      */
     public collGetChildren(coll_i: number): number[] {
         const children: number[] = [];
-        for (let i = 0; i < this._geom_arrays.dn_colls_parents.length; i++) {
-            const coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[i];
+        for (let i = 0; i < this._geom_arrays.up_colls_parents.length; i++) {
+            const coll_parent: TCollParent = this._geom_arrays.up_colls_parents[i];
             if (coll_parent !== undefined && coll_parent !== null && coll_parent === coll_i) {
                 children.push(i);
             }
@@ -286,11 +284,11 @@ export class GeomBase {
      */
     public collGetDescendents(coll_i: number): number[] {
         const descendent_colls_i: number[] = [];
-        for (let i = 0; i < this._geom_arrays.dn_colls_parents.length; i++) {
+        for (let i = 0; i < this._geom_arrays.up_colls_parents.length; i++) {
             if (i === coll_i) { continue; }
-            const coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[i];
+            const coll_parent: TCollParent = this._geom_arrays.up_colls_parents[i];
             if (coll_parent !== undefined && coll_parent !== null) {
-                if (this.isCollDescendent(i, coll_i)) {
+                if (this.collIsDescendent(i, coll_i)) {
                     descendent_colls_i.push(i);
                 }
             }

@@ -20,8 +20,8 @@ export class GeomAdd {
      * Adds a new point entity to the model.
      */
     public addPoint(posi_i: number): number {
-        const vert_i = this.geom.data.addVertEnt(posi_i);
-        return this.geom.data.addPointEnt(vert_i);
+        const vert_i = this.geom.data.pushVertEnt(posi_i);
+        return this.geom.data.pushPointEnt(vert_i);
     }
     /**
      * Adds a new pline entity to the model using numeric indices.
@@ -29,11 +29,11 @@ export class GeomAdd {
      */
     public addPline(posis_i: number[], close: boolean = false): number {
         // create verts, edges, wires
-        const verts_i: number[] = posis_i.map( posi_i => this.geom.data.addVertEnt(posi_i));
-        const edges_i: number[] = this.geom.data.addEdgeEnts(verts_i, close);
-        const wire_i: number = this.geom.data.addWireEnt(edges_i);
+        const verts_i: number[] = posis_i.map( posi_i => this.geom.data.pushVertEnt(posi_i));
+        const edges_i: number[] = this.geom.data.pushEdgeEnts(verts_i, close);
+        const wire_i: number = this.geom.data.pushWireEnt(edges_i);
         // create pline
-        return this.geom.data.addPlineEnt(wire_i);
+        return this.geom.data.pushPlineEnt(wire_i);
     }
     /**
      * Adds a new polygon + hole entity to the model using numeric indices.
@@ -42,26 +42,26 @@ export class GeomAdd {
     public addPgon(posis_i: number[], holes_posis_i?: number[][]): number {
         const has_holes: boolean = (holes_posis_i !== undefined) && (holes_posis_i.length) ? true : false ;
         // create verts, edges, wire for face
-        const verts_i: number[] = posis_i.map( posi_i => this.geom.data.addVertEnt(posi_i));
-        const edges_i: number[] = this.geom.data.addEdgeEnts(verts_i, true);
-        const wire_i: number = this.geom.data.addWireEnt(edges_i);
+        const verts_i: number[] = posis_i.map( posi_i => this.geom.data.pushVertEnt(posi_i));
+        const edges_i: number[] = this.geom.data.pushEdgeEnts(verts_i, true);
+        const wire_i: number = this.geom.data.pushWireEnt(edges_i);
         const wires_i: number[] = [wire_i];
         if (has_holes) {
         // create verts, edges, wire for holes
             for (const hole_posis_i of holes_posis_i) {
-                const hole_verts_i: number[] = hole_posis_i.map( posi_i => this.geom.data.addVertEnt(posi_i));
-                const hole_edges_i: number[] = this.geom.data.addEdgeEnts(hole_verts_i, true);
-                const hole_wire_i: number = this.geom.data.addWireEnt(hole_edges_i);
+                const hole_verts_i: number[] = hole_posis_i.map( posi_i => this.geom.data.pushVertEnt(posi_i));
+                const hole_edges_i: number[] = this.geom.data.pushEdgeEnts(hole_verts_i, true);
+                const hole_wire_i: number = this.geom.data.pushWireEnt(hole_edges_i);
                 wires_i.push(hole_wire_i);
             }
         }
         // insert the face into the data
         const face: TFace = [wires_i, []]; // no triangles yet
-        const face_i: number = this.geom.data.addFaceEnt(face);
+        const face_i: number = this.geom.data.pushFaceEnt(face);
         // triangulate the new face
         this.geom.data.faceTri(face_i);
         // insert the polygon into the data
-        const pgon_i: number = this.geom.data.addPgonEnt(face_i);
+        const pgon_i: number = this.geom.data.pushPgonEnt(face_i);
         // return the pgon index
         return pgon_i;
     }
@@ -73,7 +73,7 @@ export class GeomAdd {
      * @param pgons_i
      */
     public addColl(parent_i: number, points_i: number[], plines_i: number[], pgons_i: number[]): number {
-        return this.geom.data.addCollEnt([parent_i, points_i, plines_i, pgons_i]);
+        return this.geom.data.pushCollEnt([parent_i, points_i, plines_i, pgons_i]);
     }
     // ============================================================================
     // Copy geometry

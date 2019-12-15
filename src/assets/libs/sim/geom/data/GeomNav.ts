@@ -1,13 +1,13 @@
 import { EEntType, IGeomArrays, TColl, TCollPoints, TCollPlines, TCollPgons } from '../../common';
 import { isPosi, isVert, isPoint, isEdge, isWire, isPline, isFace, isPgon, isColl, isTri } from '../../id';
 import { Geom } from '../Geom';
-import { GeomBase } from './GeomBase';
+import { GeomPrint } from './GeomPrint';
 
 /**
  * Class for navigating the datastructure
  * This is parent of all the other classes
  */
-export class GeomNav extends GeomBase { // extends GeomBase
+export class GeomNav extends GeomPrint { // extends GeomBase
     /**
      * Constructor
      */
@@ -493,6 +493,7 @@ export class GeomNav extends GeomBase { // extends GeomBase
     }
     private getTriPosis(tri_i: number): number[] {
         const verts_i: number[] = this._geom_arrays.dn_tris_verts[tri_i];
+        console.log(">>>", tri_i, verts_i, this._geom_arrays.dn_tris_verts)
         const posis_i: number[] = [];
         for (const vert_i of verts_i) {
             posis_i.push( this._geom_arrays.dn_verts_posis[vert_i] );

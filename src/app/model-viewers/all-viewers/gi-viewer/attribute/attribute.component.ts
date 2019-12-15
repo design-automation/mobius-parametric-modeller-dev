@@ -152,7 +152,7 @@ export class AttributeComponent implements OnChanges, DoCheck {
           });
           this.displayData = SelectedAttribData;
         } else {
-          const AllAttribData = ThreeJSData.getAttribsForTable(this.tab_map[tabIndex]).data;
+          const AllAttribData = ThreeJSData.getEntAttribsForTable(this.tab_map[tabIndex]).data;
           AllAttribData.map(row => {
             if (this.selected_ents.has(row._id)) {
               return row.selected = true;
@@ -337,7 +337,7 @@ export class AttributeComponent implements OnChanges, DoCheck {
     const id = Number(ent_id.substr(2));
     // Multiple row selection
     const ThreeJSData = this.data.attribs.threejs;
-    const attrib_table = ThreeJSData.getAttribsForTable(this.tab_map[currentTab]);
+    const attrib_table = ThreeJSData.getEntAttribsForTable(this.tab_map[currentTab]);
     this.current_selected = id;
     const s = this.multi_selection;
 

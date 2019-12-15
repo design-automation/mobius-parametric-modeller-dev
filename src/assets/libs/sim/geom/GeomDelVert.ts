@@ -179,7 +179,7 @@ export class GeomDelVert {
         const edge_b_verts_i: [number, number] = this.geom.data.navEdgeToVert(old_edges_i[1]);
         // create new edge
         const new_edge: TEdge = [edge_a_verts_i[0], edge_b_verts_i[1]];
-        const new_edge_i: number = this.geom.data.addEdgeEnt(new_edge);
+        const new_edge_i: number = this.geom.data.pushEdgeEnt(new_edge);
         // create new wire
         const new_edges_i: TWire = wire_edges_i.slice();
         new_edges_i.splice(idx_a, 1, new_edge_i);

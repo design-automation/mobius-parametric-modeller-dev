@@ -44,14 +44,14 @@ export class SIModel {
      */
     public setData (model_data: IModelData): void {
         this.attribs.data.setData(model_data.attributes); // warning: must be before this.geom.io.setData()
-        this.geom.data.setData(model_data.geometry);
+        this.geom.data.setData(model_data.geometry, true); // replace null with undef
     }
     /**
      * Returns the data for this model.
      */
     public getData(): IModelData {
         return {
-            geometry: this.geom.data.getData(),
+            geometry: this.geom.data.getData(true), // replace undef with null
             attributes: this.attribs.data.getData()
         };
     }
@@ -81,7 +81,7 @@ export class SIModel {
      * Then sets the position xyz in attrib side.
      */
     public createPosi(xyz: Txyz): number {
-        const posi_i: number = this.geom.data.addPosiEnt();
+        const posi_i: number = this.geom.data.pushPosiEnt();
         this.attribs.add.setPosiCoords(posi_i, xyz);
         return posi_i;
     }

@@ -1,4 +1,4 @@
-import { IGeomArrays, TEdge, TWire, TFace, TTri, TFaceWire, TFaceTri } from '../../common';
+import { TEdge, TWire, TTri, TFaceWires, TFaceTris } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -38,8 +38,8 @@ export class GeomRev extends GeomNav {
      * Reverse a face
      */
     public faceReverse(face_i: number): void {
-        const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
-        const face_tris: TFaceTri = this._geom_arrays.dn_faces_tris[face_i];
+        const face_wires: TFaceWires = this._geom_arrays.dn_faces_wires[face_i];
+        const face_tris: TFaceTris = this._geom_arrays.dn_faces_tris[face_i];
         // reverse the edges
         for (const wire_i of face_wires) {
             this.wireReverse(wire_i);

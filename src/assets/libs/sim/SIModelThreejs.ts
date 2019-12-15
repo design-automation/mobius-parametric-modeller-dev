@@ -13,17 +13,17 @@ export class SIModelThreejs {
     constructor(model: SIModel) {
         this._model = model;
     }
-    /**
-     * Generate a default color if none exists.
-     */
-    private _generateColors(): number[] {
-        const colors = [];
-        const numEnts = this._model.geom.data.numEnts(EEntType.VERT, false);
-        for (let index = 0; index < numEnts; index++) {
-            colors.push(1, 1, 1);
-        }
-        return colors;
-    }
+    // /**
+    //  * Generate a default color if none exists.
+    //  */
+    // private _generateColors(): number[] {
+    //     const colors = [];
+    //     const numEnts = this._model.geom.data.numEnts(EEntType.VERT, false);
+    //     for (let index = 0; index < numEnts; index++) {
+    //         colors.push(1, 1, 1);
+    //     }
+    //     return colors;
+    // }
     // /**
     //  * Generate default normals if non exist.
     //  */
@@ -42,15 +42,15 @@ export class SIModelThreejs {
         // get the attribs at the vertex level
         const [posis_xyz, posis_map]: [number[], Map<number, number>]  =  this._model.attribs.threejs.get3jsSeqPosisCoords();
         const [vertex_xyz, vertex_map]: [number[], Map<number, number>]  =  this._model.attribs.threejs.get3jsSeqVertsCoords();
-        const normals_values: number[] = this._model.attribs.threejs.get3jsSeqVertsAttrib(EAttribNames.NORMAL);
-        let colors_values: number[] = this._model.attribs.threejs.get3jsSeqVertsAttrib(EAttribNames.COLOR);
+        const normals_values: number[] = this._model.attribs.threejs.get3jsSeqVertsNormal();
+        const colors_values: number[] = this._model.attribs.threejs.get3jsSeqVertsColor();
         // add normals and colours
         // if (!normals_values) {
         //     normals_values = this._generateNormals();
         // }
-        if (!colors_values) {
-            colors_values = this._generateColors();
-        }
+        // if (!colors_values) {
+        //     colors_values = this._generateColors();
+        // }
         // get posi indices
         const posis_indices: number[] = Array.from(posis_map.values());
         // get the indices of the vertices for edges, points and triangles

@@ -56,7 +56,7 @@ export enum EEntTypeStr {
 }
 
 export enum EEntStrToGeomArray {
-    'posis',
+    'up_posis_verts',
     'dn_tris_verts',
     'dn_verts_posis',
     'dn_edges_verts',
@@ -65,7 +65,7 @@ export enum EEntStrToGeomArray {
     'dn_points_verts',
     'dn_plines_wires',
     'dn_pgons_faces',
-    'dn_colls_parents'
+    'up_colls_parents'
 }
 
 /**
@@ -151,12 +151,11 @@ export interface IGeomArrays {
     dn_tris_verts: TTri[];
     dn_edges_verts: TEdge[];
     dn_wires_edges: TWire[];
-    dn_faces_tris: TFaceTri[];
-    dn_faces_wires: TFaceWire[];
+    dn_faces_tris: TFaceTris[];
+    dn_faces_wires: TFaceWires[];
     dn_points_verts: TPoint[];
     dn_plines_wires: TPline[];
     dn_pgons_faces: TPgon[];
-    dn_colls_parents: TCollParent[];
     dn_colls_points: TCollPoints[];
     dn_colls_plines: TCollPlines[];
     dn_colls_pgons: TCollPgons[];
@@ -173,6 +172,7 @@ export interface IGeomArrays {
     up_points_colls: number[][]; // one to many
     up_plines_colls: number[][]; // one to many
     up_pgons_colls: number[][]; // one to many
+    up_colls_parents: TCollParent[];
 }
 
 
@@ -238,9 +238,9 @@ export type TTri = [number, number, number]; // [vertex, vertex, vertex]
 export type TVert = number; // positions
 export type TEdge = [number, number]; // [vertex, vertex]
 export type TWire = number[]; // [edge, edge,....]
-export type TFace = [TFaceWire, TFaceTri]; // [[wire, ....], [triangle, ...]]
-export type TFaceTri = number[]; // [triangle, ...]
-export type TFaceWire = number[]; // [wire, ....]
+export type TFace = [TFaceWires, TFaceTris]; // [[wire, ....], [triangle, ...]]
+export type TFaceTris = number[]; // [triangle, ...]
+export type TFaceWires = number[]; // [wire, ....]
 export type TPoint = number; // [vertex,....]
 export type TPline = number; // [wire,....]
 export type TPgon = number; // [face,....]
@@ -263,15 +263,15 @@ export interface IGeomData {
     verts: TVert[];
     edges: TEdge[];
     wires: TWire[];
-    faces_tris: TFaceTri[];
-    faces_wires: TFaceWire[];
+    faces_tris: TFaceTris[];
+    faces_wires: TFaceWires[];
     points: TPoint[];
     plines: TPline[];
     pgons: TPgon[];
-    coll_parents: TCollParent[];
     coll_points: TCollPoints[];
     coll_plines: TCollPlines[];
     coll_pgons: TCollPgons[];
+    coll_parents: TCollParent[];
     selected: TEntTypeIdx[];
 }
 

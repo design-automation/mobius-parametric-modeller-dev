@@ -72,7 +72,7 @@ export class GeomIns extends GeomNav {
     public updateCollEnt(coll: TColl, coll_i: number): void {
         coll = [coll[0], coll[1].slice(), coll[2].slice(), coll[3].slice()] as TColl;
         // down
-        this._geom_arrays.dn_colls_parents[coll_i] = coll[0];
+        this._geom_arrays.up_colls_parents[coll_i] = coll[0];
         this._geom_arrays.dn_colls_points[coll_i] = coll[1];
         this._geom_arrays.dn_colls_plines[coll_i] = coll[2];
         this._geom_arrays.dn_colls_pgons[coll_i] = coll[3];

@@ -1,5 +1,5 @@
 import { EEntType, IGeomArrays, TFace, TColl, TPointTree, TPlineTree, TEdgeTree, TVertTree,
-    TWireTree, TFaceTree, TPgonTree, TCollTree, TTree, EEntTypeStr, TFaceWire, TCollParent, TCollPoints, TCollPlines, TCollPgons } from '../../common';
+    TWireTree, TFaceTree, TPgonTree, TCollTree, TTree, EEntTypeStr, TFaceWires, TCollParent, TCollPoints, TCollPlines, TCollPgons } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -71,7 +71,7 @@ export class GeomTree extends GeomNav {
      *
      */
     public getFaceTree(face_i: number): TFaceTree {
-        const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+        const face_wires: TFaceWires = this._geom_arrays.dn_faces_wires[face_i];
         const wire_trees: TWireTree[] = [];
         for (const wire_i of face_wires) { // ignore the tris
             wire_trees.push(this.getWireTree(wire_i));
@@ -104,7 +104,7 @@ export class GeomTree extends GeomNav {
      * Why does this tree not contain sub-colls?
      */
     public getCollTree(coll_i: number): TCollTree {
-        const coll_parent: TCollParent = this._geom_arrays.dn_colls_parents[coll_i];
+        const coll_parent: TCollParent = this._geom_arrays.up_colls_parents[coll_i];
         const coll_points: TCollPoints = this._geom_arrays.dn_colls_points[coll_i];
         const coll_plines: TCollPlines = this._geom_arrays.dn_colls_plines[coll_i];
         const coll_pgons: TCollPgons = this._geom_arrays.dn_colls_pgons[coll_i];
@@ -143,7 +143,7 @@ export class GeomTree extends GeomNav {
             return _str;
         }
         // ---
-        console.log(JSON.stringify(tree));
+        // console.log(JSON.stringify(tree));
         return _pretty(tree, 0);
     }
 }

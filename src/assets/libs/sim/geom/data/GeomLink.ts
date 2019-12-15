@@ -52,7 +52,6 @@ export class GeomLink extends GeomNav {
         this._geom_arrays.up_edges_wires[edge_i] = wire_i;
     }
     public linkFaceTri(face_i: number, tri_i: number): void {
-        console.log("F", face_i, "<->T", tri_i)
         // down
         this._geom_arrays.dn_faces_tris[face_i].push(tri_i); // TODO should be a set
         // up
@@ -107,9 +106,9 @@ export class GeomLink extends GeomNav {
     // ============================================================================
     public unlinkVertPosi(vert_i: number, posi_i: number): void {
         // down
-        this._clearValsInArr(this._geom_arrays.dn_verts_posis, vert_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_verts_posis, vert_i, true);
         // up
-        this._remValFromSetInArr(this._geom_arrays.up_posis_verts, posi_i, vert_i, true);
+        this._remValFromSetInArr(this._geom_arrays.up_posis_verts, posi_i, vert_i, false); //  should be set to null
     }
     public unlinkPosiToVert(posi_i: number, vert_i: number): void {
         // up
@@ -117,27 +116,27 @@ export class GeomLink extends GeomNav {
     }
     public unlinkEdgeStartVert(edge_i: number, vert_i: number): void {
         // down
-        this._clearValsInArr(this._geom_arrays.dn_edges_verts[edge_i], 0, false);
+        this._clearValsInArr(this._geom_arrays.dn_edges_verts[edge_i], 0, true);
         // up
-        if (this._geom_arrays.up_verts_edges[vert_i][0] === null) { return; } // TODO is this needed
-        this._clearValsInArrIf(this._geom_arrays.up_verts_edges[vert_i], 1, edge_i, false);
+        // if (this._geom_arrays.up_verts_edges[vert_i][0] === null) { return; } // TODO is this needed
+        this._clearValsInArrIf(this._geom_arrays.up_verts_edges[vert_i], 1, edge_i, true);
     }
     public unlinkEdgeEndVert(edge_i: number, vert_i: number): void {
         // down
-        this._clearValsInArr(this._geom_arrays.dn_edges_verts[edge_i], 1, false);
+        this._clearValsInArr(this._geom_arrays.dn_edges_verts[edge_i], 1, true);
         // up
-        if (this._geom_arrays.up_verts_edges[vert_i][1] === null) { return; } // TODO is this needed
-        this._clearValsInArrIf( this._geom_arrays.up_verts_edges[vert_i], 0, edge_i, false);
+        // if (this._geom_arrays.up_verts_edges[vert_i][1] === null) { return; } // TODO is this needed
+        this._clearValsInArrIf( this._geom_arrays.up_verts_edges[vert_i], 0, edge_i, true);
     }
     public unlinkVertToEdge(vert_i: number, edge_i: number): void {
         // up
-        if (this._geom_arrays.up_verts_edges[vert_i][0] === null) { return; } // TODO is this needed
-        this._clearValsInArrIf(this._geom_arrays.up_verts_edges[vert_i], 0, edge_i, false);
-        this._clearValsInArrIf(this._geom_arrays.up_verts_edges[vert_i], 1, edge_i, false);
+        // if (this._geom_arrays.up_verts_edges[vert_i][0] === null) { return; } // TODO is this needed
+        this._clearValsInArrIf(this._geom_arrays.up_verts_edges[vert_i], 0, edge_i, true);
+        this._clearValsInArrIf(this._geom_arrays.up_verts_edges[vert_i], 1, edge_i, true);
     }
     public unlinkWireEdge(wire_i: number, edge_i: number): void {
         // down
-        this._remValFromSetInArr(this._geom_arrays.dn_wires_edges, wire_i, edge_i, false);
+        this._remValFromSetInArr(this._geom_arrays.dn_wires_edges, wire_i, edge_i, true);
         // up
         this._clearValsInArrIf( this._geom_arrays.up_edges_wires, edge_i, wire_i, true);
     }
@@ -147,7 +146,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkFaceTri(face_i: number, tri_i: number): void {
         // down
-        this._remValFromSetInArr(this._geom_arrays.dn_faces_tris, face_i, tri_i, false);
+        this._remValFromSetInArr(this._geom_arrays.dn_faces_tris, face_i, tri_i, true);
         // up
         this._clearValsInArrIf( this._geom_arrays.up_tris_faces, tri_i, face_i, true);
     }
@@ -157,7 +156,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkFaceWire(face_i: number, wire_i: number): void {
         // down
-        this._remValFromSetInArr(this._geom_arrays.dn_faces_wires, face_i, wire_i, false);
+        this._remValFromSetInArr(this._geom_arrays.dn_faces_wires, face_i, wire_i, true);
         // up
         this._clearValsInArrIf( this._geom_arrays.up_wires_faces, wire_i, face_i, true);
     }
@@ -167,7 +166,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkPointVert(point_i: number, vert_i: number): void {
         // down
-        this._clearValsInArr(this._geom_arrays.dn_points_verts, point_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_points_verts, point_i, true);
         // up
         this._clearValsInArrIf( this._geom_arrays.up_verts_points, vert_i, point_i, true);
     }
@@ -177,7 +176,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkPlineWire(pline_i: number, wire_i: number): void {
         // down
-        this._clearValsInArr(this._geom_arrays.dn_plines_wires, pline_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_plines_wires, pline_i, true);
         // up
         this._clearValsInArrIf( this._geom_arrays.up_wires_plines, wire_i, pline_i, true);
     }
@@ -187,7 +186,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkPgonFace(pgon_i: number, face_i: number): void {
         // down
-        this._clearValsInArr(this._geom_arrays.dn_pgons_faces, pgon_i, false);
+        this._clearValsInArr(this._geom_arrays.dn_pgons_faces, pgon_i, true);
         // up
         this._clearValsInArrIf( this._geom_arrays.up_faces_pgons, face_i, pgon_i, true);
     }
@@ -197,7 +196,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkCollPoint(coll_i: number, point_i: number): void {
         // down
-        this._remValFromSetInArr(this._geom_arrays.dn_colls_points, coll_i, point_i, false);
+        this._remValFromSetInArr(this._geom_arrays.dn_colls_points, coll_i, point_i, true);
         // up
         this._remValFromSetInArr(this._geom_arrays.up_points_colls, point_i, coll_i, true);
     }
@@ -207,7 +206,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkCollPline(coll_i: number, pline_i: number): void {
         // down
-        this._remValFromSetInArr(this._geom_arrays.dn_colls_plines, coll_i, pline_i, false);
+        this._remValFromSetInArr(this._geom_arrays.dn_colls_plines, coll_i, pline_i, true);
         // up
         this._remValFromSetInArr(this._geom_arrays.up_plines_colls, pline_i, coll_i, true);
     }
@@ -217,7 +216,7 @@ export class GeomLink extends GeomNav {
     }
     public unlinkCollPgon(coll_i: number, pgon_i: number): void {
         // down
-        this._remValFromSetInArr(this._geom_arrays.dn_colls_pgons, coll_i, pgon_i, false);
+        this._remValFromSetInArr(this._geom_arrays.dn_colls_pgons, coll_i, pgon_i, true);
         // up
         this._remValFromSetInArr(this._geom_arrays.up_pgons_colls, pgon_i, coll_i, true);
     }

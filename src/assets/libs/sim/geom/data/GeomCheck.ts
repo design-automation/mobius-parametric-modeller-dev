@@ -1,4 +1,4 @@
-import { TVert, TWire, TPline, TEdge, TFace, TPgon, TPoint, TFaceWire, TCollPgons, TCollPlines, TCollPoints } from '../../common';
+import { TVert, TWire, TPline, TEdge, TFace, TPgon, TPoint, TFaceWires, TCollPgons, TCollPlines, TCollPoints } from '../../common';
 import { Geom } from '../Geom';
 import { GeomNav } from './GeomNav';
 
@@ -36,13 +36,13 @@ export class GeomCheck  extends GeomNav {
         for (let posi_i = 0; posi_i < this._geom_arrays.up_posis_verts.length; posi_i++) {
             // up
             const verts_i: number[] = this._geom_arrays.up_posis_verts[posi_i];
-            if (verts_i === undefined) { errors.push('Posi ' + posi_i + ': Posi->Vert undefined.'); }
-            if (verts_i === null) { continue; } // deleted
+            if (verts_i === null) { errors.push('Posi ' + posi_i + ': Posi->Vert null.'); }
+            if (verts_i === undefined) { continue; } // deleted
             // down
             for (const vert_i of verts_i) {
                 const vert: TVert = this._geom_arrays.dn_verts_posis[vert_i];
+                // if (vert === undefined ) { errors.push('Posi ' + posi_i + ': Vert->Posi undefined.'); }
                 if (vert === undefined ) { errors.push('Posi ' + posi_i + ': Vert->Posi undefined.'); }
-                if (vert === null ) { errors.push('Posi ' + posi_i + ': Vert->Posi null.'); }
             }
         }
         return errors;
@@ -52,8 +52,8 @@ export class GeomCheck  extends GeomNav {
         for (let vert_i = 0; vert_i < this._geom_arrays.dn_verts_posis.length; vert_i++) {
             // check the vert itself
             const vert: TVert = this._geom_arrays.dn_verts_posis[vert_i];
-            if (vert === undefined) { errors.push('Vert ' + vert_i + ': Vert->Posi undefined.'); }
-            if (vert === null) { continue; } // deleted
+            if (vert === null) { errors.push('Vert ' + vert_i + ': Vert->Posi null.'); }
+            if (vert === undefined) { continue; } // deleted
             // check the position
             const posi_i: number = vert;
             // check that the position points up to this vertex
@@ -110,8 +110,8 @@ export class GeomCheck  extends GeomNav {
         for (let edge_i = 0; edge_i < this._geom_arrays.dn_edges_verts.length; edge_i++) {
             // check the edge itself
             const edge: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
-            if (edge === undefined) { errors.push('Edge ' + edge_i + ': Edge->Vert undefined.'); }
-            if (edge === null) { continue; } // deleted
+            if (edge === null) { errors.push('Edge ' + edge_i + ': Edge->Vert null.'); }
+            if (edge === undefined) { continue; } // deleted
             if (edge.length > 2) { errors.push('Edge ' + edge_i + ': Edge has more than two vertices.'); }
             // down from edge to vertices
             const verts_i: number[] = this._geom_arrays.dn_edges_verts[edge_i];
@@ -136,8 +136,8 @@ export class GeomCheck  extends GeomNav {
             }
             // up from edge to wire
             const wire_i: number = this._geom_arrays.up_edges_wires[edge_i];
-            if (wire_i === undefined) { continue; } // no wire, must be a point
-            if (wire_i === null) { errors.push('Edge ' + edge_i + ': Edge->Wire null.'); }
+            if (wire_i === undefined) { errors.push('Edge ' + edge_i + ': Edge->Wire undefined.'); }
+            if (wire_i === null) { continue; } // no wire, must be a point
             // check the wire
             const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
             if (wire === undefined) {
@@ -158,8 +158,8 @@ export class GeomCheck  extends GeomNav {
         for (let wire_i = 0; wire_i < this._geom_arrays.dn_wires_edges.length; wire_i++) {
             // check the wire itself
             const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-            if (wire === undefined) { errors.push('Wire ' + wire_i + ': Wire->Edge undefined.'); }
-            if (wire === null) { continue; } // deleted
+            if (wire === null) { errors.push('Wire ' + wire_i + ': Wire->Edge null.'); }
+            if (wire === undefined) { continue; } // deleted
             // down from wire to edges
             const edges_i: number[] = wire;
             for (const edge_i of edges_i) {
@@ -187,7 +187,7 @@ export class GeomCheck  extends GeomNav {
                     errors.push('Wire ' + wire_i + ': Wire->Face null.');
                 }
                 // down from face to wires (and tris)
-                const face_wires: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
+                const face_wires: TFaceWires = this._geom_arrays.dn_faces_wires[face_i];
                 if (face_wires === undefined) {
                     errors.push('Wire ' + wire_i + ': Face->Wire undefined.');
                 } else if (face_wires === null) {
@@ -224,12 +224,12 @@ export class GeomCheck  extends GeomNav {
         const errors: string[] = [];
         for (let face_i = 0; face_i < this._geom_arrays.dn_faces_wires.length; face_i++) {
             // check this face itself
-            const face_wires_i: TFaceWire = this._geom_arrays.dn_faces_wires[face_i];
-            const face_tris_i: TFaceWire = this._geom_arrays.dn_faces_tris[face_i];
-            if (face_wires_i === undefined) { errors.push('Face ' + face_i + ': Face->Wire undefined.'); }
-            if (face_tris_i === undefined) { errors.push('Face ' + face_i + ': Face->Tri undefined.'); }
-            if (face_wires_i === null) { continue; } // deleted
-            if (face_tris_i === null) { errors.push('Face ' + face_i + ': Face tris deleted but face wires not deleted.'); }
+            const face_wires_i: TFaceWires = this._geom_arrays.dn_faces_wires[face_i];
+            const face_tris_i: TFaceWires = this._geom_arrays.dn_faces_tris[face_i];
+            if (face_wires_i === null) { errors.push('Face ' + face_i + ': Face->Wire null.'); }
+            if (face_tris_i === null) { errors.push('Face ' + face_i + ': Face->Tri null.'); }
+            if (face_wires_i === undefined) { continue; } // deleted
+            if (face_tris_i === undefined) { errors.push('Face ' + face_i + ': Face tris deleted but face wires not deleted.'); }
             // down from face to wires
             for (const wire_i of face_wires_i) {
                 // check the wire
@@ -287,8 +287,8 @@ export class GeomCheck  extends GeomNav {
         for (let point_i = 0; point_i < this._geom_arrays.dn_points_verts.length; point_i++) {
             // check the point itself
             const point: TPoint = this._geom_arrays.dn_points_verts[point_i];
-            if (point === undefined) { errors.push('Point ' + point_i + ': Point->Vert undefined.'); }
-            if (point === null) { continue; } // deleted
+            if (point === null) { errors.push('Point ' + point_i + ': Point->Vert null.'); }
+            if (point === undefined) { continue; } // deleted
             // down from point to vertex
             const vert_i: number = point;
             // check that the vertex points up to this point
@@ -322,8 +322,8 @@ export class GeomCheck  extends GeomNav {
         for (let pline_i = 0; pline_i < this._geom_arrays.dn_plines_wires.length; pline_i++) {
             // check the pline itself
             const pline: TPline = this._geom_arrays.dn_plines_wires[pline_i];
-            if (pline === undefined) { errors.push('Pline ' + pline_i + ': Pline->Wire undefined.'); }
-            if (pline === null) { continue; } // deleted
+            if (pline === null) { errors.push('Pline ' + pline_i + ': Pline->Wire null.'); }
+            if (pline === undefined) { continue; } // deleted
             // down from pline to wire
             const wire_i: number = pline;
             // check that the wire points up to this pline
@@ -357,8 +357,8 @@ export class GeomCheck  extends GeomNav {
         for (let pgon_i = 0; pgon_i < this._geom_arrays.dn_pgons_faces.length; pgon_i++) {
             // check the pgon itself
             const pgon: TPgon = this._geom_arrays.dn_pgons_faces[pgon_i];
-            if (pgon === undefined) { errors.push('Pgon ' + pgon_i + ': Pgon->Face undefined.'); }
-            if (pgon === null) { continue; } // deleted
+            if (pgon === null) { errors.push('Pgon ' + pgon_i + ': Pgon->Face null.'); }
+            if (pgon === undefined) { continue; } // deleted
             // down from pgon to face
             const face_i: number = pgon;
             // check that the face points up to this pgon
@@ -392,8 +392,8 @@ export class GeomCheck  extends GeomNav {
         for (let wire_i = 0; wire_i < this._geom_arrays.dn_wires_edges.length; wire_i++) {
             // down
             const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-            if (wire === undefined) { continue; } // error, will be picked up by _checkWires()
-            if (wire === null) { continue; } // deleted
+            if (wire === null) { continue; } // error, will be picked up by _checkWires()
+            if (wire === undefined) { continue; } // deleted
             // check if this is closed or open
             const first_edge: TEdge = this._geom_arrays.dn_edges_verts[wire[0]];
             const last_edge: TEdge = this._geom_arrays.dn_edges_verts[wire[wire.length - 1]];

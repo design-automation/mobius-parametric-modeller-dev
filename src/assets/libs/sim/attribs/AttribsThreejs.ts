@@ -27,64 +27,77 @@ export class AttribsThreejs {
      */
     public get3jsSeqPosisCoords(): [number[], Map<number, number>] {
         const coords_attrib: GIAttribMap = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS);
-        //
         const coords: number[][] = [];
         const posi_map: Map<number, number> = new Map();
-        const posis_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.POSI, true);
-        posis_i.forEach( (posi_i, gi_index) => {
-            if (posi_i !== null) {
-                const tjs_index: number = coords.push( coords_attrib.getEntVal(posi_i) as number[] ) - 1;
-                posi_map.set(gi_index, tjs_index);
-            }
-        });
+        const posis_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.POSI, false);
+        for (const posi_i of posis_i) {
+            const tjs_index: number = coords.push( coords_attrib.getEntVal(posi_i) as number[] ) - 1;
+            posi_map.set(posi_i, tjs_index);
+        }
         // @ts-ignore
         return [coords.flat(1), posi_map];
     }
     /**
      * Get a flat array of all the coordinates of all the vertices.
      * Verts that have been deleted will not be included
-     * @param verts An array of vertex indices pointing to the positio.
+     * The vertex map is from the SI vertex index to the TJS vertex index
+     * @returns [coords, vertex_map]
      */
     public get3jsSeqVertsCoords(): [number[], Map<number, number>] {
         const coords_attrib: GIAttribMap = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS);
         //
         const coords: number[][] = [];
         const vertex_map: Map<number, number> = new Map();
-        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, true);
-        verts_i.forEach( (vert_i, gi_index) => {
-            if (vert_i !== null) {
-                const posi_i: number = this._attribs.model.geom.data.navVertToPosi(vert_i);
-                const tjs_index: number = coords.push( coords_attrib.getEntVal(posi_i) as number[] ) - 1;
-                vertex_map.set(gi_index, tjs_index);
-            }
-        });
+        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, false);
+        for (const vert_i of verts_i) {
+            const posi_i: number = this._attribs.model.geom.data.navVertToPosi(vert_i);
+            const tjs_index: number = coords.push( coords_attrib.getEntVal(posi_i) as number[] ) - 1;
+            vertex_map.set(vert_i, tjs_index);
+        }
         // @ts-ignore
         return [coords.flat(1), vertex_map];
     }
     /**
-     * Get a flat array of attribute values for all the vertices.
+     * Get a flat array of normals for all the vertices.
      * Verts that have been deleted will not be included
-     * @param attrib_name The name of the vertex attribute. Either NORMAL or COLOR.
      */
-    public get3jsSeqVertsAttrib(attrib_name: EAttribNames): number[] {
-        if (!this._attribs._attribs_maps._v.has(attrib_name)) { return null; }
-        const verts_attrib: GIAttribMap = this._attribs._attribs_maps._v.get(attrib_name);
-        //
+    public get3jsSeqVertsNormal(): number[] {
+        // no normals defined, return null, threejs will take care of it
+        if (!this._attribs._attribs_maps._v.has(EAttribNames.NORMAL)) {
+            return null;
+        }
+        // get the normals
+        const verts_attrib: GIAttribMap = this._attribs._attribs_maps._v.get(EAttribNames.NORMAL);
         const verts_attribs_values: TAttribDataTypes[] = [];
-        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, true);
-        verts_i.forEach( (vert_i, gi_index) => {
-            if (vert_i !== null) {
-                const value = verts_attrib.getEntVal(vert_i) as TAttribDataTypes;
-                if (attrib_name === EAttribNames.COLOR) {
-                    const _value = value === undefined ? [1, 1, 1] : value;
-                    verts_attribs_values.push(_value);
-                } else {
-                    verts_attribs_values.push(value);
-                }
-            }
-        });
+        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, false);
+        for (const vert_i of verts_i) {
+            const value = verts_attrib.getEntVal(vert_i) as TAttribDataTypes;
+            verts_attribs_values.push(value);
+        }
         // @ts-ignore
         return verts_attribs_values.flat(1);
+    }
+    /**
+     * Get a flat array of colors for all the vertices.
+     * Verts that have been deleted will not be included
+     */
+    public get3jsSeqVertsColor(): number[] {
+        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, false);
+        // no colour defined, default to white
+        if (!this._attribs._attribs_maps._v.has(EAttribNames.COLOR)) {
+            const verts_colors_flat: number[] = new Array(verts_i.length * 3);
+            verts_colors_flat.fill(0, verts_i.length * 3, 1);
+            return verts_colors_flat;
+        }
+        // get the colors
+        const verts_colors: number[][] = new Array(verts_i.length);
+        const verts_attrib: GIAttribMap = this._attribs._attribs_maps._v.get(EAttribNames.NORMAL);
+        for (const vert_i of verts_i) {
+            const value = verts_attrib.getEntVal(vert_i) as number[];
+            verts_colors.push(value === undefined ? [1, 1, 1] : value);
+        }
+        // @ts-ignore
+        return verts_colors.flat(1);
     }
     /**
      *
@@ -107,7 +120,7 @@ export class AttribsThreejs {
      *
      * @param ent_type
      */
-    public getAttribsForTable(ent_type: EEntType): {data: any[], ents: number[]} {
+    public getEntAttribsForTable(ent_type: EEntType): {data: any[], ents: number[]} {
         // get the attribs map for this ent type
         const attribs_maps_key: string = EEntTypeStr[ent_type];
         const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];

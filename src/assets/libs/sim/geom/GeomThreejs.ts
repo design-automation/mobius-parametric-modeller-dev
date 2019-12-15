@@ -1,8 +1,7 @@
 import { Geom } from './Geom';
-import { IGeomArrays, TTri, TEdge, TPoint, EEntType } from '../common';
+import { TTri, TEdge, TPoint, EEntType } from '../common';
 import { GIAttribMap } from '../attribs/data/AttribMap';
 import * as THREE from 'three';
-import { GeomData } from './data/GeomData';
 
 /**
  * Class for geometry.
@@ -65,7 +64,7 @@ export class GeomThreejs {
         for (const tri_i of tris_i) {
             // const tri_verts_i: [number, number, number] = this._geom_arrays.dn_tris_verts[tri_i];
             const tri_verts_i: [number, number, number] =  this._geom.data.navTriToVert(tri_i);
-            if (tri_verts_i !== null) {
+            if (tri_verts_i !== undefined) {
                 // get the verts, face and the polygon for this tri
                 const new_tri_verts_i: TTri = tri_verts_i.map(v => vertex_map.get(v)) as TTri;
                 // get the materials for this tri from the polygon
@@ -204,8 +203,8 @@ export class GeomThreejs {
         const points_i: number[] = this._geom.data.getEnts(EEntType.POINT, false);
         for (const point_i of points_i) {
             // const point_verts_i: TPoint = this._geom_arrays.dn_points_verts[gi_i];
-            const point_verts_i: TPoint = this._geom.data.navPointToVert(point_i); 
-            if (point_verts_i !== null) {
+            const point_verts_i: TPoint = this._geom.data.navPointToVert(point_i);
+            if (point_verts_i !== undefined) {
                 const new_point_verts_i: TPoint = vertex_map.get(point_verts_i) as TPoint;
                 const tjs_i = points_verts_i_filt.push(new_point_verts_i) - 1;
                 point_select_map.set(tjs_i, point_i);
