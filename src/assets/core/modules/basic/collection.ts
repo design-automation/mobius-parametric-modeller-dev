@@ -107,7 +107,7 @@ export function Get(__model__: SIModel, names: string|string[]): TId|TId[] {
 }
 function _get(__model__: SIModel, names: string|string[]): TEntTypeIdx | TEntTypeIdx[] {
     if (!Array.isArray(names)) {
-        const colls_i: number[] = __model__.geom.data.getEnts(EEntType.COLL, false);
+        const colls_i: number[] = __model__.geom.data.getEnts(EEntType.COLL);
         const query_result: number[] = __model__.attribs.query.filterByAttribs(
             EEntType.COLL, colls_i, 'name', null, EFilterOperatorTypes.IS_EQUAL, names);
         if (query_result.length > 0) {

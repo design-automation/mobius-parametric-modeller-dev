@@ -12,33 +12,31 @@ export class GeomPosi extends GeomNav {
     constructor(geom: Geom) {
         super(geom);
     }
-    // ============================================================================
-    // Posis
-    // ============================================================================
     /**
      * Returns a list of indices for all posis that have no verts
      */
-    public getUnusedPosis(include_deleted: boolean): number[] {
-        // get posis indices array from up array: up_posis_verts
+    public getAllUnusedPosis(): number[] {
         const posis: number[][] = this._geom_arrays.up_posis_verts;
         const posis_i: number[] = [];
-        if (include_deleted) {
-            for (let i = 0; i < posis.length; i++ ) {
-                const posi = posis[i];
-                if (posi !== undefined) {
-                    if (posi.length === 0) { posis_i.push(i); }
-                } else {
-                    posis_i.push(null);
-                }
-            }
-        } else {
-            for (let i = 0; i < posis.length; i++ ) {
-                const posi = posis[i];
-                if (posi !== undefined) {
-                    if (posi.length === 0) { posis_i.push(i); }
-                }
+        for (let i = 0; i < posis.length; i++ ) {
+            const posi = posis[i];
+            if (posi !== undefined && posi.length === 0) {
+                posis_i.push(i);
             }
         }
         return posis_i;
+    }
+    /**
+     * Filter a list of posis, and return those posis that have no verts
+     */
+    public getUnusedPosis(posis_i: number[]): number[] {
+        const unused_posis_i: number[] = [];
+        for (const posi_i of posis_i) {
+            const posi = this._geom_arrays.up_posis_verts[posi_i];
+            if (posi !== undefined && posi.length === 0) {
+                unused_posis_i.push(posi_i);
+            }
+        }
+        return unused_posis_i;
     }
 }

@@ -151,14 +151,19 @@ export class GeomDel {
             const wires_i: number[] = face[0];
             const tris_i: number[] = face[1];
             for (const wire_i of wires_i) {
+                // get the wire verts
+                const verts_i: number[] = this.geom.data.wireGetVerts(wire_i);
+                // del wires
                 const edges_i: number[] = this.geom.data.remWireEnt(wire_i);
+                // del edges
                 for (const edge_i of edges_i) {
-                    const verts_i: number[] = this.geom.data.remEdgeEnt(edge_i);
-                    for (const vert_i of verts_i) {
-                        const posi_i: number = this.geom.data.remVertEnt(vert_i);
-                        if (posi_i !== null) {
-                            posis_i.push(posi_i);
-                        }
+                    this.geom.data.remEdgeEnt(edge_i);
+                }
+                // del verts and save posis
+                for (const vert_i of verts_i) {
+                    const posi_i: number = this.geom.data.remVertEnt(vert_i);
+                    if (posi_i !== null) {
+                        posis_i.push(posi_i);
                     }
                 }
             }
@@ -201,46 +206,19 @@ export class GeomDel {
     /**
      * Delete a collection.
      * Collection attributes will also be deleted.
-     * This delete all the object in the collection.
-     * Also, does not delete any positions.
+     * This does not delete the objects or positions in the collection.
      * @param colls_i The collections to delete
      */
-    public delColls(colls_i: number|number[], del_contents: boolean): number[] {
+    public delColls(colls_i: number|number[]): void {
         // create array
         colls_i = (Array.isArray(colls_i)) ? colls_i : [colls_i];
-        if (!colls_i.length) { return []; }
+        if (!colls_i.length) { return; }
         // loop
-        const set_posis_i: Set<number> = new Set();
         for (const coll_i of colls_i) {
-            if (!this.geom.data.entExists(EEntType.COLL, coll_i)) { continue; } // already deleted
-            // remove the coll
-            const coll: TColl = this.geom.data.remCollEnt(coll_i);
-            if (del_contents) {
-                // process coll points
-                const point_posis_i: number[] = this.delPoints(coll[1]);
-                point_posis_i.forEach( posi_i => set_posis_i.add(posi_i) );
-                // process coll plines
-                const pline_posis_i: number[] = this.delPlines(coll[2]);
-                pline_posis_i.forEach( posi_i => set_posis_i.add(posi_i) );
-                // process coll pgons
-                const pgon_posis_i: number[] = this.delPgons(coll[3]);
-                pgon_posis_i.forEach( posi_i => set_posis_i.add(posi_i) );
-                // process child colls, recursive
-                const child_colls_i: number[] = this.geom.data.collGetChildren(coll_i);
-                const coll_posis_i: number[] = this.delColls(child_colls_i, del_contents);
-                coll_posis_i.forEach( posi_i => set_posis_i.add(posi_i) );
+            if (this.geom.data.entExists(EEntType.COLL, coll_i)) {
+                this.geom.data.remCollEnt(coll_i);
             }
         }
-        // return the posis
-        return Array.from(set_posis_i);
     }
 }
 
-
-        // by default all posis are deleted unless
-        // 1) the are part of the ents to keep
-        // 2) they are explicitly listed to be kept
-        // So the process for deleting is as follows
-        // 1) del all ents
-        // 2) get all posis without verts and check if they are listed to be kept
-        // 3) del those posis

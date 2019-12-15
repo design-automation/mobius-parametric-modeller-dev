@@ -103,7 +103,7 @@ export function Get(__model__: SIModel, ent_type_enum: _EEntType, entities: TId|
     // if ents_arr is null, then get all entities in the model of type ent_type
     if (ents_arr === null) {
         ents_arr = ents_arr as TEntTypeIdx[];
-        const ents_i: number[] = __model__.geom.data.getEnts(ent_type, false);
+        const ents_i: number[] = __model__.geom.data.getEnts(ent_type);
         ents_arr = ents_i.map(ent_i => [ent_type, ent_i]) as TEntTypeIdx[];
     }
     if (isEmptyArr(ents_arr)) { return []; }
@@ -286,7 +286,7 @@ function _invert(__model__: SIModel, select_ent_types: EEntType|EEntType[], ents
             .filter(ent_arr => ent_arr[0] === select_ent_type).map(ent_arr => ent_arr[1]);
         // get the list of entities
         const found_entities_i: number[] = [];
-        const ents_i: number[] = __model__.geom.data.getEnts(select_ent_type, false);
+        const ents_i: number[] = __model__.geom.data.getEnts(select_ent_type);
         for (const ent_i of ents_i) {
             if (excl_ents_i.indexOf(ent_i) === -1) { found_entities_i.push(ent_i); }
         }

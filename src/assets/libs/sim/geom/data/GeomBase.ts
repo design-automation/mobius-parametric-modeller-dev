@@ -162,12 +162,12 @@ export class GeomBase {
      * @param sub_arr_idxs The indexes to the sub-arrays.
      * @param val The value.
      */
-    protected _appendValToArrInArr(cont_arr: any[], sub_arr_idxs: number|number[], val: number): void {
+    protected _appendValToSubArr(cont_arr: any[], sub_arr_idxs: number|number[], val: number): void {
         if (!Array.isArray(sub_arr_idxs)) {
             if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
             cont_arr[sub_arr_idxs].push(val);
         } else {
-            sub_arr_idxs.forEach( sub_arr_idx => this._appendValToArrInArr(cont_arr, sub_arr_idx, val) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._appendValToSubArr(cont_arr, sub_arr_idx, val) );
         }
     }
     /**
@@ -177,12 +177,12 @@ export class GeomBase {
      * @param val The value.
      * @param val_idx The value index.
      */
-    protected _setValInArrInArr(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, val: number): void {
+    protected _setValInSubArr(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, val: number): void {
         if (!Array.isArray(sub_arr_idxs)) {
             if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
             cont_arr[sub_arr_idxs][val_idx] = val;
         } else {
-            sub_arr_idxs.forEach( sub_arr_idx => this._setValInArrInArr(cont_arr, sub_arr_idx, val_idx, val) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._setValInSubArr(cont_arr, sub_arr_idx, val_idx, val) );
         }
     }
     /**
@@ -193,7 +193,7 @@ export class GeomBase {
      * @param val_idx The index in the sub-arrays.
      * @param del Delete or set to null.
      */
-    protected _remValFromArrInArr(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, del: boolean): void {
+    protected _remValFromSubArr(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, del: boolean): void {
         if (!Array.isArray(sub_arr_idxs)) {
             if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
             if (del) {
@@ -202,7 +202,7 @@ export class GeomBase {
                 cont_arr[sub_arr_idxs][val_idx] = null;
             }
         } else {
-            sub_arr_idxs.forEach( sub_arr_idx => this._remValFromArrInArr(cont_arr, sub_arr_idx, val_idx, del) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._remValFromSubArr(cont_arr, sub_arr_idx, val_idx, del) );
         }
     }
     /**
@@ -214,7 +214,7 @@ export class GeomBase {
      * @param current_val The current value.
      * @param del Delete or set to null.
      */
-    protected _remValFromArrInArrIf(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, 
+    protected _remValFromSubArrIf(cont_arr: any[], sub_arr_idxs: number|number[], val_idx: number, 
             current_val: number, del: boolean): void {
         if (!Array.isArray(sub_arr_idxs)) {
             if (!cont_arr[sub_arr_idxs]) { cont_arr[sub_arr_idxs] = []; }
@@ -226,7 +226,7 @@ export class GeomBase {
                 }
             }
         } else {
-            sub_arr_idxs.forEach( sub_arr_idx => this._remValFromArrInArr(cont_arr, sub_arr_idx, val_idx, del) );
+            sub_arr_idxs.forEach( sub_arr_idx => this._remValFromSubArr(cont_arr, sub_arr_idx, val_idx, del) );
         }
     }
     // ============================================================================

@@ -292,7 +292,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 element.innerHTML = String(index);
             }
         } else {
-            const ent_arr = this.model.geom.data.getEnts(this.SelectingEntityType.id, false);
+            const ent_arr = this.model.geom.data.getEnts(this.SelectingEntityType.id);
             for (let i = 0; i < allLabels.length; i++) {
                 const element = allLabels[i];
                 const val = Number(element.getAttribute('data-index'));

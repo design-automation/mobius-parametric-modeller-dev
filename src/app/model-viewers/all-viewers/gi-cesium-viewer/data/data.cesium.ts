@@ -188,7 +188,7 @@ export class DataCesium {
             new Cesium.Matrix4()
         );
         // create all positions
-        const posis_i: number[] = model.geom.data.getEnts(EEntType.POSI, false);
+        const posis_i: number[] = model.geom.data.getEnts(EEntType.POSI);
         const posi_to_point_map: Map<number, any> = new Map();
         for (const posi_i of posis_i) {
             if (!posi_to_point_map.has(posi_i)) {
@@ -202,7 +202,7 @@ export class DataCesium {
         // add geom
         if (model) {
             // get each polygon
-            const pgons_i: number[] = model.geom.data.getEnts(EEntType.PGON, false);
+            const pgons_i: number[] = model.geom.data.getEnts(EEntType.PGON);
             // get each triangle
             const lines_instances: any[] = [];
             const tris_instances: any[] = [];
@@ -271,7 +271,7 @@ export class DataCesium {
                 }
             }
             // get each polygon
-            const plines_i: number[] = model.geom.data.getEnts(EEntType.PLINE, false);
+            const plines_i: number[] = model.geom.data.getEnts(EEntType.PLINE);
             // get each pline
             for (const pline_i of plines_i) {
                 let pline_colour = Cesium.Color.BLACK;

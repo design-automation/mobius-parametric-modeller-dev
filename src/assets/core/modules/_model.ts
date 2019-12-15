@@ -1,7 +1,6 @@
 import { SIModel } from '@assets/libs/sim/SIModel';
-import { EAttribDataTypeStrs, TAttribDataTypes, EAttribNames, EEntType, TId, TEntTypeIdx, EEntTypeStr } from '@libs/sim/common';
-import { getArrDepth, idsBreak } from '@libs/sim/id';
-import { checkIDs, checkArgTypes, TypeCheckObj, IDcheckObj, checkAttribName, checkAttribValue } from './_check_args';
+import { EAttribDataTypeStrs, EAttribNames, EEntType, TEntTypeIdx } from '@libs/sim/common';
+import { idsBreak } from '@libs/sim/id';
 import __ from 'underscore';
 
 //  ===============================================================================================
@@ -50,13 +49,13 @@ export function __merge__(model1: SIModel, model2: SIModel): void {
     model1.merge(model2);
 }
 //  ===============================================================================================
-/**
- * Returns a string representation of this model.
- * @param __model__
- */
-export function __stringify__(__model__: SIModel): string {
-    return JSON.stringify(__model__.getData());
-}
+// /**
+//  * Returns a string representation of this model.
+//  * @param __model__
+//  */
+// export function __stringify__(__model__: SIModel): string {
+//     return JSON.stringify(__model__.getData());
+// }
 //  ===============================================================================================
 /**
  * Select entities in the model.

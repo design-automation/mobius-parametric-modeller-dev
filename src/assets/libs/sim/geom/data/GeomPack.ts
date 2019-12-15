@@ -163,8 +163,10 @@ export class GeomPack extends GeomNav {
      * Returns a geom pack of unique indexes, given an array of TEntTypeIdx.
      *
      * Include objs and colls, and positions.
+     * 
+     * Also selects objects inside collections.
      */
-    public getGeomPackFromEnts(ents: TEntTypeIdx[], invert: boolean = false): IGeomPack {
+    public getGeomPackFromEnts(ents: TEntTypeIdx[]): IGeomPack {
         // utility functions
         function _addToSet(_set: Set<number>, _ents_i: number[]): void {
             _ents_i.forEach( num => _set.add(num) );
@@ -194,7 +196,7 @@ export class GeomPack extends GeomNav {
             } else if (ent_type === EEntType.POINT) {
                 set_points_i.add(index);
             } else if (ent_type === EEntType.POSI) {
-                set_points_i.add(index);
+                set_posis_i.add(index);
             }
         }
         // return the arrays, do not invert

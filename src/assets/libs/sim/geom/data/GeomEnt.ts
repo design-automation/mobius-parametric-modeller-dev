@@ -23,32 +23,20 @@ export class GeomEnt extends GeomNav {
      *
      * If include_deleted=true, it will include ents that are null.
      */
-    public getEnts(ent_type: EEntType, include_deleted: boolean): number[] {
+    public getEnts(ent_type: EEntType): number[] {
         // get the array
         const geom_array_key: string = EEntStrToGeomArray[ent_type];
         const geom_array: any[] = this._geom_arrays[geom_array_key];
-        if (include_deleted) {
-            const ents_i: number[] = new Array(geom_array.length); // Preallocate array to correct length
-            for (let i = 0; i < geom_array.length; i++ ) {
-                const ent = geom_array[i];
-                if (ent !== undefined) {
-                    ents_i.push(i);
-                } 
-                // else {
-                //     ents_i.push(null); // Deleted TODO
-                // }
+        const ents_i: number[] = [];
+        for (let i = 0; i < geom_array.length; i++ ) {
+            if (geom_array[i] === null) {
+                console.log("ERROR, null value found in geom arrays, should be undefined")
             }
-            return ents_i;
-        } else {
-            const ents_i: number[] = [];
-            for (let i = 0; i < geom_array.length; i++ ) {
-                const ent = geom_array[i];
-                if (ent !== undefined) {
-                    ents_i.push(i);
-                }
+            if (geom_array[i] !== undefined) {
+                ents_i.push(i);
             }
-            return ents_i;
         }
+        return ents_i;
     }
     /**
      * Returns the number of entities
@@ -58,7 +46,7 @@ export class GeomEnt extends GeomNav {
             const geom_array_key: string = EEntStrToGeomArray[ent_type];
             return this._geom_arrays[geom_array_key].length;
         } else {
-            return this.getEnts(ent_type, include_deleted).length;
+            return this.getEnts(ent_type).length;
         }
     }
     /**

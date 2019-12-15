@@ -35,8 +35,8 @@ export class GeomAdd extends GeomNav {
         // down
         const edge_i: number =  this._geom_arrays.dn_edges_verts.push(edge) - 1;
         // up
-        this._setValInArrInArr(this._geom_arrays.up_verts_edges, edge[0], 1, edge_i);
-        this._setValInArrInArr(this._geom_arrays.up_verts_edges, edge[1], 0, edge_i);
+        this._setValInSubArr(this._geom_arrays.up_verts_edges, edge[0], 1, edge_i);
+        this._setValInSubArr(this._geom_arrays.up_verts_edges, edge[1], 0, edge_i);
         // return
         return edge_i;
     }

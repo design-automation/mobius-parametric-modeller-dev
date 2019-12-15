@@ -295,6 +295,6 @@ export interface IAttribsData {
 }
 
 export interface IModelData {
-    geometry: IGeomData;
+    geometry: IGeomArrays;
     attributes: IAttribsData;
 }

@@ -41,7 +41,9 @@ export class GeomRem extends GeomNav {
         this._clearValsInArr(this._geom_arrays.dn_verts_posis, vert_i, true);
         // remove up
         const posi_i: number = vert;
-        this._remValFromSetInArr(this._geom_arrays.up_posis_verts, posi_i, vert_i, false);
+        this._remValFromSetInArr(this._geom_arrays.up_posis_verts, posi_i, vert_i, false); // don't del empty array
+        // remove up 2, from verts to edges
+        this._clearValsInArr(this._geom_arrays.up_verts_edges, vert_i, true); // special case
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.VERT, vert_i);
         // return
@@ -54,9 +56,9 @@ export class GeomRem extends GeomNav {
         // remove down
         this._clearValsInArr(this._geom_arrays.dn_edges_verts, edge_i, true);
         // remove up
-        const [start_vert_i, end_vert_i]: [number, number] = edge;
-        this._remValFromArrInArrIf(this._geom_arrays.up_verts_edges, start_vert_i, 1, edge_i, true);
-        this._remValFromArrInArrIf(this._geom_arrays.up_verts_edges, end_vert_i, 0, edge_i, true);
+        const [start_vert_i, end_vert_i]: [number, number] = edge; // see special case above
+        this._remValFromSubArrIf(this._geom_arrays.up_verts_edges, start_vert_i, 1, edge_i, false); // set null
+        this._remValFromSubArrIf(this._geom_arrays.up_verts_edges, end_vert_i, 0, edge_i, false); // set null
         // delete attribs
         this.geom.model.attribs.add.delEntFromAttribs(EEntType.EDGE, edge_i);
         // return

@@ -645,33 +645,27 @@ export function Delete(__model__: SIModel, entities: TId|TId[], method: _EDelete
 }
 function _delete(__model__: SIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
     // get the ents
-    const geom_pack: IGeomPack = __model__.geom.data.getGeomPackFromEnts(ents_arr, invert);
+    const geom_pack: IGeomPack = __model__.geom.data.getGeomPackFromEnts(ents_arr);
     const obj_pack: IObjPack = invert ? __model__.geom.data.invertObjPack(geom_pack) : geom_pack;
     // delete the objects
-    __model__.geom.del.delPgons(obj_pack.pgons_i);
-    __model__.geom.del.delPlines(obj_pack.plines_i);
-    __model__.geom.del.delPoints(obj_pack.points_i);
+    const pgon_posis_i: number[] = __model__.geom.del.delPgons(obj_pack.pgons_i);
+    const pline_posis_i: number[] = __model__.geom.del.delPlines(obj_pack.plines_i);
+    const point_posis_i: number[] = __model__.geom.del.delPoints(obj_pack.points_i);
     // delete the collections
-    __model__.geom.del.delColls(obj_pack.colls_i, false);
+    __model__.geom.del.delColls(obj_pack.colls_i);
     // get the posis
-    const unused_posis_i: number[] = __model__.geom.data.getUnusedPosis(false);
-    const set_selected_posis_i: Set<number> = new Set(geom_pack.posis_i);
-    const posis_to_del_i: number[] = [];
-    // get the list of possi to del
-    for (const unused_posi_i of unused_posis_i) {
-        // invert = true, selected_posis_i = posis to keep
-        if (!set_selected_posis_i.has(unused_posi_i)) {
-            posis_to_del_i.push(unused_posi_i);
-        }
-        if (!invert) {
-            // invert = false, selected_posis_i = posis to del
-            for (const ent_i of geom_pack.posis_i) {
-                posis_to_del_i.push(ent_i);
-            }
-        }
+    const set_posis_to_del_i: Set<number> = new Set();
+    for (const posi_i of pgon_posis_i) { set_posis_to_del_i.add(posi_i); }
+    for (const posi_i of pline_posis_i) { set_posis_to_del_i.add(posi_i); }
+    for (const posi_i of point_posis_i) { set_posis_to_del_i.add(posi_i); }
+    // includ eor exclude the selected posis
+    if (invert) {
+        for (const posi_i of geom_pack.posis_i) { set_posis_to_del_i.delete(posi_i); }
+    } else {
+        for (const posi_i of geom_pack.posis_i) { set_posis_to_del_i.add(posi_i); }
     }
     // delete the posis
-    __model__.geom.del.delPosis(posis_to_del_i);
+    __model__.geom.del.delPosis(Array.from(set_posis_to_del_i));
 }
 
 

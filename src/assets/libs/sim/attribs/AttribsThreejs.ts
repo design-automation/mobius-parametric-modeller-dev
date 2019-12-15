@@ -29,7 +29,7 @@ export class AttribsThreejs {
         const coords_attrib: GIAttribMap = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS);
         const coords: number[][] = [];
         const posi_map: Map<number, number> = new Map();
-        const posis_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.POSI, false);
+        const posis_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.POSI);
         for (const posi_i of posis_i) {
             const tjs_index: number = coords.push( coords_attrib.getEntVal(posi_i) as number[] ) - 1;
             posi_map.set(posi_i, tjs_index);
@@ -45,10 +45,9 @@ export class AttribsThreejs {
      */
     public get3jsSeqVertsCoords(): [number[], Map<number, number>] {
         const coords_attrib: GIAttribMap = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS);
-        //
         const coords: number[][] = [];
         const vertex_map: Map<number, number> = new Map();
-        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, false);
+        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT);
         for (const vert_i of verts_i) {
             const posi_i: number = this._attribs.model.geom.data.navVertToPosi(vert_i);
             const tjs_index: number = coords.push( coords_attrib.getEntVal(posi_i) as number[] ) - 1;
@@ -69,7 +68,7 @@ export class AttribsThreejs {
         // get the normals
         const verts_attrib: GIAttribMap = this._attribs._attribs_maps._v.get(EAttribNames.NORMAL);
         const verts_attribs_values: TAttribDataTypes[] = [];
-        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, false);
+        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT);
         for (const vert_i of verts_i) {
             const value = verts_attrib.getEntVal(vert_i) as TAttribDataTypes;
             verts_attribs_values.push(value);
@@ -82,7 +81,7 @@ export class AttribsThreejs {
      * Verts that have been deleted will not be included
      */
     public get3jsSeqVertsColor(): number[] {
-        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT, false);
+        const verts_i: number[] = this._attribs.model.geom.data.getEnts(EEntType.VERT);
         // no colour defined, default to white
         if (!this._attribs._attribs_maps._v.has(EAttribNames.COLOR)) {
             const verts_colors_flat: number[] = new Array(verts_i.length * 3);
@@ -130,7 +129,7 @@ export class AttribsThreejs {
         const data_obj_map: Map< number, {_id: string} > = new Map();
 
         // create the ID for each table row
-        const ents_i: number[] = this._attribs.model.geom.data.getEnts(ent_type, false);
+        const ents_i: number[] = this._attribs.model.geom.data.getEnts(ent_type);
 
         // sessionStorage.setItem('attrib_table_ents', JSON.stringify(ents_i));
         let i = 0;
@@ -257,7 +256,7 @@ export class AttribsThreejs {
      * @param id
      */
     public getIdIndex(ent_type: EEntType, id: number) {
-        const ents_i = this._attribs.model.geom.data.getEnts(ent_type, false);
+        const ents_i = this._attribs.model.geom.data.getEnts(ent_type);
         const index = ents_i.findIndex(ent_i => ent_i === id);
         console.log("calling getIdIndex in GIATtribsThreejs", id, index);
         return index;

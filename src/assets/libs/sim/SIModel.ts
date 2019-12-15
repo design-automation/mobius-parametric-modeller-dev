@@ -35,7 +35,7 @@ export class SIModel {
      */
     public merge(model: SIModel): void {
         this.attribs.data.merge(model.attribs); // warning: must be before this.geom.data.merge()
-        this.geom.data.merge(model.geom);
+        this.geom.data.merge(model.geom.data.getData());
     }
     /**
      * Sets the data in this model from data.
@@ -43,15 +43,15 @@ export class SIModel {
      * @param model_data The data.
      */
     public setData (model_data: IModelData): void {
-        this.attribs.data.setData(model_data.attributes); // warning: must be before this.geom.io.setData()
-        this.geom.data.setData(model_data.geometry, true); // replace null with undef
+        this.attribs.data.setData(model_data.attributes); // warning: must be before this.geom.data.setData()
+        this.geom.data.setData(model_data.geometry);
     }
     /**
      * Returns the data for this model.
      */
     public getData(): IModelData {
         return {
-            geometry: this.geom.data.getData(true), // replace undef with null
+            geometry: this.geom.data.getData(),
             attributes: this.attribs.data.getData()
         };
     }

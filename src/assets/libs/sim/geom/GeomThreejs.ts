@@ -25,7 +25,7 @@ export class GeomThreejs {
      * The indices in the list point to the sequential coordinates.
      */
     public get3jsVerts(): number[] {
-        return this._geom.data.getEnts(EEntType.VERT, false);
+        return this._geom.data.getEnts(EEntType.VERT);
     }
     /**
      * Returns that data required for threejs triangles.
@@ -59,7 +59,7 @@ export class GeomThreejs {
         // loop through all tris
         // const num_tris = this._geom_arrays.dn_tris_verts.length;
         // const num_tris = this._geom.data.numEnts(EEntType.TRI, true);
-        const tris_i: number[] = this._geom.data.getEnts(EEntType.TRI, false);
+        const tris_i: number[] = this._geom.data.getEnts(EEntType.TRI);
         // for (let tri_i = 0; tri_i < num_tris; tri_i++) {
         for (const tri_i of tris_i) {
             // const tri_verts_i: [number, number, number] = this._geom_arrays.dn_tris_verts[tri_i];
@@ -174,7 +174,7 @@ export class GeomThreejs {
         const edge_select_map: Map<number, number> = new Map();
         // const num_edges: number = this._geom.data.numEnts(EEntType.EDGE, true); // this._geom_arrays.dn_edges_verts.length;
         // for (let edge_i = 0; edge_i < num_edges; edge_i++) {
-        const edges_i: number[] = this._geom.data.getEnts(EEntType.EDGE, false);
+        const edges_i: number[] = this._geom.data.getEnts(EEntType.EDGE);
         for (const edge_i of edges_i) {
             // const edge_verts_i: TEdge = this._geom_arrays.dn_edges_verts[edge_i];
             const edge_verts_i: TEdge = this._geom.data.navEdgeToVert(edge_i);
@@ -200,7 +200,7 @@ export class GeomThreejs {
         const point_select_map: Map<number, number> = new Map();
         // const num_points = this._geom.data.numEnts(EEntType.POSI, true);  // this._geom_arrays.dn_points_verts.length;
         // for (let point_i = 0; point_i < num_points; point_i++) {
-        const points_i: number[] = this._geom.data.getEnts(EEntType.POINT, false);
+        const points_i: number[] = this._geom.data.getEnts(EEntType.POINT);
         for (const point_i of points_i) {
             // const point_verts_i: TPoint = this._geom_arrays.dn_points_verts[gi_i];
             const point_verts_i: TPoint = this._geom.data.navPointToVert(point_i);
