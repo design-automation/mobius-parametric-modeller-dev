@@ -18,36 +18,44 @@ export class DataOutputService {
         // console.log('retrieve Data...');
         const model = _parameterTypes.newFn();
         if (getViewOutput) {
-            const result = webWorker.run(input => {
-                return JSON.parse(input);
-            }, node.model);
-            result.then(r => {
-                model.setData(r);
-                this.iModel.model = model;
-            });
+            // const result = webWorker.run(input => {
+            //     return JSON.parse(input);
+            // }, node.model);
+            // result.then(r => {
+            //     model.setData(r);
+            //     this.iModel.model = model;
+            // });
+            const result = node.model;
+            model.setData(result);
+            this.iModel.model = model;
+
             this.iModel.getOutput = true;
             this.iModel.nodeID = node.id;
             return this.iModel.model;
             // model.setData(JSON.parse(node.model));
         } else if (node.input.edges.length === 1) {
-            const result = webWorker.run(input => {
-                return JSON.parse(input);
-            }, node.input.edges[0].source.parentNode.model);
-            result.then(r => {
-                model.setData(r);
-                this.iModel.model = model;
-            });
+            // const result = webWorker.run(input => {
+            //     return JSON.parse(input);
+            // }, node.input.edges[0].source.parentNode.model);
+            // result.then(r => {
+            //     model.setData(r);
+            //     this.iModel.model = model;
+            // });
+            const result = node.input.edges[0].source.parentNode.model;
+            model.setData(result);
+            this.iModel.model = model;
+
             this.iModel.getOutput = false;
             this.iModel.nodeID = node.id;
             return this.iModel.model;
-            // model.setData(JSON.parse(node.input.edges[0].source.parentNode.model));
         } else {
             for (const edge of node.input.edges) {
                 if (!edge.source.parentNode || !edge.source.parentNode.enabled) {
                     continue;
                 }
                 const newModel = _parameterTypes.newFn();
-                newModel.setData(JSON.parse(edge.source.parentNode.model));
+                // newModel.setData(JSON.parse(edge.source.parentNode.model));
+                newModel.setData(edge.source.parentNode.model);
                 model.merge(newModel);
             }
             this.iModel.getOutput = false;
