@@ -85,7 +85,10 @@ export class AttribsThreejs {
         // no colour defined, default to white
         if (!this._attribs._attribs_maps._v.has(EAttribNames.COLOR)) {
             const verts_colors_flat: number[] = new Array(verts_i.length * 3);
-            verts_colors_flat.fill(0, verts_i.length * 3, 1);
+            verts_colors_flat.fill(1, 0, verts_i.length * 3);
+            // for (let i = 0; i < verts_colors_flat.length; i++) {
+            //     verts_colors_flat[i] = 1;
+            // }
             return verts_colors_flat;
         }
         // get the colors
