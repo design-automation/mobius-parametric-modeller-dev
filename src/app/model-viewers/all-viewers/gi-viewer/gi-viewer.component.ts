@@ -43,7 +43,7 @@ export class GIViewerComponent implements OnInit {
     public selectSwitchOnOff: Boolean;
     public attribLabelVal: String;
 
-    @ViewChild(ThreejsViewerComponent) threejs: ThreejsViewerComponent;
+    @ViewChild(ThreejsViewerComponent, { static: true }) threejs: ThreejsViewerComponent;
     /**
      * constructor
      * @param dataService
@@ -142,14 +142,19 @@ export class GIViewerComponent implements OnInit {
             localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
             this.threejs.updateModel(this.data);
         } else {
+            // tslint:disable-next-line: forin
             for (const setting in this.dataService.getThreejsScene().settings) {
                 this.settings[setting] = this.dataService.getThreejsScene().settings[setting];
             }
             this.threejs.updateModel(this.data);
         }
+        setTimeout(() => {
+            this.threejs.activateRender();
+        }, 100);
     }
 
     onCloseModal() {
+        // tslint:disable-next-line: forin
         for (const setting in this.dataService.getThreejsScene().settings) {
             this.settings[setting] = this.dataService.getThreejsScene().settings[setting];
         }
@@ -196,6 +201,12 @@ export class GIViewerComponent implements OnInit {
                 break;
             case 'positions.size':
                 this.settings.positions.size = Number(value);
+                break;
+            case 'background.show':
+                this.settings.background.show = !this.settings.background.show;
+                break;
+            case 'background.set':
+                this.settings.background.background_set = Number(value);
                 break;
             case 'tjs_summary.show':
                 this.settings.gi_summary.show = false;
@@ -346,7 +357,7 @@ export class GIViewerComponent implements OnInit {
             default:
                 break;
         }
-        scene._renderer.render(scene._scene, scene._camera);
+        this.threejs.activateRender();
     }
 
     // resetDefault(setting, value) {
@@ -420,6 +431,10 @@ interface Settings {
         pos_x: number,
         pos_y: number,
         pos_z: number,
+    };
+    background: {
+        show: boolean,
+        background_set: number
     };
     positions: { show: boolean, size: number };
     wireframe: { show: boolean };

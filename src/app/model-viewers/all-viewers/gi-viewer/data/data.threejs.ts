@@ -6,6 +6,19 @@ import { EEntTypeStr, EEntType } from '@libs/sim/common';
 import { Vector3 } from 'three';
 import { DataService } from '@services';
 import { Vector } from '@assets/core/modules/basic/calc';
+enum objType {
+    point = 'point',
+    line = 'line',
+    face = 'face'
+}
+enum MaterialType {
+    MeshBasicMaterial = 'MeshBasicMaterial',
+    MeshStandardMaterial = 'MeshStandardMaterial',
+    MeshLambertMaterial = 'MeshLambertMaterial',
+    MeshPhongMaterial = 'MeshPhongMaterial',
+    MeshPhysicalMaterial = 'MeshPhysicalMaterial'
+}
+
 /**
  * ThreejsScene
  */
@@ -15,7 +28,7 @@ export class DataThreejs {
     // public basic_scene: THREE.Scene;
     public _renderer: THREE.WebGLRenderer;
     public _camera;
-    public _controls: THREE.OrbitControls;
+    public _controls: any;
     public _raycaster: THREE.Raycaster;
     public _mouse: THREE.Vector2;
     // interaction and selection
@@ -75,7 +88,26 @@ export class DataThreejs {
         }
         // scene
         this._scene = new THREE.Scene();
-        this._scene.background = new THREE.Color(this.settings.colors.viewer_bg);
+
+        // var loader = new THREE.ImageLoader();
+
+        // for (var i = 0; i < 6; i++) {
+        //     materialArray.push( new THREE.MeshBasicMaterial({
+        //         map: loader.load( urls[i] ),
+        //         side: THREE.BackSide
+        //     }))
+        // }
+
+        // var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );
+        // var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+        // var skybox = new THREE.Mesh( skyGeometry, skyMaterial );
+
+
+        if (this.settings.background.show) {
+            this.loadBackground(this.settings.background.background_set);
+        } else {
+            this._scene.background = new THREE.Color(this.settings.colors.viewer_bg);
+        }
 
         // this.basic_scene = new THREE.Scene();
         // this.basic_scene.background = new THREE.Color(0xE6E6E6);
@@ -97,7 +129,6 @@ export class DataThreejs {
         //     0.5 * frustumSize * aspect / 2,
         //     frustumSize / 2, frustumSize / - 2, 150, 1000 );
         this._camera = new THREE.PerspectiveCamera(50, 1, 0.01, 1000000);
-        // document.addEventListener( 'keypress', this.onWindowKeyPress, false );
         this._camera.position.x = -80;
         this._camera.position.y = -80;
         this._camera.position.z = 80;
@@ -154,7 +185,11 @@ export class DataThreejs {
      * @param container
      */
     public addGeometry(model: SIModel, container): void {
-        this._scene.background = new THREE.Color(this.settings.colors.viewer_bg);
+        if (this.settings.background.show) {
+            this.loadBackground(this.settings.background.background_set);
+        } else {
+            this._scene.background = new THREE.Color(this.settings.colors.viewer_bg);
+        }
         while (this._scene.children.length > 0) {
             DataThreejs.disposeObjectProperty(this._scene.children[0], 'geometry');
             DataThreejs.disposeObjectProperty(this._scene.children[0], 'material');
@@ -296,9 +331,12 @@ export class DataThreejs {
         }
         const geom = new THREE.BufferGeometry();
         geom.setIndex(tris_i);
-        geom.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geom.addAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
-        geom.addAttribute('color', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
+        // geom.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        // geom.addAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
+        // geom.addAttribute('color', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
+        geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geom.setAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
+        geom.setAttribute('color', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
         geom.clearGroups();
         geom.addGroup(0, tris_i.length, 0);
         geom.addGroup(0, tris_i.length, 1);
@@ -339,8 +377,10 @@ export class DataThreejs {
         } else {
             geom.setIndex([0, 1]);
         }
-        geom.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geom.addAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
+        // geom.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        // geom.addAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
+        geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geom.setAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
         this.BufferGeoms.push(geom);
         const rgb = `rgb(${colors.toString()})`;
         const mat = new THREE.LineBasicMaterial({
@@ -458,10 +498,12 @@ export class DataThreejs {
         if (point_indices) {
             geom.setIndex(point_indices);
         }
-        geom.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        // geom.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         const color_rgb = new THREE.Color(parseInt(color.replace('#', '0x'), 16));
         if (colors) {
-            geom.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            // geom.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            geom.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
         } else {
             let color_data;
             if (positions) {
@@ -473,7 +515,8 @@ export class DataThreejs {
                 }
             }
             const color_buffer = new Uint8Array(color_data);
-            geom.addAttribute('color', new THREE.BufferAttribute(color_buffer, 3, true));
+            // geom.addAttribute('color', new THREE.BufferAttribute(color_buffer, 3, true));
+            geom.setAttribute('color', new THREE.BufferAttribute(color_buffer, 3, true));
         }
         geom.computeBoundingSphere();
         this.BufferGeoms.push(geom);
@@ -818,7 +861,7 @@ export class DataThreejs {
                 if (this.allObjs) {
                     const lightTarget = new THREE.Object3D();
                     lightTarget.position.set(this.allObjs.center.x, this.allObjs.center.y, this.allObjs.center.z);
-                    lightTarget.name = 'lightTarget'
+                    lightTarget.name = 'lightTarget';
                     this._scene.add(lightTarget);
                     (<THREE.DirectionalLight>this.directional_light).target = lightTarget;
                 }
@@ -830,7 +873,7 @@ export class DataThreejs {
             helper.name = 'DLHelper';
             this._scene.add(helper);
             this.getDLPosition(scale);
-            this._renderer.render(this._scene, this._camera);
+            // this._renderer.render(this._scene, this._camera);
         }
     }
 
@@ -845,7 +888,7 @@ export class DataThreejs {
             this.directional_light.shadow.mapSize.width = _size;
             this.directional_light.shadow.mapSize.width = _size;
         }
-        this._renderer.render(this._scene, this._camera);
+        // this._renderer.render(this._scene, this._camera);
     }
 
 
@@ -912,9 +955,12 @@ export class DataThreejs {
         materials): void {
         const geom = new THREE.BufferGeometry();
         geom.setIndex(tris_i);
-        geom.addAttribute('position', posis_buffer);
-        // geom.addAttribute('normal', normals_buffer);
-        geom.addAttribute('color', colors_buffer);
+        // geom.addAttribute('position', posis_buffer);
+        // // geom.addAttribute('normal', normals_buffer);
+        // geom.addAttribute('color', colors_buffer);
+        geom.setAttribute('position', posis_buffer);
+        // geom.setAttribute('normal', normals_buffer);
+        geom.setAttribute('color', colors_buffer);
         const colorf = new THREE.Color(parseInt(this.settings.colors.face_f.replace('#', '0x'), 16));
         const colorb = new THREE.Color(parseInt(this.settings.colors.face_b.replace('#', '0x'), 16));
         geom.clearGroups();
@@ -929,6 +975,11 @@ export class DataThreejs {
         const l = materials.length;
         for (; index < l; index++) {
             const element = materials[index];
+            // if (this.settings.background.show) {
+            //     element.envMap = this._scene.background;
+            //     element.refractionRatio = 1;
+            //     element.envMap.mapping = THREE.CubeRefractionMapping;
+            // }
             let mat;
             if (index === 0) {
                 delete element.type; element.color = colorf;
@@ -946,6 +997,11 @@ export class DataThreejs {
                     mat = new THREE.MeshPhongMaterial(element);
                 } else if (element.type === MaterialType.MeshPhysicalMaterial) {
                     delete element.type;
+                    // if (this.settings.background.show) {
+                    //     element.envMap = this._scene.background;
+                    //     // element.refractionRatio = 1;
+                    //     // element.envMap.mapping = THREE.CubeRefractionMapping;
+                    // }
                     mat = new THREE.MeshPhysicalMaterial(element);
                 } else if (element.type === MaterialType.MeshLambertMaterial) {
                     delete element.type;
@@ -981,10 +1037,12 @@ export class DataThreejs {
         size: number = 1): void {
         const geom = new THREE.BufferGeometry();
         geom.setIndex(lines_i);
-        geom.addAttribute('position', posis_buffer);
-        geom.addAttribute('normal', normals_buffer);
+        // geom.addAttribute('position', posis_buffer);
+        // geom.addAttribute('normal', normals_buffer);
+        geom.setAttribute('position', posis_buffer);
+        geom.setAttribute('normal', normals_buffer);
         this.BufferGeoms.push(geom);
-        // geom.addAttribute( 'color', new THREE.Float32BufferAttribute( colors_flat, 3 ) );
+        // // geom.addAttribute( 'color', new THREE.Float32BufferAttribute( colors_flat, 3 ) );
         const mat = new THREE.LineBasicMaterial({
             color: 0x000000,
             linewidth: size,
@@ -1006,8 +1064,10 @@ export class DataThreejs {
         size: number = 1): void {
         const geom = new THREE.BufferGeometry();
         geom.setIndex(points_i);
-        geom.addAttribute('position', posis_buffer);
-        geom.addAttribute('color', colors_buffer);
+        // geom.addAttribute('position', posis_buffer);
+        // geom.addAttribute('color', colors_buffer);
+        geom.setAttribute('position', posis_buffer);
+        geom.setAttribute('color', colors_buffer);
         this.BufferGeoms.push(geom);
         // geom.computeBoundingSphere();
         const rgb = `rgb(${color.toString()})`;
@@ -1029,7 +1089,8 @@ export class DataThreejs {
         size: number = 1): void {
         const geom = new THREE.BufferGeometry();
         geom.setIndex(points_i);
-        geom.addAttribute('position', posis_buffer);
+        // geom.addAttribute('position', posis_buffer);
+        geom.setAttribute('position', posis_buffer);
         this.BufferGeoms.push(geom);
         // geom.computeBoundingSphere();
         const mat = new THREE.PointsMaterial({
@@ -1199,12 +1260,12 @@ export class DataThreejs {
 
     public getGridPos() {
         if (this.allObjs) {
-            const grid_pos = new THREE.Vector3(this.allObjs.center.x, this.allObjs.center.y, 0);
-            this.grid.position.set(grid_pos.x, grid_pos.y, 0)
-            return grid_pos;
+            const grd_pos = new THREE.Vector3(this.allObjs.center.x, this.allObjs.center.y, 0);
+            this.grid.position.set(grd_pos.x, grd_pos.y, 0);
+            return grd_pos;
         }
         const grid_pos = new THREE.Vector3(0, 0, 0);
-        this.grid.position.set(0, 0, 0)
+        this.grid.position.set(0, 0, 0);
         return grid_pos;
     }
 
@@ -1302,36 +1363,43 @@ export class DataThreejs {
         }
         return true;
     }
+
+    loadBackground(background_set: number) {
+        const path = 'assets/img/background/bg' + background_set + '/';
+        const format = '.jpg';
+        const urls = [
+            path + 'px' + format, path + 'nx' + format,
+            path + 'py' + format, path + 'ny' + format,
+            path + 'pz' + format, path + 'nz' + format
+        ];
+        const background = new THREE.CubeTextureLoader().load( urls );
+
+        background.format = THREE.RGBFormat;
+        this._scene.background = background;
+        // this._renderer.render(this._scene, this._camera);
+    }
 }
 
 /**
  * objType includes point, line, face
  */
 
-enum objType {
-    point = 'point',
-    line = 'line',
-    face = 'face'
-}
 
-enum MaterialType {
-    MeshBasicMaterial = 'MeshBasicMaterial',
-    MeshStandardMaterial = 'MeshStandardMaterial',
-    MeshLambertMaterial = 'MeshLambertMaterial',
-    MeshPhongMaterial = 'MeshPhongMaterial',
-    MeshPhysicalMaterial = 'MeshPhysicalMaterial'
-}
 
 interface Settings {
     normals: { show: boolean, size: number };
     axes: { show: boolean, size: number };
     grid: {
-        show: boolean, 
+        show: boolean,
         size: number,
         pos: Vector3,
         pos_x: number,
         pos_y: number,
         pos_z: number,
+    };
+    background: {
+        show: boolean,
+        background_set: number
     };
     positions: { show: boolean, size: number };
     tjs_summary: { show: boolean };

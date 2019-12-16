@@ -221,6 +221,24 @@ export class ProcedureItemComponent implements OnDestroy {
         // this.data.enabled = !this.data.enabled;
     }
 
+    addArg(event: MouseEvent) {
+        event.stopPropagation();
+        this.data.args.push( <IArgument> {
+            'name': 'arg_' + this.data.argCount,
+            'value': '',
+            'jsValue': ''
+        });
+        this.data.argCount += 1;
+    }
+
+
+    rmArg(event: MouseEvent) {
+        event.stopPropagation();
+        this.data.args.pop();
+        this.data.argCount -= 1;
+        return ;
+    }
+
     // delete child procedure (after receiving emitDelete from child procedure)
     deleteChild(index: number): void {
         this.dataService.registerEdtAction([{'type': 'del', 'parent': this.data, 'index': index, 'prod': this.data.children[index]}]);
@@ -237,6 +255,7 @@ export class ProcedureItemComponent implements OnDestroy {
         const check = this.data.argCount > 0 && this.data.args[0].name === 'var_name';
         if (!check) { return false; }
         if (this.data.type !== ProcedureTypes.MainFunction) { return true; }
+        if (!this.ModuleDoc[this.data.meta.module] || !this.ModuleDoc[this.data.meta.module][this.data.meta.name]) { return false; }
         const returns = this.ModuleDoc[this.data.meta.module][this.data.meta.name].returns;
         if (!returns || returns.length < 5) { return false; }
         if (returns.slice(0, 5).toLowerCase() === 'entit') {return true; }
@@ -245,6 +264,13 @@ export class ProcedureItemComponent implements OnDestroy {
 
     haveHelpText() {
         return (this.data.type === 8 || this.data.type ===  9);
+    }
+
+    isLocalFunc(isRemove = false) {
+        if (isRemove) {
+            return this.data.type === 16 && this.data.argCount > 1;
+        }
+        return this.data.type === 16;
     }
 
 

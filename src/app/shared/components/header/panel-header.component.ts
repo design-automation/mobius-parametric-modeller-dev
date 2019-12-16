@@ -43,7 +43,7 @@ export class PanelHeaderComponent implements OnDestroy {
         this.ctx.font = '12px sans-serif';
 
         this.settings = this.dataService.mobiusSettings;
-
+        if (this.settings['debug'] === undefined) { this.settings['debug'] = true; }
         for (const cat in this.func_categories) {
             if (!this.func_categories[cat] || this.settings.hasOwnProperty('_func_' + this.func_categories[cat])) { continue; }
             this.settings['_func_' + this.func_categories[cat]] = true;
@@ -203,8 +203,13 @@ export class PanelHeaderComponent implements OnDestroy {
             if (result === 'error') {
                 return;
             }
-
-            this.dataService.file = circularJSON.parse(result);
+            SaveFileComponent.clearModelData(this.dataService.file, null);
+            try {
+                this.dataService.file = circularJSON.parse(result);
+            } catch (ex) {
+                this.dataService.notifyMessage('ERROR: Corrupted local file');
+                return;
+            }
             this.dataService.file.flowchart.meta.selected_nodes = [this.dataService.file.flowchart.nodes.length - 1];
             this.dataService.flagModifiedNode(this.dataService.flowchart.nodes[0].id);
             if (this.settings.execute) {
@@ -567,7 +572,7 @@ export class PanelHeaderComponent implements OnDestroy {
 
         let txtArea = document.getElementById('generatedLink');
         txtArea.innerHTML = `${window.location.origin}/${this.urlSet[1]}` +
-            `?file=${url}${this.urlSet[2]}${this.urlSet[3]}${this.urlSet[4]}`;
+            `?file=${url}${this.urlSet[2]}${this.urlSet[3]}${this.urlSet[4]}${this.urlSet[5]}`;
         txtArea = null;
     }
 
