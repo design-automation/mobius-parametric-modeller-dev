@@ -20,9 +20,8 @@ import { GeomMerge } from './GeomMerge';
 import { GeomGetSet } from './GeomGetSet';
 import { GeomCheck } from './GeomCheck';
 // others
-import { TFace, Txyz, TTri, IGeomData, TFaceWires, TFaceTris } from '../../common';
+import { TFace, Txyz, TTri, TFaceWires, TFaceTris } from '../../common';
 import { triangulate } from '@assets/libs/triangulate/triangulate';
-import { arrFill } from '@assets/libs/util/arrs';
 
 /**
  * Class that inherits all the other classes using mixins

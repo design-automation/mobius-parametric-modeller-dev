@@ -1,4 +1,5 @@
 import { GIAttribMap } from './attribs/data/AttribMap';
+import * as THREE from 'three';
 
 // longitude latitude in Singapore, NUS
 export const LONGLAT = [103.778329, 1.298759];
@@ -298,3 +299,45 @@ export interface IModelData {
     geometry: IGeomArrays;
     attributes: IAttribsData;
 }
+
+
+
+export enum ETjsMaterialType {
+    MeshBasicMaterial = 'MeshBasicMaterial',
+    MeshStandardMaterial = 'MeshStandardMaterial',
+    MeshLambertMaterial = 'MeshLambertMaterial',
+    MeshPhongMaterial = 'MeshPhongMaterial',
+    MeshPhysicalMaterial = 'MeshPhysicalMaterial'
+}
+export interface ITjsMaterial {
+    type: ETjsMaterialType;
+    side: THREE.Side;
+    vertexColors: THREE.Colors;
+    color?: THREE.Color;
+}
+export interface ITjsData {
+    num_posis: number;
+    num_points: number;
+    num_lines: number;
+    num_tris: number;
+    tris_geom_buff: THREE.BufferGeometry;
+    lines_geom_buff: THREE.BufferGeometry;
+    points_geom_buff: THREE.BufferGeometry;
+    posis_geom_buff: THREE.BufferGeometry;
+    // posis_xyz: number[];
+    // posis_indices: number[];
+    posis_map: Map<number, number>;
+    // vertex_xyz: number[];
+    vertex_map: Map<number, number>;
+    // normals: number[];
+    // colors: number[];
+    // point_indices: number[];
+    point_select_map: Map<number, number>;
+    // edge_indices: number[];
+    edge_select_map: Map<number, number>;
+    // triangle_indices: number[];
+    triangle_select_map: Map<number, number>;
+    materials: ITjsMaterial[];
+    // material_groups: [number, number, number][];
+}
+

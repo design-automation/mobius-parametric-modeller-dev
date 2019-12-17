@@ -1,7 +1,8 @@
 import { Geom } from './Geom';
-import { TTri, TEdge, TPoint, EEntType } from '../common';
+import { TTri, TEdge, TPoint, EEntType, ETjsMaterialType } from '../common';
 import { GIAttribMap } from '../attribs/data/AttribMap';
 import * as THREE from 'three';
+import { ITjsMaterial } from '../common';
 
 /**
  * Class for geometry.
@@ -34,7 +35,7 @@ export class GeomThreejs {
      * 2) the materials array, which is an array of objects
      * 3) the material groups array, which is an array of [ start, count, mat_index ]
      */
-    public get3jsTris(vertex_map: Map<number, number>): [number[], Map<number, number>, object[], [number, number, number][]] {
+    public get3jsTris(vertex_map: Map<number, number>): [number[], Map<number, number>, ITjsMaterial[], [number, number, number][]] {
         const settings = JSON.parse(localStorage.getItem('mpm_settings'));
         // arrays to store threejs data
         const tri_data_arrs: [number[], TTri, number][] = []; // tri_mat_indices, new_tri_verts_i, tri_i
@@ -52,7 +53,7 @@ export class GeomThreejs {
             side: THREE.BackSide,
             wireframe: settings.wireframe.show
         };
-        const materials: object[] = [this._getMaterial( mat_f ), this._getMaterial( mat_b )];
+        const materials: ITjsMaterial[] = [this._getMaterial( mat_f ), this._getMaterial( mat_b )];
         const material_names:  string[] = ['default_front', 'default_back'];
         // get the material attribute from polygons
         const material_attrib: GIAttribMap = this._geom.model.attribs._attribs_maps.pg.get('material');
@@ -218,9 +219,9 @@ export class GeomThreejs {
      * Create a threejs material
      * @param settings
      */
-    private _getMaterial(settings?: object) {
-        const material =  {
-            type: 'MeshPhongMaterial',
+    private _getMaterial(settings?: object): ITjsMaterial {
+        const material: ITjsMaterial =  {
+            type: ETjsMaterialType.MeshPhongMaterial, // 'MeshPhongMaterial',
             side: THREE.DoubleSide,
             vertexColors: THREE.VertexColors
         };
