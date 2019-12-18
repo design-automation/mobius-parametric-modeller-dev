@@ -324,20 +324,37 @@ export interface ITjsData {
     lines_geom_buff: THREE.BufferGeometry;
     points_geom_buff: THREE.BufferGeometry;
     posis_geom_buff: THREE.BufferGeometry;
-    // posis_xyz: number[];
-    // posis_indices: number[];
-    posis_map: Map<number, number>;
-    // vertex_xyz: number[];
-    vertex_map: Map<number, number>;
-    // normals: number[];
-    // colors: number[];
-    // point_indices: number[];
-    point_select_map: Map<number, number>;
-    // edge_indices: number[];
-    edge_select_map: Map<number, number>;
-    // triangle_indices: number[];
-    triangle_select_map: Map<number, number>;
+
+    posis_idx_to_i: number[];
+    verts_idx_to_i: number[];
+    points_select_idx_to_i: number[];
+    edges_select_idx_to_i: number[];
+    tris_select_idx_to_i: number[];
+
     materials: ITjsMaterial[];
-    // material_groups: [number, number, number][];
 }
 
+export interface ITjsGeomData {
+    // tris
+    tris_verts_idx_flat: number[];
+    tris_select_idx_to_i: number[];
+    materials: ITjsMaterial[];
+    material_groups: [number, number, number][];
+
+    // edges
+    edges_verts_idx_flat: number[];
+    edges_select_idx_to_i: number[];
+
+    // points
+    points_verts_idx_flat: number[];
+    points_select_idx_to_i: number[];
+}
+
+export interface ITjsAttribData {
+    coords_flat: number[];
+    colors_flat: number[];
+    normals_flat: number[];
+    posis_idx_to_i: number[];
+    verts_idx_to_i: number[];
+    verts_i_to_idx: number[];
+}

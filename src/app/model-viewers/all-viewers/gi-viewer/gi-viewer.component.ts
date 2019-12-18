@@ -282,10 +282,10 @@ export class GIViewerComponent implements OnInit {
                 }
                 break;
             case 'directional_light.type': // Directional Light
-                if (this.settings.directional_light.type === 'directional'){
-                    this.settings.directional_light.type = 'point'
+                if (this.settings.directional_light.type === 'directional') {
+                    this.settings.directional_light.type = 'point';
                 } else {
-                    this.settings.directional_light.type = 'directional'
+                    this.settings.directional_light.type = 'directional';
                 }
                 this.threejs.updateModel(this.data);
                 break;

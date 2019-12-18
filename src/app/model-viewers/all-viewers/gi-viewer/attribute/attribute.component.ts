@@ -9,6 +9,7 @@ import { SIModel } from '@assets/libs/sim/SIModel';
 import { DataService } from '../data/data.service';
 import { EEntType, EEntTypeStr } from '@libs/sim/common';
 import { AttribsThreejs } from '@assets/libs/sim/attribs/AttribsThreejs';
+import { AttribsTable } from '@assets/libs/sim/attribs/AttribsTable';
 import { ATabsComponent } from './tabs.component';
 import { sortByKey } from '@libs/util/maps';
 
@@ -136,16 +137,15 @@ export class AttributeComponent implements OnChanges {
 
     generateTable(tabIndex: number) {
         if (this.data) {
-            const ThreeJSData = this.data.attribs.threejs;
             if (Number(tabIndex) === 9) {
-                this.displayData = ThreeJSData.getModelAttribsForTable();
+                this.displayData = this.data.attribs.table.getModelAttribsForTable();
             } else {
-                const ready = this.data.attribs.threejs instanceof AttribsThreejs;
+                const ready = this.data.attribs.table instanceof AttribsTable; // TODO what is this?
                 this.selected_ents = this.dataService.selected_ents.get(EEntTypeStr[this.tab_map[tabIndex]]);
 
                 if (!ready) { return; }
                 if (this.showSelected) {
-                    const SelectedAttribData = ThreeJSData.getEntsVals(this.selected_ents, this.tab_map[tabIndex]);
+                    const SelectedAttribData = this.data.attribs.table.getEntsVals(this.selected_ents, this.tab_map[tabIndex]);
                     SelectedAttribData.map(row => {
                         if (this.selected_ents.has(row._id)) {
                             return row.selected = true;
@@ -153,7 +153,7 @@ export class AttributeComponent implements OnChanges {
                     });
                     this.displayData = SelectedAttribData;
                 } else {
-                    const AllAttribData = ThreeJSData.getEntAttribsForTable(this.tab_map[tabIndex]).data;
+                    const AllAttribData = this.data.attribs.table.getEntAttribsForTable(this.tab_map[tabIndex]).data;
                     AllAttribData.map(row => {
                         if (this.selected_ents.has(row._id)) {
                             return row.selected = true;
@@ -338,8 +338,7 @@ export class AttributeComponent implements OnChanges {
         }
         const id = Number(ent_id.substr(2));
         // Multiple row selection
-        const ThreeJSData = this.data.attribs.threejs;
-        const attrib_table = ThreeJSData.getEntAttribsForTable(this.tab_map[currentTab]);
+        const attrib_table = this.data.attribs.table.getEntAttribsForTable(this.tab_map[currentTab]);
         this.current_selected = id;
         const s = this.multi_selection;
 

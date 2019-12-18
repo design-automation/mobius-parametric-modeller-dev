@@ -493,7 +493,6 @@ export class GeomNav extends GeomPrint { // extends GeomBase
     }
     private getTriPosis(tri_i: number): number[] {
         const verts_i: number[] = this._geom_arrays.dn_tris_verts[tri_i];
-        console.log(">>>", tri_i, verts_i, this._geom_arrays.dn_tris_verts)
         const posis_i: number[] = [];
         for (const vert_i of verts_i) {
             posis_i.push( this._geom_arrays.dn_verts_posis[vert_i] );

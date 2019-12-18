@@ -720,7 +720,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
         switch (this.SelectingEntityType.id) {
             case EEntType.POSI:
                 if (intersect0.object.type === 'Points') {
-                    const posi = scene.posis_map.get(intersect0.index);
+                    // const posi = scene.posis_map.get(intersect0.index);
+                    const posi = scene.posis_idx_to_i[intersect0.index];
                     const ent_id = `${EEntTypeStr[EEntType.POSI]}${posi}`;
                     if (scene.selected_geoms.has(ent_id)) {
                         this.unselectGeom(ent_id, EEntTypeStr[EEntType.POSI], true);
@@ -731,7 +732,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                         this.selectPositions(posi, null, null, ent_id);
                     }
                 } else if (intersect0.object.type === 'LineSegments') {
-                    const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    // const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    const edge = scene.edges_select_idx_to_i[intersect0.index / 2];
                     const ent_id = `_e_posi${edge}`;
                     if (scene.selected_positions.has(ent_id)) {
                         this.unselectGeom(ent_id, EEntTypeStr[EEntType.POSI]);
@@ -742,7 +744,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                         this.selectPositions(null, edge, null, ent_id);
                     }
                 } else if (intersect0.object.type === 'Mesh') {
-                    const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    // const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    const tri = scene.tris_select_idx_to_i[intersect0.faceIndex];
                     const face = this.model.geom.data.navTriToFace(tri);
                     const ent_id = `_f_posi${face}`;
                     if (scene.selected_positions.has(ent_id)) {
@@ -757,8 +760,10 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 break;
             case EEntType.VERT:
                 if (intersect0.object.type === 'Points') {
-                    const vert = scene.vertex_map.get(intersect0.index);
-                    const verts = this.model.geom.data.navPosiToVert(intersect0.index);
+                    // const vert = scene.vertex_map.get(intersect0.index);
+                    const vert = scene.verts_idx_to_i[intersect0.index];
+                    // const verts = this.model.geom.data.navPosiToVert(intersect0.index); // TODO this is wrong
+                    const verts = this.model.geom.data.navPosiToVert(vert);
                     let point: number;
                     if (verts.length > 1) {
                         this.dropdown.setItems(verts, EEntTypeStr[EEntType.VERT]);
@@ -777,7 +782,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                         this.selectVertex(point, null, null, ent_id);
                     }
                 } else if (intersect0.object.type === 'LineSegments') {
-                    const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    // const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    const edge = scene.edges_select_idx_to_i[intersect0.index / 2];
                     const ent_id = `_e_v${edge}`;
                     if (scene.selected_vertex.has(ent_id)) {
                         this.unselectGeom(ent_id, EEntTypeStr[EEntType.VERT]);
@@ -788,7 +794,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                         this.selectVertex(null, edge, null, ent_id);
                     }
                 } else if (intersect0.object.type === 'Mesh') {
-                    const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    // const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    const tri = scene.tris_select_idx_to_i[intersect0.faceIndex];
                     const face = this.model.geom.data.navTriToFace(tri);
                     const ent_id = `_f_v${face}`;
                     if (scene.selected_vertex.has(ent_id)) {
@@ -809,7 +816,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 break;
             case EEntType.FACE:
                 if (intersect0.object.type === 'Mesh') {
-                    const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    // const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    const tri = scene.tris_select_idx_to_i[intersect0.faceIndex];
                     const face = this.model.geom.data.navTriToFace(tri);
                     const ent_id = `${EEntTypeStr[EEntType.FACE]}${face}`;
                     if (scene.selected_geoms.has(ent_id)) {
@@ -826,7 +834,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 break;
             case EEntType.PGON:
                 if (intersect0.object.type === 'Mesh') {
-                    const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    // const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    const tri = scene.tris_select_idx_to_i[intersect0.faceIndex];
                     const face = this.model.geom.data.navTriToFace(tri);
                     const pgon = this.model.geom.data.navFaceToPgon(face);
                     const ent_id = `${EEntTypeStr[EEntType.PGON]}${pgon}`;
@@ -844,7 +853,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 break;
             case EEntType.EDGE:
                 if (intersect0.object.type === 'LineSegments') {
-                    const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    // const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    const edge = scene.edges_select_idx_to_i[intersect0.index / 2];
                     const ent_id = `${EEntTypeStr[EEntType.EDGE]}${edge}`;
                     if (scene.selected_geoms.has(ent_id)) {
                         this.unselectGeom(ent_id, EEntTypeStr[EEntType.EDGE], true);
@@ -855,7 +865,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                         this.selectEdge(edge);
                     }
                 } else if (intersect0.object.type === 'Mesh') {
-                    const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    // const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    const tri = scene.tris_select_idx_to_i[intersect0.faceIndex];
                     const face = this.model.geom.data.navTriToFace(tri);
                     const ent_id = `${EEntTypeStr[EEntType.FACE]}${face}`;
                     if (scene.selected_face_edges.has(ent_id)) {
@@ -872,7 +883,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 break;
             case EEntType.WIRE:
                 if (intersect0.object.type === 'LineSegments') {
-                    const edge = scene.edge_select_map.get(intersect0.index / 2),
+                    // const edge = scene.edge_select_map.get(intersect0.index / 2),
+                    const edge = scene.edges_select_idx_to_i[intersect0.index / 2],
                         wire = this.model.geom.data.navEdgeToWire(edge);
                     const ent_id = `${EEntTypeStr[EEntType.WIRE]}${edge}`;
                     if (scene.selected_geoms.has(ent_id)) {
@@ -884,7 +896,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                         this.selectWire(wire);
                     }
                 } else if (intersect0.object.type === 'Mesh') {
-                    const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    // const tri = scene.tri_select_map.get(intersect0.faceIndex);
+                    const tri = scene.tris_select_idx_to_i[intersect0.faceIndex];
                     const face = this.model.geom.data.navTriToFace(tri);
                     const ent_id = `${EEntTypeStr[EEntType.FACE]}${face}`;
                     if (scene.selected_face_wires.has(ent_id)) {
@@ -901,7 +914,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 break;
             case EEntType.PLINE:
                 if (intersect0.object.type === 'LineSegments') {
-                    const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    // const edge = scene.edge_select_map.get(intersect0.index / 2);
+                    const edge = scene.edges_select_idx_to_i[intersect0.index / 2];
                     const wire = this.model.geom.data.navEdgeToWire(edge);
                     const pline = this.model.geom.data.navWireToPline(wire);
                     const ent_id = `${EEntTypeStr[EEntType.PLINE]}${pline}`;
@@ -925,7 +939,8 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 if (intersect0.object.type === 'Points') {
                     const vert = this.model.geom.data.navPosiToVert(intersect0.index);
                     const _point = this.model.geom.data.navVertToPoint(vert[0]);
-                    const point = scene.point_select_map.get(_point);
+                    // const point = scene.point_select_map.get(_point);
+                    const point = scene.points_select_idx_to_i[_point];
                     const ent_id = `${EEntTypeStr[EEntType.POINT]}${point}`;
                     if (scene.selected_geoms.has(ent_id)) {
                         this.unselectGeom(ent_id, EEntTypeStr[EEntType.POINT], true);
@@ -1103,7 +1118,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             this.dataService.selected_ents.get(ent_type_str).delete(ent_id);
             this.unselectLabel(ent_id, ent_type_str);
         }
-        console.log('.....',event)
+        console.log('.....', event);
         this.refreshTable(event);
     }
 

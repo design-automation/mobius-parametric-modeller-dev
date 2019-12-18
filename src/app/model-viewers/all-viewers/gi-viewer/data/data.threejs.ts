@@ -25,11 +25,17 @@ export class DataThreejs {
     public _raycaster: THREE.Raycaster;
     public _mouse: THREE.Vector2;
     // interaction and selection
-    public tri_select_map: Map<number, number>;
-    public edge_select_map: Map<number, number>;
-    public point_select_map: Map<number, number>;
-    public posis_map: Map<number, number>;
-    public vertex_map: Map<number, number>;
+    // public tri_select_map: Map<number, number>;
+    // public edge_select_map: Map<number, number>;
+    // public point_select_map: Map<number, number>;
+    // public posis_map: Map<number, number>;
+    // public vertex_map: Map<number, number>;
+
+    public tris_select_idx_to_i: number[];
+    public edges_select_idx_to_i: number[];
+    public points_select_idx_to_i: number[];
+    public posis_idx_to_i: number[];
+    public verts_idx_to_i: number[];
 
     public selected_geoms: Map<string, number> = new Map();
     public selected_positions: Map<string, Map<string, number>> = new Map();
@@ -200,7 +206,7 @@ export class DataThreejs {
         this._addAxes();
 
         // Add geometry
-        const threejs_data: ITjsData = model.threejs.get3jsData();
+        const threejs_data: ITjsData = model.threejs.getTjsData();
 
         // if (threejs_data.posis_indices.length === 0) {
             // this._camera.position.set(-80, -80, 80);
@@ -214,11 +220,11 @@ export class DataThreejs {
         // }
         // this._camera.lookAt(this._scene.position);
 
-        this.tri_select_map = threejs_data.triangle_select_map;
-        this.edge_select_map = threejs_data.edge_select_map;
-        this.point_select_map = threejs_data.point_select_map;
-        this.posis_map = threejs_data.posis_map;
-        this.vertex_map = threejs_data.vertex_map;
+        this.tris_select_idx_to_i = threejs_data.tris_select_idx_to_i;
+        this.edges_select_idx_to_i = threejs_data.edges_select_idx_to_i;
+        this.points_select_idx_to_i = threejs_data.points_select_idx_to_i;
+        this.posis_idx_to_i = threejs_data.posis_idx_to_i;
+        this.verts_idx_to_i = threejs_data.verts_idx_to_i;
 
         // const material_groups = threejs_data.material_groups;
         const materials = threejs_data.materials;

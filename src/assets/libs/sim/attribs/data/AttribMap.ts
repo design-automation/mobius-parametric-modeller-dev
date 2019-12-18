@@ -123,6 +123,36 @@ export class GIAttribMap {
         // this._data_length may need to be reduced
     }
     /**
+     * Returns all values as a flat array, not including deleted
+     * and an array idx -> ent_i
+     * and an array ent_i -> idx
+     */
+    public getAllValsWithIdxs(): [TAttribDataTypes[], number[], number[]] {
+        const all_values: TAttribDataTypes[] = [];
+        const idx_to_i: number[] = [];
+        const i_to_idx: number[] = [];
+        this._map_ent_i_to_val_i.forEach( (val_i, ent_i) => {
+            if (val_i !== undefined) {
+                const idx: number = all_values.push( this._map_val_i_to_val.get(val_i) ) - 1;
+                idx_to_i[idx] = ent_i;
+                i_to_idx[ent_i] = idx;
+            }
+        });
+        return [all_values, idx_to_i, i_to_idx];
+    }
+    /**
+     * Returns all values as a flat array, not including deleted
+     */
+    public getAllVals(): TAttribDataTypes[] {
+        const all_values: TAttribDataTypes[] = [];
+        this._map_ent_i_to_val_i.forEach( (val_i, ent_i) => {
+            if (val_i !== undefined) {
+                all_values.push( this._map_val_i_to_val.get(val_i) );
+            }
+        });
+        return all_values;
+    }
+    /**
      * Returns a nested array of entities and values, like this:
      * [ [[2,4,6,8], 'hello'], [[9,10], 'world']]
      * This is the same format as used in gi-json

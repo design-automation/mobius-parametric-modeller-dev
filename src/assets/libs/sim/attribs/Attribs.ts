@@ -1,5 +1,6 @@
 import { AttribsAdd } from './AttribsAdd';
 import { AttribsThreejs } from './AttribsThreejs';
+import { AttribsTable } from './AttribsTable';
 import { AttribsQuery } from './AttribsQuery';
 import { SIModel } from '../SIModel';
 import { EEntType, EAttribNames, EAttribDataTypeStrs, IAttribsMaps } from '../common';
@@ -40,6 +41,7 @@ export class Attribs {
     public modify: AttribsModify;
     public query: AttribsQuery;
     public threejs: AttribsThreejs;
+    public table: AttribsTable;
    /**
      * Creates an object to store the attribute data.
      * @param model The JSON data
@@ -53,6 +55,7 @@ export class Attribs {
         this.modify = new AttribsModify(this);
         this.query = new AttribsQuery(this);
         this.threejs = new AttribsThreejs(this);
+        this.table = new AttribsTable(this);
         // add an attrib for xyz
         this.add.addAttrib(EEntType.POSI, EAttribNames.COORDS, EAttribDataTypeStrs.LIST);
     }
