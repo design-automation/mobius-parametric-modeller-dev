@@ -7,18 +7,34 @@ const config = require('../gallery/__config__.json');
 const urlString = 'https://mobius.design-automation.net';
 
 // Edit this ModuleList to include modules that are to be converted into MD file
+// const ModuleList = [
+//     'query',
+//     'make',
+//     'modify',
+//     'isect',
+//     'calc',
+//     'util',
+//     'pattern',
+//     'virtual',
+//     'list',
+// ];
 const ModuleList = [
     'query',
+    'pattern',
     'make',
     'modify',
-    'isect',
+    'attrib',
     'calc',
-    'util',
-    'pattern',
-    'virtual',
+    'intersect',
+    'collection',
     'list',
+    'dict',
+    'analyze',
+    'visualize',
+    'material',
+    'io',
+    'util'
 ];
-
 
 let examples;
 for (const s of config.data){
@@ -73,19 +89,21 @@ const docs = [];
 
 for (const mod of doc.children) {
     let modName = mod.name.split('/');
+    if (modName.length < 3 || modName[0] !== '"assets' || modName[1] !== 'core' || modName[2] !== 'modules') { continue; }
     modName = modName[modName.length - 1];
     if (modName.substr(0, 1) === '"' || modName.substr(0, 1) === '\'') {
         modName = modName.substr(1, modName.length - 2);
     } else {
         modName = modName.substr(0, modName.length - 1);
     }
-    if (modName.substr(0, 1) === '_' || modName === 'index') {
+    if (modName.substr(0, 1) === '_' || modName === 'index' || modName === 'categorization') {
         continue;
     }
     const moduleDoc = {};
     moduleDoc['id'] = mod.id;
     moduleDoc['name'] = modName;
     moduleDoc['func'] = [];
+    if (!mod.children) { continue; }
     for (const func of mod.children) {
         if (func.name[0] === '_') { continue; }
         const fn = {};

@@ -5,13 +5,14 @@ import { INode } from '@models/node';
 import { IProcedure } from '@models/procedure';
 import { IEdge } from '@models/edge';
 import { Subject } from 'rxjs';
+import { VERSION } from '@env/version';
 
 @Injectable()
 export class DataService {
     private static _data: IMobius = {
         name: 'Untitled',
         author: 'new_user',
-        version: 1,
+        version: VERSION.version,
         flowchart: FlowchartUtils.newflowchart(),
         settings: {}
     };
