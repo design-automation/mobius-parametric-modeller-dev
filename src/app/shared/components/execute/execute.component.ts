@@ -548,6 +548,7 @@ export class ExecuteComponent {
             }
 
             params['model'] = _parameterTypes.newFn();
+            params['model'].debug = this.dataService.mobiusSettings.debug;
             _parameterTypes.mergeFn(params['model'], node.input.value);
             // create the function with the string: new Function ([arg1[, arg2[, ...argN]],] functionBody)
 

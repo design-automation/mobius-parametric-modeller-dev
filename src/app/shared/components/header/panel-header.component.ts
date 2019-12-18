@@ -177,6 +177,7 @@ export class PanelHeaderComponent implements OnDestroy {
 
     updateSettings() {
         this.settings.execute = (<HTMLInputElement>document.getElementById('settings-execute')).checked;
+        this.settings.debug = (<HTMLInputElement>document.getElementById('settings-debug')).checked;
 
         for (const cat in this.func_categories) {
             if (!this.func_categories[cat]) { continue; }

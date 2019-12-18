@@ -499,52 +499,50 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             this._no_model = true;
             return;
         } else {
-            // if (model !== this._data_threejs._model) {
-                this._data_threejs._model = model;
-                try {
-                    // add geometry to the scene
-                    this._data_threejs.addGeometry(model, this.container);
-                    // this.resetTable();
-                    this.getGISummary(model);
-                    if (localStorage.getItem('gi_summary')) {
-                        this.giSummary = JSON.parse(localStorage.getItem('gi_summary'));
-                    }
-                    this._model_error = false;
-                    this._no_model = false;
-
-                    // Show Flowchart Selected Entities
-                    const selected = this.model.geom.selected;
-                    this.dataService.clearAll();
-                    if (selected !== undefined && selected.length) {
-                        let selectingType;
-                        this._data_threejs.selected_geoms.clear();
-                        selected.forEach(s => {
-                            const type = EEntTypeStr[s[0]], id = Number(s[1]);
-                            if (this.model.geom.data.entExists(s[0], id)) {
-                                this.dataService.selected_ents.get(type).set(`${type}${id}`, id);
-                                this.attrTableSelect({ action: 'select', ent_type: type, id: id }, true);
-                            }
-                            selectingType = s[0];
-                        });
-                        sessionStorage.setItem('mpm_showSelected', 'true');
-
-                        sessionStorage.setItem('mpm_changetab', 'true');
-                        localStorage.setItem('mpm_attrib_current_tab', this.tab_rev_map[selectingType]);
-                        this.selectEntityType(this.selections.find(selection => selection.id === selectingType));
-                    } else {
-                        sessionStorage.setItem('mpm_showSelected', 'false');
-                        sessionStorage.setItem('mpm_changetab', 'false');
-                    }
-                    this.getSelectingEntityType();
-                    this.refreshTable(event);
-
-                } catch (ex) {
-                    console.error('Error displaying model:', ex);
-                    this._model_error = true;
-                    this._data_threejs._text = ex;
+            this._data_threejs._model = model;
+            try {
+                // add geometry to the scene
+                this._data_threejs.addGeometry(model, this.container);
+                // this.resetTable();
+                this.getGISummary(model);
+                if (localStorage.getItem('gi_summary')) {
+                    this.giSummary = JSON.parse(localStorage.getItem('gi_summary'));
                 }
+                this._model_error = false;
+                this._no_model = false;
+
+                // Show Flowchart Selected Entities
+                const selected = this.model.geom.selected;
+                this.dataService.clearAll();
+                if (selected !== undefined && selected.length) {
+                    let selectingType;
+                    this._data_threejs.selected_geoms.clear();
+                    selected.forEach(s => {
+                        const type = EEntTypeStr[s[0]], id = Number(s[1]);
+                        if (this.model.geom.data.entExists(s[0], id)) {
+                            this.dataService.selected_ents.get(type).set(`${type}${id}`, id);
+                            this.attrTableSelect({ action: 'select', ent_type: type, id: id }, true);
+                        }
+                        selectingType = s[0];
+                    });
+                    sessionStorage.setItem('mpm_showSelected', 'true');
+
+                    sessionStorage.setItem('mpm_changetab', 'true');
+                    localStorage.setItem('mpm_attrib_current_tab', this.tab_rev_map[selectingType]);
+                    this.selectEntityType(this.selections.find(selection => selection.id === selectingType));
+                } else {
+                    sessionStorage.setItem('mpm_showSelected', 'false');
+                    sessionStorage.setItem('mpm_changetab', 'false');
+                }
+                this.getSelectingEntityType();
+                this.refreshTable(event);
+
+            } catch (ex) {
+                console.error('Error displaying model:', ex);
+                this._model_error = true;
+                this._data_threejs._text = ex;
             }
-        // }
+        }
     }
 
     onMouseUp(event) {

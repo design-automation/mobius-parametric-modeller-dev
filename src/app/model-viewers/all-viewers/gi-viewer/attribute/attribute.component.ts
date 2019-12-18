@@ -334,7 +334,7 @@ export class AttributeComponent implements OnChanges {
     selectRow(ent_id: string, event) {
         const currentTab = this.getCurrentTab();
         if (currentTab === 9) {
-        return;
+            return;
         }
         const id = Number(ent_id.substr(2));
         // Multiple row selection
