@@ -11,6 +11,9 @@ import { IMobius } from '@models/mobius';
 
 
 export function checkMobFile(file: IMobius) {
+    if (file.version === VERSION.version) {
+        return;
+    }
     // check the end node
     // checkEndReturn(file);
 
