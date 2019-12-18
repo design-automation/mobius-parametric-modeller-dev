@@ -117,5 +117,25 @@
             "module": "material",
             "name": "Physical"
         }
+    },
+    {
+        "old_func": {
+            "module": "render",
+            "name": "LambertMaterial"
+        },
+        "new_func": {
+            "module": "material",
+            "name": "Lambert"
+        }
+    },
+    {
+        "old_func": {
+            "module": "render",
+            "name": "StandardMaterial"
+        },
+        "new_func": {
+            "module": "material",
+            "name": "Standard"
+        }
     }
 ]
