@@ -320,6 +320,7 @@ export interface ITjsData {
     num_points: number;
     num_lines: number;
     num_tris: number;
+
     tris_geom_buff: THREE.BufferGeometry;
     lines_geom_buff: THREE.BufferGeometry;
     points_geom_buff: THREE.BufferGeometry;
