@@ -62,11 +62,18 @@ export class DataThreejs extends DataThreejsLookAt {
         }
         while (this.scene.children.length > 0) {
             DataThreejs.disposeObjectProperty(this.scene.children[0], 'geometry');
-            DataThreejs.disposeObjectProperty(this.scene.children[0], 'material');
+            // DataThreejs.disposeObjectProperty(this.scene.children[0], 'material');
             DataThreejs.disposeObjectProperty(this.scene.children[0], 'texture');
             this.scene.remove(this.scene.children[0]);
-            this.scene_objs = [];
         }
+        this.selected_geoms.clear();
+        this.selected_positions.clear();
+        this.selected_vertex.clear();
+        this.selected_face_edges.clear();
+        this.selected_face_wires.clear();
+        this.scene_objs_selected.clear();
+        this.scene_objs = [];
+
         document.querySelectorAll('[id^=textLabel_]').forEach(value => {
             container.removeChild(value);
         });
@@ -547,7 +554,6 @@ export class DataThreejs extends DataThreejsLookAt {
      * Add threejs triangles to the scene
      */
     private _addTris(tris_geom_buff: THREE.BufferGeometry, tris_mat_arr: THREE.Material[]): void {
-        this._buffer_geoms.push(tris_geom_buff);
         const mesh = new THREE.Mesh(tris_geom_buff, tris_mat_arr);
         mesh.geometry.computeBoundingSphere();
         mesh.geometry.computeVertexNormals();
@@ -565,7 +571,6 @@ export class DataThreejs extends DataThreejsLookAt {
      * Add threejs lines to the scene
      */
     private _addLines(lines_buff_geom: THREE.BufferGeometry, size: number = 1): void {
-        this._buffer_geoms.push(lines_buff_geom);
         // // geom.addAttribute( 'color', new THREE.Float32BufferAttribute( colors_flat, 3 ) );
         const mat = new THREE.LineBasicMaterial({
             color: 0x000000,
@@ -583,7 +588,6 @@ export class DataThreejs extends DataThreejsLookAt {
     private _addPoints(points_buff_geom: THREE.BufferGeometry,
             color: [number, number, number],
             size: number = 1) {
-        this._buffer_geoms.push(points_buff_geom);
         // geom.computeBoundingSphere();
         const rgb = `rgb(${color.toString()})`;
         const mat = new THREE.PointsMaterial({
@@ -600,7 +604,6 @@ export class DataThreejs extends DataThreejsLookAt {
      * Add threejs positions to the scene
      */
     private _addPosis(posis_geom_buff: THREE.BufferGeometry, color: string, size: number = 1): void {
-        this._buffer_geoms.push(posis_geom_buff);
         // geom.computeBoundingSphere();
         const mat = new THREE.PointsMaterial({
             color: new THREE.Color(parseInt(color.replace('#', '0x'), 16)),

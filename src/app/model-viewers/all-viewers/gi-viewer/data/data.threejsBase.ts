@@ -64,7 +64,6 @@ export class DataThreejsBase {
     // initial origin
     protected origin: THREE.Vector3 = new THREE.Vector3(0, 1, 0);
     // BufferGeoms
-    protected _buffer_geoms: THREE.BufferGeometry[] = [];
     protected _all_objs_sphere: THREE.Sphere;
 
     /**
@@ -106,19 +105,5 @@ export class DataThreejsBase {
         this.raycaster = new THREE.Raycaster();
         this.raycaster.linePrecision = 0.3; // TODO this need to be set dynamically based on model size and view zoom
         this.raycaster.params.Points.threshold = 0.3; // TODO this need to be set dynamically based on model size and view zoom
-    }
-    /**
-     *
-     * @param object
-     * @param property
-     */
-    public static disposeObjectProperty(object: THREE.Object3D, property: string): void {
-        if (object.hasOwnProperty(property)) {
-            if (object[property].constructor === [].constructor) {
-                object[property].forEach(prop => prop.dispose());
-            } else {
-                object[property].dispose();
-            }
-        }
     }
 }

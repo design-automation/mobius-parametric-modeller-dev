@@ -74,7 +74,6 @@ export class DataThreejsSelect extends DataThreejsBase {
             this.createLabelforObj(container, obj.entity, obj.type, labelText, ent_id);
             this.ObjLabelMap.set(ent_id, obj);
         }
-        this._buffer_geoms.push(geom);
     }
     /**
      *
@@ -437,7 +436,6 @@ export class DataThreejsSelect extends DataThreejsBase {
         // geom.addAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
         geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geom.setAttribute('normal', new THREE.Float32BufferAttribute(Array(positions.length).fill(0), 3));
-        this._buffer_geoms.push(geom);
         const rgb = `rgb(${colors.toString()})`;
         const mat = new THREE.LineBasicMaterial({
             color: new THREE.Color(rgb),
@@ -487,7 +485,6 @@ export class DataThreejsSelect extends DataThreejsBase {
             geom.setAttribute('color', new THREE.BufferAttribute(color_buffer, 3, true));
         }
         geom.computeBoundingSphere();
-        this._buffer_geoms.push(geom);
         const mat = new THREE.PointsMaterial({
             color: color_rgb,
             size: size,

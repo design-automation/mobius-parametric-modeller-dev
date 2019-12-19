@@ -76,6 +76,19 @@
     },
     {
         "old_func": {
+            "module": "make",
+            "name": "Unweld"
+        },
+        "new_func": {
+            "module": "modify",
+            "name": "Weld",
+            "values": {
+                "method": "'clone_positions'"
+            }
+        }
+    },
+    {
+        "old_func": {
             "module": "render",
             "name": "BasicMaterial"
         },
