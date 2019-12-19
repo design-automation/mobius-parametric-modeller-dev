@@ -309,38 +309,31 @@ export enum ETjsMaterialType {
     MeshPhongMaterial = 'MeshPhongMaterial',
     MeshPhysicalMaterial = 'MeshPhysicalMaterial'
 }
+
 export interface ITjsMaterial {
     type: ETjsMaterialType;
     side: THREE.Side;
     vertexColors: THREE.Colors;
     color?: THREE.Color;
-}
-export interface ITjsData {
-    num_posis: number;
-    num_points: number;
-    num_lines: number;
-    num_tris: number;
-
-    tris_geom_buff: THREE.BufferGeometry;
-    lines_geom_buff: THREE.BufferGeometry;
-    points_geom_buff: THREE.BufferGeometry;
-    posis_geom_buff: THREE.BufferGeometry;
-
-    posis_idx_to_i: number[];
-    verts_idx_to_i: number[];
-    points_select_idx_to_i: number[];
-    edges_select_idx_to_i: number[];
-    tris_select_idx_to_i: number[];
-
-    materials: ITjsMaterial[];
+    // emissive?: THREE.Color;
+    // specular?: THREE.Color;
+    // transparent?: boolean;
+    // opacity?: number;
+    // shininess?: number;
+    // roughness?: number;
+    // metalness?: number;
+    // reflectivity?: number;
 }
 
 export interface ITjsGeomData {
+
+    // materials
+    materials: ITjsMaterial[];
+    material_groups: [number, number, number][];
+
     // tris
     tris_verts_idx_flat: number[];
     tris_select_idx_to_i: number[];
-    materials: ITjsMaterial[];
-    material_groups: [number, number, number][];
 
     // edges
     edges_verts_idx_flat: number[];
@@ -352,10 +345,34 @@ export interface ITjsGeomData {
 }
 
 export interface ITjsAttribData {
+
+    // flat arrays of data
     coords_flat: number[];
     colors_flat: number[];
     normals_flat: number[];
+
+    // pointers
     posis_idx_to_i: number[];
     verts_idx_to_i: number[];
     verts_i_to_idx: number[];
 }
+
+// export interface ITjsData {
+//     num_posis: number;
+//     num_points: number;
+//     num_lines: number;
+//     num_tris: number;
+
+//     tris_geom_buff: THREE.BufferGeometry;
+//     lines_geom_buff: THREE.BufferGeometry;
+//     points_geom_buff: THREE.BufferGeometry;
+//     posis_geom_buff: THREE.BufferGeometry;
+
+//     posis_idx_to_i: number[];
+//     verts_idx_to_i: number[];
+//     points_select_idx_to_i: number[];
+//     edges_select_idx_to_i: number[];
+//     tris_select_idx_to_i: number[];
+
+//     materials: ITjsMaterial[];
+// }

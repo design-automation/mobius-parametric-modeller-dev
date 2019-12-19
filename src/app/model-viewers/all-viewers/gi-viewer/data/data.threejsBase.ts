@@ -8,8 +8,10 @@ import { ISettings } from './data.threejsSettings';
  * ThreejsScene
  */
 export class DataThreejsBase {
+    
     // threeJS objects
     public scene: THREE.Scene;
+
     // public basic_scene: THREE.Scene;
     public renderer: THREE.WebGLRenderer;
     public camera;
@@ -18,17 +20,11 @@ export class DataThreejsBase {
     public mouse: THREE.Vector2;
 
     // interaction and selection
-    // public tri_select_map: Map<number, number>;
-    // public edge_select_map: Map<number, number>;
-    // public point_select_map: Map<number, number>;
-    // public posis_map: Map<number, number>;
-    // public vertex_map: Map<number, number>;
-
-    public tris_select_idx_to_i: number[];
-    public edges_select_idx_to_i: number[];
-    public points_select_idx_to_i: number[];
-    public posis_idx_to_i: number[];
-    public verts_idx_to_i: number[];
+    public tris_select_idx_to_i: Int16Array;
+    public edges_select_idx_to_i: Int16Array;
+    public points_select_idx_to_i: Int16Array;
+    public posis_idx_to_i: Int16Array;
+    public verts_idx_to_i: Int16Array;
 
     public selected_geoms: Map<string, number> = new Map();
     public selected_positions: Map<string, Map<string, number>> = new Map();
@@ -36,14 +32,17 @@ export class DataThreejsBase {
     public selected_face_edges: Map<string, Map<string, number>> = new Map();
     public selected_face_wires: Map<string, Map<string, number>> = new Map();
     public text: string;
+
     // text labels
     public ObjLabelMap: Map<string, any> = new Map();
     public textLabels: Map<string, any> = new Map();
+
     // number of threejs points, lines, triangles
     public threejs_nums: [number, number, number] = [0, 0, 0];
+
     // grid
     public grid: THREE.GridHelper;
-    // public grid_pos: THREE.Vector3 = new THREE.Vector3();
+
     // axes
     public axesHelper: THREE.AxesHelper;
     protected axes_pos: THREE.Vector3 = new THREE.Vector3();
@@ -52,17 +51,22 @@ export class DataThreejsBase {
     public ambient_light: THREE.AmbientLight;
     public hemisphere_light: THREE.HemisphereLight;
     public groundObj: THREE.Mesh;
+
     // the model to display
     public model: SIModel;
     public scene_objs: THREE.Object3D[] = [];
     public scene_objs_selected: Map<string, THREE.Object3D> = new Map();
     public positions: THREE.Object3D[] = [];
+
     // Show Normals
     public vnh: THREE.VertexNormalsHelper;
+
     // Settings
     public settings: ISettings;
+
     // initial origin
     protected origin: THREE.Vector3 = new THREE.Vector3(0, 1, 0);
+
     // BufferGeoms
     protected _buffer_geoms: THREE.BufferGeometry[] = [];
     protected _all_objs_sphere: THREE.Sphere;
