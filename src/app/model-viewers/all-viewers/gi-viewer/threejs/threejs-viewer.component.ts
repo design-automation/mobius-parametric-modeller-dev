@@ -139,12 +139,12 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
 
         this._data_threejs = this.dataService.getThreejsScene();
         this.threeJSViewerService.DataThreejs = this._data_threejs;
-        this.container.appendChild(this._data_threejs._renderer.domElement);
+        this.container.appendChild(this._data_threejs.renderer.domElement);
         // set the numbers of entities
-        this._threejs_nums = this._data_threejs._threejs_nums;
+        this._threejs_nums = this._data_threejs.threejs_nums;
         // ??? What is happening here?
-        this._data_threejs._controls.addEventListener('change', this.activateRender);
-        this._data_threejs._renderer.render(this._data_threejs._scene, this._data_threejs._camera);
+        this._data_threejs.controls.addEventListener('change', this.activateRender);
+        this._data_threejs.renderer.render(this._data_threejs.scene, this._data_threejs.camera);
 
         if (this._data_threejs.ObjLabelMap.size !== 0) {
             this._data_threejs.ObjLabelMap.forEach((obj, label) => {
@@ -185,9 +185,9 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             this._width = width;
             this._height = height;
             setTimeout(() => {
-                this._data_threejs._camera.aspect = this._width / this._height;
-                this._data_threejs._camera.updateProjectionMatrix();
-                this._data_threejs._renderer.setSize(this._width, this._height);
+                this._data_threejs.camera.aspect = this._width / this._height;
+                this._data_threejs.camera.updateProjectionMatrix();
+                this._data_threejs.renderer.setSize(this._width, this._height);
                 this.activateRender();
             }, 10);
         }
@@ -238,7 +238,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
         this.model = null;
         clearInterval(this.renderInterval);
         this.renderInterval = null;
-        this._data_threejs._controls.removeEventListener('change', this.activateRender);
+        this._data_threejs.controls.removeEventListener('change', this.activateRender);
         // this.keyboardServiceSub.unsubscribe();
     }
 
@@ -250,13 +250,13 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
      * @param self
      */
     public render() {
-        const textLabels = this._data_threejs._textLabels;
+        const textLabels = this._data_threejs.textLabels;
         if (textLabels.size !== 0) {
             textLabels.forEach((label) => {
                 label.updatePosition();
             });
         }
-        this._data_threejs._renderer.render(this._data_threejs._scene, this._data_threejs._camera);
+        this._data_threejs.renderer.render(this._data_threejs.scene, this._data_threejs.camera);
     }
 
 
@@ -278,7 +278,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
         const sorted = sortByKey(unSorted);
         const arr = Array.from(sorted.values());
         const showSelected = JSON.parse(sessionStorage.getItem('mpm_showSelected'));
-        const attr_names = this._data_threejs._model.attribs.query.getAttribNames(ent_type);
+        const attr_names = this._data_threejs.model.attribs.query.getAttribNames(ent_type);
 
         let attr_name = this.currentAttribLabel, isArr = false, key;
         if (attr_name.match(/\[.*?\]/g)) {
@@ -295,7 +295,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                 for (let i = 0; i < allLabels.length; i++) {
                     const element = allLabels[i];
                     const attr = Number(element.getAttribute('data-index'));
-                    const attr_val = this._data_threejs._model.attribs.query.getAttribVal(ent_type, attr_name, attr);
+                    const attr_val = this._data_threejs.model.attribs.query.getAttribVal(ent_type, attr_name, attr);
                     const _attr_val = attr_val !== undefined ? attr_val : '';
                     if (isArr && _attr_val !== '') {
                         const val = String(_attr_val).split(',')[key];
@@ -499,7 +499,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             this._no_model = true;
             return;
         } else {
-            this._data_threejs._model = model;
+            this._data_threejs.model = model;
             try {
                 // add geometry to the scene
                 this._data_threejs.addGeometry(model, this.container);
@@ -540,7 +540,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             } catch (ex) {
                 console.error('Error displaying model:', ex);
                 this._model_error = true;
-                this._data_threejs._text = ex;
+                this._data_threejs.text = ex;
             }
         }
     }
@@ -667,13 +667,13 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
         document.querySelectorAll('[id^=textLabel_]').forEach(value => {
             this.container.removeChild(value);
         });
-        this._data_threejs._textLabels.clear();
+        this._data_threejs.textLabels.clear();
 
         this.dataService.selected_ents.forEach(map => {
             map.clear();
         });
         this.refreshTable(event);
-        scene.sceneObjsSelected.clear();
+        scene.scene_objs_selected.clear();
         // if (this.SelectingEntityType.id === EEntTypeStr[EEntType.COLL]) {
         //     document.getElementById('executeButton').click();
         // }

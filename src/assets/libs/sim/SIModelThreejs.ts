@@ -25,7 +25,7 @@ export class SIModelThreejs {
         // get the indices of the vertices for edges, points and triangles
         const geom_data: ITjsGeomData = this._model.geom.threejs.getTjsSeqGeomData(attrib_data.verts_i_to_idx);
 
-        // Create attribute buffers that will be shared by all geometry
+        // create attribute buffers that will be shared by all geometry buffers
         const coords_buff_attrib = new THREE.BufferAttribute( new Float32Array(attrib_data.coords_flat), 3 );
         const colors_buff_attrib = new THREE.BufferAttribute( new Float32Array(attrib_data.colors_flat), 3 );
         const normals_buff_attrib = attrib_data.normals_flat === null ?
