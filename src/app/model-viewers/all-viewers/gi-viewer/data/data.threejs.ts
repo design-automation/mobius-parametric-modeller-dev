@@ -60,11 +60,18 @@ export class DataThreejs extends DataThreejsLookAt {
         // clean up
         while (this.scene.children.length > 0) {
             DataThreejs.disposeObjectProperty(this.scene.children[0], 'geometry');
-            DataThreejs.disposeObjectProperty(this.scene.children[0], 'material');
+            // DataThreejs.disposeObjectProperty(this.scene.children[0], 'material');
             DataThreejs.disposeObjectProperty(this.scene.children[0], 'texture');
             this.scene.remove(this.scene.children[0]);
-            this.scene_objs = [];
         }
+        this.selected_geoms.clear();
+        this.selected_positions.clear();
+        this.selected_vertex.clear();
+        this.selected_face_edges.clear();
+        this.selected_face_wires.clear();
+        this.scene_objs_selected.clear();
+        this.scene_objs = [];
+
 
         // raycaster
         const position_size = this.settings.positions.size;

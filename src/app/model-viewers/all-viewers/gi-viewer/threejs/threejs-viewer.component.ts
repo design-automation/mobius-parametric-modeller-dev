@@ -674,7 +674,6 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             map.clear();
         });
         this.refreshTable(event);
-        scene.scene_objs_selected.clear();
         // if (this.SelectingEntityType.id === EEntTypeStr[EEntType.COLL]) {
         //     document.getElementById('executeButton').click();
         // }
@@ -1117,7 +1116,6 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
             this.dataService.selected_ents.get(ent_type_str).delete(ent_id);
             this.unselectLabel(ent_id, ent_type_str);
         }
-        console.log('.....', event);
         this.refreshTable(event);
     }
 
