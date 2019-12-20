@@ -1,6 +1,19 @@
 [
     {
         "old_func": {
+            "module": "util",
+            "name": "ImportData"
+        },
+        "new_func": {
+            "module": "io",
+            "name": "ImportToModel",
+            "replace": {
+                "method": [["'squares'", "'quads'"]]
+            }
+        }
+    },
+    {
+        "old_func": {
             "module": "make",
             "name": "Collection"
         },
@@ -14,15 +27,12 @@
     },
     {
         "old_func": {
-            "module": "pattern",
-            "name": "grid"
+            "module": "render",
+            "name": "StandardMaterial"
         },
         "new_func": {
-            "module": "pattern",
-            "name": "grid",
-            "replace": {
-                "method": [["'squares'", "'quads'"]]
-            }
+            "module": "material",
+            "name": "Standard"
         }
     },
     {
