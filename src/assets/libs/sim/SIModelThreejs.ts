@@ -22,7 +22,7 @@ export class SIModelThreejs {
      * Returns arrays for visualization in Threejs.
      */
     public getTjsData(): [Uint8Array, THREE.Material[]] {
-        
+
         // get the data
         const attrib_data: ITjsAttribData = this._model.attribs.threejs.getTjsSeqAttribData();
         const geom_data: ITjsGeomData = this._model.geom.threejs.getTjsSeqGeomData(attrib_data.verts_i_to_idx);
@@ -33,34 +33,9 @@ export class SIModelThreejs {
         // make the materials
         const tjs_materials: THREE.Material[] = this._createTrisMatArr(geom_data.materials);
         return [fb_tjs_data, tjs_materials];
-
-
-        // const ta_coords: Float32Array = new Float32Array(new ArrayBuffer(
-        //    attrib_data.coords_flat.length * Float32Array.BYTES_PER_ELEMENT));
-        // ta_coords.set(attrib_data.coords_flat, 0);
-        // const ta_colors: Float32Array = new Float32Array(new ArrayBuffer(
-        //    attrib_data.colors_flat.length * Float32Array.BYTES_PER_ELEMENT));
-        // ta_colors.set(attrib_data.colors_flat, 0);
-        // const ta_posis_idx_to_i: Uint16Array = new Uint16Array(new ArrayBuffer(
-        //     attrib_data.posis_idx_to_i.length * Uint16Array.BYTES_PER_ELEMENT));
-        // ta_posis_idx_to_i.set(attrib_data.posis_idx_to_i, 0);
-        // const ta_verts_idx_to_i: Uint16Array = new Uint16Array(new ArrayBuffer(
-        //     attrib_data.verts_idx_to_i.length * Uint16Array.BYTES_PER_ELEMENT));
-        // ta_verts_idx_to_i.set(attrib_data.verts_idx_to_i, 0);
-        // const ta_verts_i_to_idx: Uint16Array = new Uint16Array(new ArrayBuffer(
-        //     attrib_data.verts_i_to_idx.length * Uint16Array.BYTES_PER_ELEMENT));
-        // ta_verts_i_to_idx.set(attrib_data.verts_i_to_idx, 0);
-        // console.log("Size of typedarray buffs = ",
-        //     (ta_coords.byteLength + ta_colors.byteLength +
-        //         ta_posis_idx_to_i.byteLength + ta_verts_idx_to_i.byteLength + ta_verts_i_to_idx.byteLength)  / 1000, 'kb' );
-
-
-
-        // return [geom_data, attrib_data];
     }
 
     private _createFlatBuf(geom_data: ITjsGeomData, attrib_data: ITjsAttribData): Uint8Array {
-
         // create the builder
         const builder = new flatbuffers.Builder(1024);
 
@@ -96,20 +71,27 @@ export class SIModelThreejs {
         // tjs.data.TjsData.createMaterialsVector(builder, fb_materials);
 
         // material groups
-        const fb_material_groups_flat: number = tjs.data.TjsData.createMaterialGroupsFlatVector(
-            builder, __.flatten(geom_data.material_groups, true));
+        const material_groups_flat: number[] = __.flatten(geom_data.material_groups, true);
+        const fb_material_groups_flat: number =
+            tjs.data.TjsData.createMaterialGroupsFlatVector(builder, material_groups_flat);
 
         // tris
-        const fb_tris_verts_idx_flat: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.tris_verts_idx_flat);
-        const fb_tris_select_idx_to_i: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.tris_select_idx_to_i);
+        const fb_tris_verts_idx_flat: number =
+            tjs.data.TjsData.createTrisVertsIdxFlatVector(builder, geom_data.tris_verts_idx_flat);
+        const fb_tris_select_idx_to_i: number =
+            tjs.data.TjsData.createTrisSelectIdxToIVector(builder, geom_data.tris_select_idx_to_i);
 
         // edges
-        const fb_edges_verts_idx_flat: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.edges_verts_idx_flat);
-        const fb_edges_select_idx_to_i: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.edges_select_idx_to_i);
+        const fb_edges_verts_idx_flat: number =
+            tjs.data.TjsData.createEdgesVertsIdxFlatVector(builder, geom_data.edges_verts_idx_flat);
+        const fb_edges_select_idx_to_i: number =
+            tjs.data.TjsData.createEdgesSelectIdxToIVector(builder, geom_data.edges_select_idx_to_i);
 
         // points
-        const fb_points_verts_idx_flat: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.points_verts_idx_flat);
-        const fb_points_select_idx_to_i: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.points_select_idx_to_i);
+        const fb_points_verts_idx_flat: number =
+            tjs.data.TjsData.createPointsVertsIdxFlatVector(builder, geom_data.points_verts_idx_flat);
+        const fb_points_select_idx_to_i: number =
+            tjs.data.TjsData.createPointsSelectIdxToIVector(builder, geom_data.points_select_idx_to_i);
 
         // coords, colors, normals
         const fb_coords: number = tjs.data.TjsData.createCoordsFlatVector(builder, attrib_data.coords_flat);
@@ -157,7 +139,6 @@ export class SIModelThreejs {
         // make the buffer
         return builder.asUint8Array();
     }
-    
     /**
      * Create the material array for threejs triangles
      */

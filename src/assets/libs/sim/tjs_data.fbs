@@ -50,19 +50,19 @@
 namespace tjs.data;
 
 table TjsData {
-  material_groups_flat:[short];
-  tris_verts_idx_flat:[short];
-  tris_select_idx_to_i:[short];
-  edges_verts_idx_flat:[short];
-  edges_select_idx_to_i:[short];
-  points_verts_idx_flat:[short];
-  points_select_idx_to_i:[short];
+  material_groups_flat:[uint];
+  tris_verts_idx_flat:[uint];
+  tris_select_idx_to_i:[uint];
+  edges_verts_idx_flat:[uint];
+  edges_select_idx_to_i:[uint];
+  points_verts_idx_flat:[uint];
+  points_select_idx_to_i:[uint];
   coords_flat:[float];
   colors_flat:[float];
   normals_flat:[float];
-  posis_idx_to_i:[short];
-  verts_idx_to_i:[short];
-  verts_i_to_idx:[short];
+  posis_idx_to_i:[uint];
+  verts_idx_to_i:[uint];
+  verts_i_to_idx:[uint];
 }
 
 root_type TjsData;

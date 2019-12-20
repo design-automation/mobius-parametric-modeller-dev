@@ -20,11 +20,11 @@ export class DataThreejsBase {
     public mouse: THREE.Vector2;
 
     // interaction and selection
-    public tris_select_idx_to_i: Int16Array;
-    public edges_select_idx_to_i: Int16Array;
-    public points_select_idx_to_i: Int16Array;
-    public posis_idx_to_i: Int16Array;
-    public verts_idx_to_i: Int16Array;
+    public tris_select_idx_to_i: Uint32Array;
+    public edges_select_idx_to_i: Uint32Array;
+    public points_select_idx_to_i: Uint32Array;
+    public posis_idx_to_i: Uint32Array;
+    public verts_idx_to_i: Uint32Array;
 
     public selected_geoms: Map<string, number> = new Map();
     public selected_positions: Map<string, Map<string, number>> = new Map();
