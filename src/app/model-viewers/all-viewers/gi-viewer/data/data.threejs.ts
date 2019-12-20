@@ -56,7 +56,6 @@ export class DataThreejs extends DataThreejsLookAt {
      * @param container
      */
     public populateScene(model: SIModel, container): void {
-        console.log('...................')
         if (this.dataService.viewerSettingsUpdated) {
             this.settings = JSON.parse(localStorage.getItem('mpm_settings'));
             this.camera.position.copy(this.settings.camera.pos);
