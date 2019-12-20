@@ -56,6 +56,24 @@ export class SIModel {
         };
     }
     /**
+     * Sets the data in this model from json data (undef replaced with neg numbers).
+     * Any existing data in the model is deleted.
+     * @param model_data The data.
+     */
+    public setJsonData (model_data: IModelData): void {
+        this.attribs.data.setData(model_data.attributes); // warning: must be before this.geom.data.setData()
+        this.geom.data.setJsonData(model_data.geometry);
+    }
+    /**
+     * Returns the data for this model as json data (undef replaced with neg numbers).
+     */
+    public getJsonData(): IModelData {
+        return {
+            geometry: this.geom.data.getJsonData(),
+            attributes: this.attribs.data.getData()
+        };
+    }
+    /**
      * Check model for internal consistency
      */
     public check(): string[] {

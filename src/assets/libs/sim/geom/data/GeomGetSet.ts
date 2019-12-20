@@ -17,24 +17,15 @@ export class GeomGetSet extends GeomNav {
      * Returns the geom data for this model.
      */
     public getData(): IGeomArrays {
-
-        // this is a temporary fix to clone the data
-        // will later be replaced by typed arrays
-        function cloneArr(arr: any) {
-            if (!Array.isArray(arr)) { return arr; }
-            return arr.map( item => cloneArr(item) );
-        }
-
         // clone the data
-        const cloned_data: IGeomArrays = this._geom_arrays;
+        const cloned_data: IGeomArrays = Object.assign({}, this._geom_arrays);
         for (const key of Object.keys(cloned_data)) {
             cloned_data[key] =  cloneArr(this._geom_arrays[key]);
         }
-
         // return the cloned data
         return cloned_data;
     }
-   /**
+    /**
      * Sets the geom data for this model.
      * Any existing data in the model is deleted.
      * @param geom_data The data to be set.
@@ -42,10 +33,81 @@ export class GeomGetSet extends GeomNav {
     public setData(geom_data: IGeomArrays): void {
         this._geom_arrays = geom_data;
     }
+    /**
+     * Returns the geom data for this model as json data (undef replaced with neg numbers).
+     */
+    public getJsonData(): IGeomArrays {
+        // clone the data
+        const json_data: IGeomArrays = Object.assign({}, this._geom_arrays); // clone shallow
+        for (const key of Object.keys(json_data)) {
+            json_data[key] =  encodeArr(cloneArr(this._geom_arrays[key]));
+
+        }
+        // return the cloned data
+        return json_data;
+    }
+    /**
+     * Sets the geom data for this model from json data (undef replaced with neg numbers).
+     * Any existing data in the model is deleted.
+     */
+    public setJsonData(geom_data: IGeomArrays): void {
+        // clone the data
+        for (const key of Object.keys(this._geom_arrays)) {
+            this._geom_arrays[key] =  decodeArr(cloneArr(geom_data[key]));
+        }
+    }
 }
 
-
-
+// this is a temporary fix to clone the data
+// will later be replaced by typed arrays
+/**
+ * Clones an array
+ * @param arr
+ */
+function cloneArr(arr: any) {
+    if (!Array.isArray(arr)) { return arr; }
+    return arr.map( item => cloneArr(item) );
+}
+/**
+ * Encodes an array by replacing undef with neg numbers
+ * @param arr
+ */
+function encodeArr(arr: any): any[] {
+    const new_arr: any[] = [];
+    let undef_count = 0;
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === undefined) {
+            undef_count--;
+            if (undef_count === -1) {
+                new_arr.push(undef_count);
+            } else {
+                new_arr[new_arr.length - 1] = undef_count;
+            }
+        } else {
+            undef_count = 0;
+            new_arr.push(arr[i]);
+        }
+    }
+    return new_arr;
+}
+/**
+ * Decodes an array by replacing neg numbers with undefined
+ * @param arr
+ */
+function decodeArr(arr: any): any[] {
+    const new_arr: any[] = [];
+    let idx_count = 0;
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] < 0) {
+            for (let j = arr[i]; j < 0; j++) {
+                idx_count++;
+            }
+        } else {
+            new_arr[idx_count] = arr[i];
+        }
+    }
+    return new_arr;
+}
     // /**
     //  * Returns the data for this model.
     //  */

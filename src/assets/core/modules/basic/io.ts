@@ -27,7 +27,7 @@ declare global {
 // ================================================================================================
 // Import / Export data types
 export enum _EIODataFormat {
-    GI = 'gi',
+    SIM = 'sim',
     OBJ = 'obj',
     GEOJSON = 'geojson'
 }
@@ -83,9 +83,9 @@ export function WriteData(__model__: SIModel, data: string, file_name: string, d
 export function ImportToModel(__model__: SIModel, model_data: string, data_format: _EIODataFormat): TId[] {
     let geom_pack: IGeomPack;
     switch (data_format) {
-        case _EIODataFormat.GI:
-            const gi_json: IModelData = JSON.parse(model_data) as IModelData;
-            __model__.setData(gi_json);
+        case _EIODataFormat.SIM:
+            const sim_json: IModelData = JSON.parse(model_data) as IModelData;
+            __model__.setJsonData(sim_json);
             geom_pack = null; // TODO
             break;
         case _EIODataFormat.OBJ:
@@ -112,7 +112,7 @@ export function ImportToModel(__model__: SIModel, model_data: string, data_forma
 }
 // ================================================================================================
 export enum _EIOExportDataFormat {
-    GI = 'gi',
+    SIM = 'sim',
     OBJ = 'obj',
     DAE = 'dae',
     GEOJSON = 'geojson'
@@ -133,13 +133,13 @@ export function ExportFromModel(__model__: SIModel, entities: TId|TId[]|TId[][],
         file_name: string, data_format: _EIOExportDataFormat, data_target: _EIODataTarget): boolean {
     // TODO implement export of entities
     switch (data_format) {
-        case _EIOExportDataFormat.GI:
-            let gi_data: string = JSON.stringify(__model__.getData());
-            gi_data = gi_data.replace(/\\\"/g, '\\\\\\"'); // TODO temporary fix
+        case _EIOExportDataFormat.SIM:
+            let sim_data: string = JSON.stringify(__model__.getJsonData());
+            sim_data = sim_data.replace(/\\\"/g, '\\\\\\"'); // TODO temporary fix
             if (data_target === _EIODataTarget.DEFAULT) {
-                return download(gi_data , file_name);
+                return download(sim_data , file_name);
             }
-            return saveResource(gi_data, file_name);
+            return saveResource(sim_data, file_name);
             break;
         case _EIOExportDataFormat.OBJ:
             const obj_data: string = exportObj(__model__);
