@@ -86,7 +86,7 @@ export function ImportToModel(__model__: SIModel, model_data: string, data_forma
         case _EIODataFormat.SIM:
             const sim_json: IModelData = JSON.parse(model_data) as IModelData;
             __model__.setJsonData(sim_json);
-            geom_pack = null; // TODO
+            // geom_pack = null; // TODO
             break;
         case _EIODataFormat.OBJ:
             throw new Error('Not implemented');

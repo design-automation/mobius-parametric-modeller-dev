@@ -8,6 +8,7 @@ import { ProcedureTypes, IProcedure } from '@models/procedure';
 import { IdGenerator } from '@utils';
 import { IMobius } from '@models/mobius';
 import { INode, NodeUtils } from '@models/node';
+import { _parameterTypes } from '@assets/core/modules';
 
 declare global {
     interface Navigator {
@@ -391,7 +392,9 @@ export class SaveFileComponent {
 
         const node = newFile.flowchart.nodes[1];
 
-        const modelVal = '\'__model_data__' + this.dataService.flowchart.nodes[this.dataService.flowchart.nodes.length - 1].model + '\'';
+        const model_full = _parameterTypes.newFn();
+        model_full.setData(this.dataService.flowchart.nodes[this.dataService.flowchart.nodes.length - 1].model);
+        const modelVal = '\'__model_data__' + JSON.stringify(model_full.getJsonData()) + '\'';
         NodeUtils.add_procedure(node, ProcedureTypes.MainFunction, {
             'module': 'io',
             'name': 'ImportToModel',
@@ -403,8 +406,8 @@ export class SaveFileComponent {
                     'value': modelVal
                 }, {
                     'name': 'data_format',
-                    'value': '\'gi\'',
-                    'jsValue': '\'gi\''
+                    'value': '\'sim\'',
+                    'jsValue': '\'sim\''
                 }
             ],
             'hasReturn': true
