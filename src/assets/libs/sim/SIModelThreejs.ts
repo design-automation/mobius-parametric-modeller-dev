@@ -1,7 +1,11 @@
-import { ITjsData, ITjsMaterial, ITjsAttribData, ITjsGeomData } from './common';
+import { ITjsAttribData, ITjsGeomData, ITjsMaterial, ETjsMaterialType } from './common';
 import { SIModel } from './SIModel';
-import * as THREE from 'three';
 import { memorySizeOf } from './mem';
+import { flatbuffers } from 'flatbuffers';
+import { tjs } from './tjs_data_generated';
+import __ from 'underscore';
+import * as THREE from 'three';
+
 /**
  * Geo-info model class.
  */
@@ -17,114 +21,192 @@ export class SIModelThreejs {
     /**
      * Returns arrays for visualization in Threejs.
      */
-    // public getTjsData(): ITjsData {
-        public getTjsData(): [ITjsGeomData, ITjsAttribData] {
-        // get the attribs at the vertex level
+    public getTjsData(): [Uint8Array, THREE.Material[]] {
+        
+        // get the data
         const attrib_data: ITjsAttribData = this._model.attribs.threejs.getTjsSeqAttribData();
-
-        // get the indices of the vertices for edges, points and triangles
         const geom_data: ITjsGeomData = this._model.geom.threejs.getTjsSeqGeomData(attrib_data.verts_i_to_idx);
 
-        return [geom_data, attrib_data];
+        // make the flat buffer
+        const fb_tjs_data: Uint8Array = this._createFlatBuf(geom_data, attrib_data);
 
-        // // create attribute buffers that will be shared by all geometry buffers
-        // const coords_buff_attrib = new THREE.BufferAttribute( new Float32Array(attrib_data.coords_flat), 3 );
-        // const colors_buff_attrib = new THREE.BufferAttribute( new Float32Array(attrib_data.colors_flat), 3 );
-        // const normals_buff_attrib = attrib_data.normals_flat === null ?
-        //     null : new THREE.BufferAttribute( new Float32Array(attrib_data.normals_flat), 3 );
+        // make the materials
+        const tjs_materials: THREE.Material[] = this._createTrisMatArr(geom_data.materials);
+        return [fb_tjs_data, tjs_materials];
 
-        // // make the geometry buffers from the attribute buffers
-        // // triangles
-        // const tris_geom_buff: THREE.BufferGeometry = this._createTrisBuffGeom(
-        //     geom_data.tris_verts_idx_flat, coords_buff_attrib, colors_buff_attrib, normals_buff_attrib, geom_data.material_groups);
-        // // lines
-        // const lines_geom_buff: THREE.BufferGeometry = this._createLinesBuffGeom(
-        //     geom_data.edges_verts_idx_flat, coords_buff_attrib, colors_buff_attrib);
-        // // points
-        // const points_geom_buff: THREE.BufferGeometry = this._createPointsBuffGeom(
-        //     geom_data.points_verts_idx_flat, coords_buff_attrib, colors_buff_attrib);
-        // // positions
-        // const posis_geom_buff: THREE.BufferGeometry = this._createPosisBuffGeom(
-        //     attrib_data.posis_idx_to_i, coords_buff_attrib);
 
-        // // return an object containing all the data
-        // const data: ITjsData = {
-        //     num_posis: attrib_data.posis_idx_to_i.length,
-        //     num_points: geom_data.points_verts_idx_flat.length,
-        //     num_lines: geom_data.edges_verts_idx_flat.length / 2,
-        //     num_tris: geom_data.tris_verts_idx_flat.length / 3,
+        // const ta_coords: Float32Array = new Float32Array(new ArrayBuffer(
+        //    attrib_data.coords_flat.length * Float32Array.BYTES_PER_ELEMENT));
+        // ta_coords.set(attrib_data.coords_flat, 0);
+        // const ta_colors: Float32Array = new Float32Array(new ArrayBuffer(
+        //    attrib_data.colors_flat.length * Float32Array.BYTES_PER_ELEMENT));
+        // ta_colors.set(attrib_data.colors_flat, 0);
+        // const ta_posis_idx_to_i: Uint16Array = new Uint16Array(new ArrayBuffer(
+        //     attrib_data.posis_idx_to_i.length * Uint16Array.BYTES_PER_ELEMENT));
+        // ta_posis_idx_to_i.set(attrib_data.posis_idx_to_i, 0);
+        // const ta_verts_idx_to_i: Uint16Array = new Uint16Array(new ArrayBuffer(
+        //     attrib_data.verts_idx_to_i.length * Uint16Array.BYTES_PER_ELEMENT));
+        // ta_verts_idx_to_i.set(attrib_data.verts_idx_to_i, 0);
+        // const ta_verts_i_to_idx: Uint16Array = new Uint16Array(new ArrayBuffer(
+        //     attrib_data.verts_i_to_idx.length * Uint16Array.BYTES_PER_ELEMENT));
+        // ta_verts_i_to_idx.set(attrib_data.verts_i_to_idx, 0);
+        // console.log("Size of typedarray buffs = ",
+        //     (ta_coords.byteLength + ta_colors.byteLength +
+        //         ta_posis_idx_to_i.byteLength + ta_verts_idx_to_i.byteLength + ta_verts_i_to_idx.byteLength)  / 1000, 'kb' );
 
-        //     tris_geom_buff: tris_geom_buff,
-        //     lines_geom_buff: lines_geom_buff,
-        //     points_geom_buff: points_geom_buff,
-        //     posis_geom_buff: posis_geom_buff,
 
-        //     posis_idx_to_i: attrib_data.posis_idx_to_i,
-        //     verts_idx_to_i: attrib_data.verts_idx_to_i,
-        //     points_select_idx_to_i: geom_data.points_select_idx_to_i,
-        //     edges_select_idx_to_i: geom_data.edges_select_idx_to_i,
-        //     tris_select_idx_to_i: geom_data.tris_select_idx_to_i,
 
-        //     materials: geom_data.materials
-        // };
-        // // console.log(data);
-        // return data;
+        // return [geom_data, attrib_data];
     }
-    // /**
-    //  * Create the buffer for threejs triangles
-    //  */
-    // private _createTrisBuffGeom(
-    //         tris_i: number[],
-    //         coords_buff_attrib: THREE.BufferAttribute,
-    //         colors_buff_attrib: THREE.BufferAttribute,
-    //         normals_buff_attrib: THREE.BufferAttribute,
-    //         material_groups): THREE.BufferGeometry {
-    //     const tris_geom_buff = new THREE.BufferGeometry();
-    //     tris_geom_buff.setIndex( tris_i );
-    //     tris_geom_buff.setAttribute('position', coords_buff_attrib );
-    //     tris_geom_buff.setAttribute('color', colors_buff_attrib );
-    //     if (normals_buff_attrib !== null) { tris_geom_buff.setAttribute('normal', normals_buff_attrib ); }
-    //     tris_geom_buff.clearGroups();
-    //     material_groups.forEach(element => {
-    //         tris_geom_buff.addGroup(element[0], element[1], element[2]);
-    //     });
-    //     return tris_geom_buff;
-    // }
-    // /**
-    //  * Create the buff geom for threejs lines
-    //  */
-    // private _createLinesBuffGeom(
-    //         lines_i: number[],
-    //         coords_buff_attrib: THREE.BufferAttribute,
-    //         colors_buff_attrib: THREE.BufferAttribute): THREE.BufferGeometry {
-    //     const lines_buff_geom = new THREE.BufferGeometry();
-    //     lines_buff_geom.setIndex( lines_i );
-    //     lines_buff_geom.setAttribute('position', coords_buff_attrib );
-    //     lines_buff_geom.setAttribute('color', colors_buff_attrib );
-    //     return lines_buff_geom;
-    // }
-    // /**
-    //  * Create the points buffer geom for threejs points
-    //  */
-    // private _createPointsBuffGeom(
-    //         points_i: number[],
-    //         coords_buff_attrib: THREE.BufferAttribute,
-    //         colors_buff_attrib: THREE.BufferAttribute): THREE.BufferGeometry {
-    //     const points_buff_geom = new THREE.BufferGeometry();
-    //     points_buff_geom.setIndex( points_i );
-    //     points_buff_geom.setAttribute('position', coords_buff_attrib );
-    //     points_buff_geom.setAttribute('color', colors_buff_attrib );
-    //     return points_buff_geom;
-    // }
-    // /**
-    //  * Create the geom buffer for threejs positions
-    //  */
-    // private _createPosisBuffGeom(
-    //         points_i: number[],
-    //         coords_buff_attrib: THREE.BufferAttribute): THREE.BufferGeometry {
-    //     const posis_geom_buff = new THREE.BufferGeometry();
-    //     posis_geom_buff.setIndex( points_i );
-    //     posis_geom_buff.setAttribute('position', coords_buff_attrib );
-    //     return posis_geom_buff;
-    // }
+
+    private _createFlatBuf(geom_data: ITjsGeomData, attrib_data: ITjsAttribData): Uint8Array {
+
+        // create the builder
+        const builder = new flatbuffers.Builder(1024);
+
+        // create the data that wil be added to the TjsData
+
+        // // materials
+        // const fb_materials = [];
+        // for (const material of geom_data.materials) {
+
+        //     // create material
+        //     tjs.data.Material.startMaterial(builder);
+        //     tjs.data.Material.addType(builder, ETjsMaterialTypeInt[material.type] as number);
+        //     tjs.data.Material.addSide(builder, material.side as number);
+        //     if ('vertexColors' in material) { tjs.data.Material.addVertexColors(builder, material.vertexColors); }
+        //     if ('color' in material) {
+        //         const [r, g, b] = material.color.toArray();
+        //         tjs.data.Material.addColor( builder, tjs.data.Color.createColor(builder, r, g, b ) );
+        //     }
+        //     if ('emissive' in material) {
+        //         const [r, g, b] = material.color.toArray();
+        //         tjs.data.Material.addEmissive( builder, tjs.data.Color.createColor(builder, r, g, b ) );
+        //     }
+        //     if ('specular' in material) {
+        //         const [r, g, b] = material.color.toArray();
+        //         tjs.data.Material.addSpecular( builder, tjs.data.Color.createColor(builder, r, g, b ) );
+        //     }
+        //     if ('transparent' in material) { tjs.data.Material.addType(builder, material.transparent); }
+        //     if ('shininess' in material) { tjs.data.Material.addShininess(builder, material.shininess); }
+        //     if ('roughness' in material) { tjs.data.Material.addRoughness(builder, material.roughness); }
+        //     if ('metalness' in material) { tjs.data.Material.addMetalness(builder, material.metalness); }
+        //     if ('reflectivity' in material) { tjs.data.Material.addReflectivity(builder, material.reflectivity); }
+        // }
+        // tjs.data.TjsData.createMaterialsVector(builder, fb_materials);
+
+        // material groups
+        const fb_material_groups_flat: number = tjs.data.TjsData.createMaterialGroupsFlatVector(
+            builder, __.flatten(geom_data.material_groups, true));
+
+        // tris
+        const fb_tris_verts_idx_flat: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.tris_verts_idx_flat);
+        const fb_tris_select_idx_to_i: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.tris_select_idx_to_i);
+
+        // edges
+        const fb_edges_verts_idx_flat: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.edges_verts_idx_flat);
+        const fb_edges_select_idx_to_i: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.edges_select_idx_to_i);
+
+        // points
+        const fb_points_verts_idx_flat: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.points_verts_idx_flat);
+        const fb_points_select_idx_to_i: number = tjs.data.TjsData.createCoordsFlatVector(builder, geom_data.points_select_idx_to_i);
+
+        // coords, colors, normals
+        const fb_coords: number = tjs.data.TjsData.createCoordsFlatVector(builder, attrib_data.coords_flat);
+        const fb_colors: number = tjs.data.TjsData.createColorsFlatVector(builder, attrib_data.colors_flat);
+        // const fb_normals: number = tjs.data.TjsData.createNormalsFlatVector(builder, attrib_data.normals_flat);
+
+        // posis and verts
+        const fb_posis_idx_to_i: number = tjs.data.TjsData.createPosisIdxToIVector(builder, attrib_data.posis_idx_to_i);
+        const fb_verts_idx_to_i: number = tjs.data.TjsData.createVertsIdxToIVector(builder, attrib_data.verts_idx_to_i);
+        const fb_verts_i_to_idx: number = tjs.data.TjsData.createVertsIToIdxVector(builder, attrib_data.verts_i_to_idx);
+
+        // START TjsData --------------------------------------
+        tjs.data.TjsData.startTjsData(builder);
+
+        // materials
+        tjs.data.TjsData.addMaterialGroupsFlat(builder, fb_material_groups_flat);
+
+        // tris
+        tjs.data.TjsData.addTrisVertsIdxFlat(builder, fb_tris_verts_idx_flat);
+        tjs.data.TjsData.addTrisSelectIdxToI(builder, fb_tris_select_idx_to_i);
+
+        // edges
+        tjs.data.TjsData.addEdgesVertsIdxFlat(builder, fb_edges_verts_idx_flat);
+        tjs.data.TjsData.addEdgesSelectIdxToI(builder, fb_edges_select_idx_to_i);
+
+        // points
+        tjs.data.TjsData.addPointsVertsIdxFlat(builder, fb_points_verts_idx_flat);
+        tjs.data.TjsData.addPointsSelectIdxToI(builder, fb_points_select_idx_to_i);
+
+        // coords, colors, normals
+        tjs.data.TjsData.addCoordsFlat(builder, fb_coords);
+        tjs.data.TjsData.addColorsFlat(builder, fb_colors);
+        // tjs.data.TjsData.addNormalsFlat(builder, fb_normals);
+
+        // posis and verts
+        tjs.data.TjsData.addPosisIdxToI(builder, fb_posis_idx_to_i);
+        tjs.data.TjsData.addVertsIdxToI(builder, fb_verts_idx_to_i);
+        tjs.data.TjsData.addVertsIdxToI(builder, fb_verts_i_to_idx);
+
+        // end
+        const fb_offset = tjs.data.TjsData.endTjsData(builder);
+        builder.finish(fb_offset);
+        // END TjsData --------------------------------------
+
+        // make the buffer
+        return builder.asUint8Array();
+    }
+    
+    /**
+     * Create the material array for threejs triangles
+     */
+    private _createTrisMatArr(materials: ITjsMaterial[]): THREE.Material[] {
+        const tris_mat_arr: THREE.Material[] = [];
+        // const colorf = new THREE.Color(parseInt(this.settings.colors.face_f.replace('#', '0x'), 16));
+        // const colorb = new THREE.Color(parseInt(this.settings.colors.face_b.replace('#', '0x'), 16));
+        const colorf = new THREE.Color(parseInt('0xFFFFFF', 16));
+        const colorb = new THREE.Color(parseInt('0xDDDDDD', 16));
+        for (let index = 0; index < materials.length; index++) {
+            const material = materials[index];
+            // if (this.settings.background.show) {
+            //     element.envMap = this._scene.background;
+            //     element.refractionRatio = 1;
+            //     element.envMap.mapping = THREE.CubeRefractionMapping;
+            // }
+            let mat;
+            if (index === 0) {
+                delete material.type; material.color = colorf;
+                mat = new THREE.MeshPhongMaterial(material);
+            } else if (index === 1) {
+                delete material.type;
+                material.color = colorb;
+                mat = new THREE.MeshPhongMaterial(material);
+            } else {
+                if (material.type === ETjsMaterialType.MeshBasicMaterial) {
+                    delete material.type;
+                    mat = new THREE.MeshBasicMaterial(material);
+                } else if (material.type === ETjsMaterialType.MeshPhongMaterial) {
+                    delete material.type;
+                    mat = new THREE.MeshPhongMaterial(material);
+                } else if (material.type === ETjsMaterialType.MeshPhysicalMaterial) {
+                    delete material.type;
+                    // if (this.settings.background.show) {
+                    //     element.envMap = this._scene.background;
+                    //     // element.refractionRatio = 1;
+                    //     // element.envMap.mapping = THREE.CubeRefractionMapping;
+                    // }
+                    mat = new THREE.MeshPhysicalMaterial(material);
+                } else if (material.type === ETjsMaterialType.MeshLambertMaterial) {
+                    delete material.type;
+                    mat = new THREE.MeshLambertMaterial(material);
+                } else if (material.type === ETjsMaterialType.MeshStandardMaterial) {
+                    delete material.type;
+                    mat = new THREE.MeshStandardMaterial(material);
+                }
+            }
+            tris_mat_arr.push(mat);
+        }
+        return tris_mat_arr;
+    }
 }

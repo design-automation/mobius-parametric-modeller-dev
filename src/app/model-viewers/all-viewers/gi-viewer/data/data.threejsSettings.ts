@@ -63,3 +63,4 @@ export interface ISettings {
         shininess: number
     };
 }
+
