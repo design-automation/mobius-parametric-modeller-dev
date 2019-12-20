@@ -51,18 +51,11 @@ export class DataThreejs extends DataThreejsLookAt {
         }
     }
     /**
-     *
+     * Adds everything to the scene
      * @param model
      * @param container
      */
-    public addGeometry(model: SIModel, container): void {
-
-        // background
-        if (this.settings.background.show) {
-            this._loadBackground(this.settings.background.background_set);
-        } else {
-            this.scene.background = new THREE.Color(this.settings.colors.viewer_bg);
-        }
+    public populateScene(model: SIModel, container): void {
 
         // clean up
         while (this.scene.children.length > 0) {
@@ -80,6 +73,10 @@ export class DataThreejs extends DataThreejsLookAt {
         this.scene_objs = [];
 
 
+        // raycaster
+        const position_size = this.settings.positions.size;
+        this.raycaster.params.Points.threshold = position_size > 1 ? position_size / 3 : position_size / 4;
+
         // selection
         document.querySelectorAll('[id^=textLabel_]').forEach(value => {
             container.removeChild(value);
@@ -87,73 +84,62 @@ export class DataThreejs extends DataThreejsLookAt {
         this.ObjLabelMap.clear();
         this.textLabels.clear();
 
+        // add the axes, ground, lights, etc
+        this._addEnv();
+
+        // add the model
+        this._addModel(model);
+
+        // hud
+        setTimeout(() => {
+            let old = document.getElementById('hud');
+            if (old) {
+                container.removeChild(old);
+            }
+            if (!this.model.attribs.query.hasAttrib(EEntType.MOD, 'hud')) { return; }
+            const hud = this.model.attribs.query.getModelAttribVal('hud') as string;
+            const element = this._createHud(hud).element;
+            container.appendChild(element);
+            old = null;
+        }, 0);
+    }
+    /**
+     * Add background, grid, ground
+     */
+    private _addEnv(): void {
+
+        // background
+        if (this.settings.background.show) {
+            this._loadBackground(this.settings.background.background_set);
+        } else {
+            this.scene.background = new THREE.Color(this.settings.colors.viewer_bg);
+        }
+
         // add gird and axes
         this.addGrid();
         this.addAxes();
+        const center = new THREE.Vector3(0, 0, 0); // allObjs.center;
+        this.axes_pos.x = center.x;
+        this.axes_pos.y = center.y;
+        let grid_pos = this.settings.grid.pos;
+        if (!grid_pos) {
+            grid_pos = new THREE.Vector3(0, 0, 0);
+        }
+        this.grid.position.set(grid_pos.x, grid_pos.y, 0);
 
-        // get the data from the model
-        const [fb_tjs_bytes, tris_mat_arr]: [Uint8Array, THREE.Material[]] = model.threejs.getTjsData();
+        // settings
+        // if (num_posis !== 0) {
+            if (this.dataService.newFlowchart) {
+                this.dataService.newFlowchart = false;
+                this.origin = new THREE.Vector3(center.x, center.y, 0);
+                this.settings.camera.target = this.origin ;
+                localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
+                this.axesHelper.position.set(center.x, center.y, 0);
+            } else {
+                this.axesHelper.position.set(this.origin.x, this.origin.y, 0);
+            }
+        // }
 
-        // create flatbuffer
-        const fb_tjs_buf = new flatbuffers.ByteBuffer(fb_tjs_bytes);
-        const fb_tjs_data = tjs.data.TjsData.getRootAsTjsData(fb_tjs_buf);
-
-        // create attribute buffers that will be shared by all geometry buffers
-        const coords_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.coordsFlatArray(), 3 );
-        const colors_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.colorsFlatArray(), 3 );
-        const normals_buff_attrib = fb_tjs_data.normalsFlatArray() === null ?
-            null : new THREE.BufferAttribute( fb_tjs_data.normalsFlatArray(), 3 );
-
-        // make the geometry buffers from the attribute buffers
-
-        // triangles
-        const tris_i_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.trisVertsIdxFlatArray(), 3);
-        const tris_geom_buff: THREE.BufferGeometry = this._createTrisBuffGeom(
-            tris_i_buff_attrib,
-            coords_buff_attrib, colors_buff_attrib, normals_buff_attrib,
-            fb_tjs_data.materialGroupsFlatArray());
-        // lines
-        const edges_i_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.edgesVertsIdxFlatArray(), 2);
-        const edges_geom_buff: THREE.BufferGeometry = this._createLinesBuffGeom(
-            edges_i_buff_attrib,
-            coords_buff_attrib, colors_buff_attrib);
-        // points
-        const points_i_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.pointsVertsIdxFlatArray(), 1);
-        const points_geom_buff: THREE.BufferGeometry = this._createPointsBuffGeom(
-            points_i_buff_attrib,
-            coords_buff_attrib, colors_buff_attrib);
-        // positions
-        const posis_i_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.posisIdxToIArray(), 1);
-        const posis_geom_buff: THREE.BufferGeometry = this._createPosisBuffGeom(
-            posis_i_buff_attrib,
-            coords_buff_attrib);
-
-        const num_posis = fb_tjs_data.posisIdxToILength();
-        const num_points = fb_tjs_data.pointsVertsIdxFlatLength();
-        const num_edges = fb_tjs_data.edgesVertsIdxFlatLength() / 2;
-        const num_tris = fb_tjs_data.trisVertsIdxFlatLength() / 3;
-
-        this.tris_select_idx_to_i = fb_tjs_data.trisSelectIdxToIArray();
-        this.edges_select_idx_to_i = fb_tjs_data.edgesSelectIdxToIArray();
-        this.points_select_idx_to_i = fb_tjs_data.pointsSelectIdxToIArray();
-        this.posis_idx_to_i = fb_tjs_data.posisIdxToIArray();
-        this.verts_idx_to_i = fb_tjs_data.vertsIdxToIArray();
-
-        // update threejs numbers
-        this.threejs_nums[0] = num_points;
-        this.threejs_nums[1] = num_edges;
-        this.threejs_nums[2] = num_tris;
-
-        // triangles
-        this._addTris(tris_geom_buff, tris_mat_arr);
-        // lines
-        this._addLines(edges_geom_buff);
-        // points
-        this._addPoints(points_geom_buff, [255, 255, 255], this.settings.positions.size + 1);
-        // positions
-        this._addPosis(posis_geom_buff, this.settings.colors.position, this.settings.positions.size);
-        const position_size = this.settings.positions.size;
-        this.raycaster.params.Points.threshold = position_size > 1 ? position_size / 3 : position_size / 4;
         // ground
         const ground = this.settings.ground;
         if (ground.show) {
@@ -169,8 +155,6 @@ export class DataThreejs extends DataThreejsLookAt {
             this.scene.add(this.groundObj);
         }
 
-        this._all_objs_sphere = this._getAllObjsSphere();
-
         if (this.settings.ambient_light.show) {
             this._addAmbientLight();
         }
@@ -180,38 +164,90 @@ export class DataThreejs extends DataThreejsLookAt {
         if (this.settings.directional_light.show) {
             this._addDirectionalLight();
         }
+    }
+    /**
+     * Add the model
+     */
+    private _addModel(model: SIModel): number {
 
-        const center = new THREE.Vector3(0, 0, 0); // allObjs.center;
-        this.axes_pos.x = center.x;
-        this.axes_pos.y = center.y;
-        let grid_pos = this.settings.grid.pos;
-        if (!grid_pos) {
-            grid_pos = new THREE.Vector3(0, 0, 0);
-        }
-        this.grid.position.set(grid_pos.x, grid_pos.y, 0);
+        // get the data from the model
+        const [fb_tjs_bytes, tris_mat_arr]: [Uint8Array, THREE.Material[]] = model.threejs.getTjsData();
 
-        if (num_posis !== 0) {
-            if (this.dataService.newFlowchart) {
-                this.dataService.newFlowchart = false;
-                this.origin = new THREE.Vector3(center.x, center.y, 0);
-                this.settings.camera.target = this.origin ;
-                localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
-                this.axesHelper.position.set(center.x, center.y, 0);
-            } else {
-                this.axesHelper.position.set(this.origin.x, this.origin.y, 0);
-            }
-        }
-        setTimeout(() => {
-            let old = document.getElementById('hud');
-            if (old) {
-                container.removeChild(old);
-            }
-            if (!this.model.attribs.query.hasAttrib(EEntType.MOD, 'hud')) { return; }
-            const hud = this.model.attribs.query.getModelAttribVal('hud') as string;
-            const element = this._createHud(hud).element;
-            container.appendChild(element);
-            old = null;
-        }, 0);
+        // create flatbuffer
+        const fb_tjs_buf = new flatbuffers.ByteBuffer(fb_tjs_bytes);
+        const fb_tjs_data = tjs.data.TjsData.getRootAsTjsData(fb_tjs_buf);
+
+        // console.log("fb_tjs_data.trisSelectIdxToIArray()", fb_tjs_data.trisSelectIdxToIArray());
+        // console.log("fb_tjs_data.edgesSelectIdxToIArray()", fb_tjs_data.edgesSelectIdxToIArray());
+        // console.log("fb_tjs_data.pointsSelectIdxToIArray()", fb_tjs_data.pointsSelectIdxToIArray());
+        // console.log("fb_tjs_data.posisIdxToIArray()", fb_tjs_data.posisIdxToIArray());
+        // console.log("fb_tjs_data.vertsIdxToIArray()", fb_tjs_data.vertsIdxToIArray());
+        // console.log("fb_tjs_data.coordsFlatArray()", fb_tjs_data.coordsFlatArray());
+        // console.log("fb_tjs_data.colorsFlatArray()", fb_tjs_data.colorsFlatArray());
+        // console.log("fb_tjs_data.trisVertsIdxFlatArray()", fb_tjs_data.trisVertsIdxFlatArray());
+        // console.log("fb_tjs_data.edgesVertsIdxFlatArray()", fb_tjs_data.edgesVertsIdxFlatArray());
+        // console.log("fb_tjs_data.pointsVertsIdxFlatArray()", fb_tjs_data.pointsVertsIdxFlatArray());
+        // console.log("fb_tjs_data.posisIdxToIArray()", fb_tjs_data.posisIdxToIArray());
+
+        // create the data from the flatbuffer
+        this.tris_select_idx_to_i = fb_tjs_data.trisSelectIdxToIArray();
+        this.edges_select_idx_to_i = fb_tjs_data.edgesSelectIdxToIArray();
+        this.points_select_idx_to_i = fb_tjs_data.pointsSelectIdxToIArray();
+        this.posis_idx_to_i = fb_tjs_data.posisIdxToIArray();
+        this.verts_idx_to_i = fb_tjs_data.vertsIdxToIArray();
+        const coords_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.coordsFlatArray(), 3 );
+        const colors_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.colorsFlatArray(), 3 );
+        const normals_buff_attrib = fb_tjs_data.normalsFlatArray() === null ?
+            null : new THREE.BufferAttribute( fb_tjs_data.normalsFlatArray(), 3 );
+        const tris_idx_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.trisVertsIdxFlatArray(), 1);
+        const edges_idx_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.edgesVertsIdxFlatArray(), 1);
+        const points_idx_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.pointsVertsIdxFlatArray(), 1);
+        const posis_idx_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.posisIdxToIArray(), 1);
+        const material_groups: Uint32Array  = fb_tjs_data.materialGroupsFlatArray();
+        const num_posis: number = fb_tjs_data.posisIdxToILength();
+        const num_points: number = fb_tjs_data.pointsVertsIdxFlatLength();
+        const num_edges: number = fb_tjs_data.edgesVertsIdxFlatLength() / 2;
+        const num_tris: number = fb_tjs_data.trisVertsIdxFlatLength() / 3;
+
+        // make the geometry buffers from the attribute buffers
+
+        // triangles
+        const tris_geom_buff: THREE.BufferGeometry = this._createTrisBuffGeom(
+            tris_idx_buff_attrib,
+            coords_buff_attrib, colors_buff_attrib, normals_buff_attrib,
+            material_groups);
+        // lines
+        const edges_geom_buff: THREE.BufferGeometry = this._createLinesBuffGeom(
+            edges_idx_buff_attrib,
+            coords_buff_attrib, colors_buff_attrib);
+        // points
+        const points_geom_buff: THREE.BufferGeometry = this._createPointsBuffGeom(
+            points_idx_buff_attrib,
+            coords_buff_attrib, colors_buff_attrib);
+        // positions
+        const posis_geom_buff: THREE.BufferGeometry = this._createPosisBuffGeom(
+            posis_idx_buff_attrib,
+            coords_buff_attrib);
+
+        // update threejs numbers
+        this.threejs_nums[0] = num_points;
+        this.threejs_nums[1] = num_edges;
+        this.threejs_nums[2] = num_tris;
+
+        // triangles
+        this._addTris(tris_geom_buff, tris_mat_arr);
+        // lines
+        this._addLines(edges_geom_buff);
+        // points
+        this._addPoints(points_geom_buff, [255, 255, 255], this.settings.positions.size + 1);
+        // positions
+        this._addPosis(posis_geom_buff, this.settings.colors.position, this.settings.positions.size);
+
+        // sphere
+        this._all_objs_sphere = this._getAllObjsSphere();
+
+        // return nuber of positions added
+        return num_posis;
     }
     /**
      *
@@ -337,18 +373,37 @@ export class DataThreejs extends DataThreejsLookAt {
             coords_buff_attrib: THREE.BufferAttribute,
             colors_buff_attrib: THREE.BufferAttribute,
             normals_buff_attrib: THREE.BufferAttribute,
-            material_groups): THREE.BufferGeometry {
+            material_groups: Uint32Array): THREE.BufferGeometry {
         const tris_geom_buff = new THREE.BufferGeometry();
         tris_geom_buff.setIndex( tris_i_buff_attrib );
         tris_geom_buff.setAttribute('position', coords_buff_attrib );
         tris_geom_buff.setAttribute('color', colors_buff_attrib );
         if (normals_buff_attrib !== null) { tris_geom_buff.setAttribute('normal', normals_buff_attrib ); }
         tris_geom_buff.clearGroups();
-        material_groups.forEach(element => {
-            tris_geom_buff.addGroup(element[0], element[1], element[2]);
-        });
+        for (let i = 0; i < material_groups.length; i = i + 3) {
+            tris_geom_buff.addGroup(material_groups[i], material_groups[i + 1], material_groups[i + 2]);
+        }
         return tris_geom_buff;
     }
+    /**
+     * Add threejs triangles to the scene
+     */
+    private _addTris(tris_geom_buff: THREE.BufferGeometry, tris_mat_arr: THREE.Material[]): void {
+        this._buffer_geoms.push(tris_geom_buff);
+        const mesh = new THREE.Mesh(tris_geom_buff, tris_mat_arr);
+        mesh.geometry.computeBoundingSphere();
+        mesh.geometry.computeVertexNormals();
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        // show vertex normals
+        this.vnh = new THREE.VertexNormalsHelper(mesh, this.settings.normals.size, 0x0000ff);
+        this.vnh.visible = this.settings.normals.show;
+        this.scene.add(this.vnh);
+        this.scene_objs.push(mesh);
+        // add mesh to scene
+        this.scene.add(mesh);
+    }
+    // ============================================================================
     /**
      * Create the buff geom for threejs lines
      */
@@ -363,9 +418,26 @@ export class DataThreejs extends DataThreejsLookAt {
         return lines_buff_geom;
     }
     /**
+     * Add threejs lines to the scene
+     */
+    private _addLines(lines_buff_geom: THREE.BufferGeometry, size: number = 1): void {
+        this._buffer_geoms.push(lines_buff_geom);
+        // // geom.addAttribute( 'color', new THREE.Float32BufferAttribute( colors_flat, 3 ) );
+        const mat = new THREE.LineBasicMaterial({
+            color: 0x000000,
+            linewidth: size,
+            linecap: 'round', // ignored by WebGLRenderer
+            linejoin: 'round' // ignored by WebGLRenderer
+        });
+        const line = new THREE.LineSegments(lines_buff_geom, mat);
+        this.scene_objs.push(line);
+        this.scene.add(line);
+    }
+    // ============================================================================
+    /**
      * Create the points buffer geom for threejs points
      */
-    private _createPointsBuffGeom(
+        private _createPointsBuffGeom(
             points_i_buff_attrib: THREE.BufferAttribute,
             coords_buff_attrib: THREE.BufferAttribute,
             colors_buff_attrib: THREE.BufferAttribute): THREE.BufferGeometry {
@@ -375,6 +447,26 @@ export class DataThreejs extends DataThreejsLookAt {
         points_buff_geom.setAttribute('color', colors_buff_attrib );
         return points_buff_geom;
     }
+    /**
+     * Add threejs points to the scene
+     */
+    private _addPoints(points_buff_geom: THREE.BufferGeometry,
+            color: [number, number, number],
+            size: number = 1) {
+        this._buffer_geoms.push(points_buff_geom);
+        // geom.computeBoundingSphere();
+        const rgb = `rgb(${color.toString()})`;
+        const mat = new THREE.PointsMaterial({
+            color: new THREE.Color(rgb),
+            size: size,
+            vertexColors: THREE.VertexColors,
+            sizeAttenuation: false
+        });
+        const point = new THREE.Points(points_buff_geom, mat);
+        this.scene_objs.push(point);
+        this.scene.add(point);
+    }
+    // ============================================================================
     /**
      * Create the geom buffer for threejs positions
      */
@@ -386,6 +478,25 @@ export class DataThreejs extends DataThreejsLookAt {
         posis_geom_buff.setAttribute('position', coords_buff_attrib );
         return posis_geom_buff;
     }
+    /**
+     * Add threejs positions to the scene
+     */
+    private _addPosis(posis_geom_buff: THREE.BufferGeometry, color: string, size: number = 1): void {
+        this._buffer_geoms.push(posis_geom_buff);
+        // geom.computeBoundingSphere();
+        const mat = new THREE.PointsMaterial({
+            color: new THREE.Color(parseInt(color.replace('#', '0x'), 16)),
+            size: size,
+            sizeAttenuation: false
+            // vertexColors: THREE.VertexColors
+        });
+        const points = new THREE.Points(posis_geom_buff, mat);
+        this.scene_objs.push(points);
+        this.scene.add(points);
+        this.positions.push(points);
+        this.positions.map(p => p.visible = this.settings.positions.show);
+    }
+    // ============================================================================
     /**
      *
      * @param text
@@ -498,73 +609,6 @@ export class DataThreejs extends DataThreejsLookAt {
         this.scene.add(this.directional_light);
     }
 
-    /**
-     * Add threejs triangles to the scene
-     */
-    private _addTris(tris_geom_buff: THREE.BufferGeometry, tris_mat_arr: THREE.Material[]): void {
-        const mesh = new THREE.Mesh(tris_geom_buff, tris_mat_arr);
-        mesh.geometry.computeBoundingSphere();
-        mesh.geometry.computeVertexNormals();
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        // show vertex normals
-        this.vnh = new THREE.VertexNormalsHelper(mesh, this.settings.normals.size, 0x0000ff);
-        this.vnh.visible = this.settings.normals.show;
-        this.scene.add(this.vnh);
-        this.scene_objs.push(mesh);
-        // add mesh to scene
-        this.scene.add(mesh);
-    }
-    /**
-     * Add threejs lines to the scene
-     */
-    private _addLines(lines_buff_geom: THREE.BufferGeometry, size: number = 1): void {
-        // // geom.addAttribute( 'color', new THREE.Float32BufferAttribute( colors_flat, 3 ) );
-        const mat = new THREE.LineBasicMaterial({
-            color: 0x000000,
-            linewidth: size,
-            linecap: 'round', // ignored by WebGLRenderer
-            linejoin: 'round' // ignored by WebGLRenderer
-        });
-        const line = new THREE.LineSegments(lines_buff_geom, mat);
-        this.scene_objs.push(line);
-        this.scene.add(line);
-    }
-    /**
-     * Add threejs points to the scene
-     */
-    private _addPoints(points_buff_geom: THREE.BufferGeometry,
-            color: [number, number, number],
-            size: number = 1) {
-        // geom.computeBoundingSphere();
-        const rgb = `rgb(${color.toString()})`;
-        const mat = new THREE.PointsMaterial({
-            color: new THREE.Color(rgb),
-            size: size,
-            vertexColors: THREE.VertexColors,
-            sizeAttenuation: false
-        });
-        const point = new THREE.Points(points_buff_geom, mat);
-        this.scene_objs.push(point);
-        this.scene.add(point);
-    }
-    /**
-     * Add threejs positions to the scene
-     */
-    private _addPosis(posis_geom_buff: THREE.BufferGeometry, color: string, size: number = 1): void {
-        // geom.computeBoundingSphere();
-        const mat = new THREE.PointsMaterial({
-            color: new THREE.Color(parseInt(color.replace('#', '0x'), 16)),
-            size: size,
-            sizeAttenuation: false
-            // vertexColors: THREE.VertexColors
-        });
-        const point = new THREE.Points(posis_geom_buff, mat);
-        this.scene_objs.push(point);
-        this.scene.add(point);
-        this.positions.push(point);
-        this.positions.map(p => p.visible = this.settings.positions.show);
-    }
     /**
      * Get the bounding sphere of all objects
      */

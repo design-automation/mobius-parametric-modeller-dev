@@ -5,63 +5,6 @@ import { flatbuffers } from "flatbuffers"
  * @constructor
  */
 export namespace tjs.data{
-export class Color {
-  bb: flatbuffers.ByteBuffer|null = null;
-
-  bb_pos:number = 0;
-/**
- * @param number i
- * @param flatbuffers.ByteBuffer bb
- * @returns Color
- */
-__init(i:number, bb:flatbuffers.ByteBuffer):Color {
-  this.bb_pos = i;
-  this.bb = bb;
-  return this;
-};
-
-/**
- * @returns number
- */
-r():number {
-  return this.bb!.readFloat32(this.bb_pos);
-};
-
-/**
- * @returns number
- */
-g():number {
-  return this.bb!.readFloat32(this.bb_pos + 4);
-};
-
-/**
- * @returns number
- */
-b():number {
-  return this.bb!.readFloat32(this.bb_pos + 8);
-};
-
-/**
- * @param flatbuffers.Builder builder
- * @param number r
- * @param number g
- * @param number b
- * @returns flatbuffers.Offset
- */
-static createColor(builder:flatbuffers.Builder, r: number, g: number, b: number):flatbuffers.Offset {
-  builder.prep(4, 12);
-  builder.writeFloat32(b);
-  builder.writeFloat32(g);
-  builder.writeFloat32(r);
-  return builder.offset();
-};
-
-}
-}
-/**
- * @constructor
- */
-export namespace tjs.data{
 export class TjsData {
   bb: flatbuffers.ByteBuffer|null = null;
 
@@ -92,7 +35,7 @@ static getRootAsTjsData(bb:flatbuffers.ByteBuffer, obj?:TjsData):TjsData {
  */
 materialGroupsFlat(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -104,11 +47,11 @@ materialGroupsFlatLength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-materialGroupsFlatArray():Int16Array|null {
+materialGroupsFlatArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -117,7 +60,7 @@ materialGroupsFlatArray():Int16Array|null {
  */
 trisVertsIdxFlat(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -129,11 +72,11 @@ trisVertsIdxFlatLength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-trisVertsIdxFlatArray():Int16Array|null {
+trisVertsIdxFlatArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -142,7 +85,7 @@ trisVertsIdxFlatArray():Int16Array|null {
  */
 trisSelectIdxToI(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -154,11 +97,11 @@ trisSelectIdxToILength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-trisSelectIdxToIArray():Int16Array|null {
+trisSelectIdxToIArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -167,7 +110,7 @@ trisSelectIdxToIArray():Int16Array|null {
  */
 edgesVertsIdxFlat(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -179,11 +122,11 @@ edgesVertsIdxFlatLength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-edgesVertsIdxFlatArray():Int16Array|null {
+edgesVertsIdxFlatArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 10);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -192,7 +135,7 @@ edgesVertsIdxFlatArray():Int16Array|null {
  */
 edgesSelectIdxToI(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -204,11 +147,11 @@ edgesSelectIdxToILength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-edgesSelectIdxToIArray():Int16Array|null {
+edgesSelectIdxToIArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 12);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -217,7 +160,7 @@ edgesSelectIdxToIArray():Int16Array|null {
  */
 pointsVertsIdxFlat(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 14);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -229,11 +172,11 @@ pointsVertsIdxFlatLength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-pointsVertsIdxFlatArray():Int16Array|null {
+pointsVertsIdxFlatArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 14);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -242,7 +185,7 @@ pointsVertsIdxFlatArray():Int16Array|null {
  */
 pointsSelectIdxToI(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 16);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -254,11 +197,11 @@ pointsSelectIdxToILength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-pointsSelectIdxToIArray():Int16Array|null {
+pointsSelectIdxToIArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 16);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -342,7 +285,7 @@ normalsFlatArray():Float32Array|null {
  */
 posisIdxToI(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 24);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -354,11 +297,11 @@ posisIdxToILength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-posisIdxToIArray():Int16Array|null {
+posisIdxToIArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 24);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -367,7 +310,7 @@ posisIdxToIArray():Int16Array|null {
  */
 vertsIdxToI(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 26);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -379,11 +322,11 @@ vertsIdxToILength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-vertsIdxToIArray():Int16Array|null {
+vertsIdxToIArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 26);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -392,7 +335,7 @@ vertsIdxToIArray():Int16Array|null {
  */
 vertsIToIdx(index: number):number|null {
   var offset = this.bb!.__offset(this.bb_pos, 28);
-  return offset ? this.bb!.readInt16(this.bb!.__vector(this.bb_pos + offset) + index * 2) : 0;
+  return offset ? this.bb!.readUint32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
 };
 
 /**
@@ -404,11 +347,11 @@ vertsIToIdxLength():number {
 };
 
 /**
- * @returns Int16Array
+ * @returns Uint32Array
  */
-vertsIToIdxArray():Int16Array|null {
+vertsIToIdxArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 28);
-  return offset ? new Int16Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
@@ -432,9 +375,9 @@ static addMaterialGroupsFlat(builder:flatbuffers.Builder, materialGroupsFlatOffs
  * @returns flatbuffers.Offset
  */
 static createMaterialGroupsFlatVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -444,7 +387,7 @@ static createMaterialGroupsFlatVector(builder:flatbuffers.Builder, data:number[]
  * @param number numElems
  */
 static startMaterialGroupsFlatVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -461,9 +404,9 @@ static addTrisVertsIdxFlat(builder:flatbuffers.Builder, trisVertsIdxFlatOffset:f
  * @returns flatbuffers.Offset
  */
 static createTrisVertsIdxFlatVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -473,7 +416,7 @@ static createTrisVertsIdxFlatVector(builder:flatbuffers.Builder, data:number[] |
  * @param number numElems
  */
 static startTrisVertsIdxFlatVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -490,9 +433,9 @@ static addTrisSelectIdxToI(builder:flatbuffers.Builder, trisSelectIdxToIOffset:f
  * @returns flatbuffers.Offset
  */
 static createTrisSelectIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -502,7 +445,7 @@ static createTrisSelectIdxToIVector(builder:flatbuffers.Builder, data:number[] |
  * @param number numElems
  */
 static startTrisSelectIdxToIVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -519,9 +462,9 @@ static addEdgesVertsIdxFlat(builder:flatbuffers.Builder, edgesVertsIdxFlatOffset
  * @returns flatbuffers.Offset
  */
 static createEdgesVertsIdxFlatVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -531,7 +474,7 @@ static createEdgesVertsIdxFlatVector(builder:flatbuffers.Builder, data:number[] 
  * @param number numElems
  */
 static startEdgesVertsIdxFlatVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -548,9 +491,9 @@ static addEdgesSelectIdxToI(builder:flatbuffers.Builder, edgesSelectIdxToIOffset
  * @returns flatbuffers.Offset
  */
 static createEdgesSelectIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -560,7 +503,7 @@ static createEdgesSelectIdxToIVector(builder:flatbuffers.Builder, data:number[] 
  * @param number numElems
  */
 static startEdgesSelectIdxToIVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -577,9 +520,9 @@ static addPointsVertsIdxFlat(builder:flatbuffers.Builder, pointsVertsIdxFlatOffs
  * @returns flatbuffers.Offset
  */
 static createPointsVertsIdxFlatVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -589,7 +532,7 @@ static createPointsVertsIdxFlatVector(builder:flatbuffers.Builder, data:number[]
  * @param number numElems
  */
 static startPointsVertsIdxFlatVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -606,9 +549,9 @@ static addPointsSelectIdxToI(builder:flatbuffers.Builder, pointsSelectIdxToIOffs
  * @returns flatbuffers.Offset
  */
 static createPointsSelectIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -618,7 +561,7 @@ static createPointsSelectIdxToIVector(builder:flatbuffers.Builder, data:number[]
  * @param number numElems
  */
 static startPointsSelectIdxToIVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -722,9 +665,9 @@ static addPosisIdxToI(builder:flatbuffers.Builder, posisIdxToIOffset:flatbuffers
  * @returns flatbuffers.Offset
  */
 static createPosisIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -734,7 +677,7 @@ static createPosisIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint
  * @param number numElems
  */
 static startPosisIdxToIVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -751,9 +694,9 @@ static addVertsIdxToI(builder:flatbuffers.Builder, vertsIdxToIOffset:flatbuffers
  * @returns flatbuffers.Offset
  */
 static createVertsIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -763,7 +706,7 @@ static createVertsIdxToIVector(builder:flatbuffers.Builder, data:number[] | Uint
  * @param number numElems
  */
 static startVertsIdxToIVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
@@ -780,9 +723,9 @@ static addVertsIToIdx(builder:flatbuffers.Builder, vertsIToIdxOffset:flatbuffers
  * @returns flatbuffers.Offset
  */
 static createVertsIToIdxVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
-  builder.startVector(2, data.length, 2);
+  builder.startVector(4, data.length, 4);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt16(data[i]);
+    builder.addInt32(data[i]);
   }
   return builder.endVector();
 };
@@ -792,7 +735,7 @@ static createVertsIToIdxVector(builder:flatbuffers.Builder, data:number[] | Uint
  * @param number numElems
  */
 static startVertsIToIdxVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(2, numElems, 2);
+  builder.startVector(4, numElems, 4);
 };
 
 /**
