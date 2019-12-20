@@ -56,6 +56,20 @@ export class DataThreejs extends DataThreejsLookAt {
      * @param container
      */
     public populateScene(model: SIModel, container): void {
+        console.log('...................')
+        if (this.dataService.viewerSettingsUpdated) {
+            this.settings = JSON.parse(localStorage.getItem('mpm_settings'));
+            this.camera.position.copy(this.settings.camera.pos);
+            this.controls.target.copy(this.settings.camera.target);
+            this.camera.updateProjectionMatrix();
+            this.controls.update();
+            this.dataService.viewerSettingsUpdated = false;
+        }
+        // if (this.settings.background.show) {
+        //     this.loadBackground(this.settings.background.background_set);
+        // } else {
+        //     this._scene.background = new THREE.Color(this.settings.colors.viewer_bg);
+        // }
 
         // clean up
         while (this.scene.children.length > 0) {
@@ -305,6 +319,15 @@ export class DataThreejs extends DataThreejsLookAt {
                         this.scene.remove(this.scene.children[i]);
                     }
                 }
+        // if (threejs_data.posis_indices.length !== 0) {
+        //     if (this.dataService.newFlowchart) {
+        //         this.dataService.newFlowchart = false;
+        //         this.origin = new Vector3(center.x, center.y, 0);
+        //         // this.settings.camera.target = this.origin ;
+        //         localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
+        //         this.axesHelper.position.set(center.x, center.y, 0);
+        //     } else {
+        //         this.axesHelper.position.set(this.origin.x, this.origin.y, 0);
             }
         }
         this.axesHelper = new THREE.AxesHelper(size);
