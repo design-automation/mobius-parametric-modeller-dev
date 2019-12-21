@@ -49,6 +49,9 @@ export class GeomAdd extends GeomNav {
         if (is_closed) {
             const last_edge: TEdge = [verts_i[verts_i.length - 1], verts_i[0]];
             edges_i.push( this.pushEdgeEnt(last_edge));
+        } else {
+            this._setValInSubArr(this._geom_arrays.up_verts_edges, verts_i[0], 0, null);
+            this._setValInSubArr(this._geom_arrays.up_verts_edges, verts_i[verts_i.length - 1], 1, null);
         }
         return edges_i;
     }
