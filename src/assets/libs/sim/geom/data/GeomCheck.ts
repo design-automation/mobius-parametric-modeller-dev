@@ -16,7 +16,6 @@ export class GeomCheck  extends GeomNav {
      * Checks geometry for internal consistency
      */
     public check(): string[] {
-        this.printArrays('Running check...');
         const errors: string[] = [];
         this._checkPosis().forEach( error => errors.push(error) );
         this._checkVerts().forEach( error => errors.push(error) );

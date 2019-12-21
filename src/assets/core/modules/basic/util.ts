@@ -185,7 +185,7 @@ export function ModelCompare(__model__: SIModel, gi_model: string, method: _ECOm
 export function ModelCheck(__model__: SIModel): string {
     const check: string[] = __model__.check();
     if (check.length > 0) {
-        console.log(__model__);
+        // console.log(__model__);
         return String(check);
     }
     return 'No internal inconsistencies have been found.';

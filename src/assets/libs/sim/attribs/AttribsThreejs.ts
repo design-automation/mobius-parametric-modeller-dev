@@ -1,5 +1,5 @@
 import { TAttribDataTypes, EEntType, EAttribNames, Txy, TColor, Txyz, ITjsAttribData } from '../common';
-import { GIAttribMap } from './data/AttribMap';
+import { AttribMap } from './data/AttribMap';
 import { Attribs } from './Attribs';
 import __ from 'underscore';
 
@@ -27,11 +27,11 @@ export class AttribsThreejs {
      */
     public getTjsSeqAttribData(): ITjsAttribData {
         // coords
-        const coords_attrib: GIAttribMap = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS);
+        const coords_attrib: AttribMap = this._attribs._attribs_maps.ps.get(EAttribNames.COORDS);
         const [coords, posis_idx_to_i, posis_i_to_idx]: [TAttribDataTypes[], number[], number[]] = coords_attrib.getAllValsWithIdxs();
         // check
-        const colors_attrib: GIAttribMap = this._attribs._attribs_maps._v.get(EAttribNames.COLOR);
-        const normals_attrib: GIAttribMap = this._attribs._attribs_maps._v.get(EAttribNames.NORMAL);
+        const colors_attrib: AttribMap = this._attribs._attribs_maps._v.get(EAttribNames.COLOR);
+        const normals_attrib: AttribMap = this._attribs._attribs_maps._v.get(EAttribNames.NORMAL);
         // colors and normals  arrays be the same length as coords
         const colors: TColor[] = new Array(coords.length);
         const normals: Txyz[] = normals_attrib === undefined ? null : new Array(coords.length);

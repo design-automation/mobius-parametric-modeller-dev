@@ -1,4 +1,4 @@
-import { GIAttribMap } from './attribs/data/AttribMap';
+import { AttribMap } from './attribs/data/AttribMap';
 import * as THREE from 'three';
 
 // longitude latitude in Singapore, NUS
@@ -73,15 +73,15 @@ export enum EEntStrToGeomArray {
  * Attribute maps
  */
 export interface IAttribsMaps {
-    ps: Map<string, GIAttribMap>;
-    _v: Map<string, GIAttribMap>;
-    _e: Map<string, GIAttribMap>;
-    _w: Map<string, GIAttribMap>;
-    _f: Map<string, GIAttribMap>;
-    pt: Map<string, GIAttribMap>;
-    pl: Map<string, GIAttribMap>;
-    pg: Map<string, GIAttribMap>;
-    co: Map<string, GIAttribMap>;
+    ps: Map<string, AttribMap>;
+    _v: Map<string, AttribMap>;
+    _e: Map<string, AttribMap>;
+    _w: Map<string, AttribMap>;
+    _f: Map<string, AttribMap>;
+    pt: Map<string, AttribMap>;
+    pl: Map<string, AttribMap>;
+    pg: Map<string, AttribMap>;
+    co: Map<string, AttribMap>;
     mo: Map<string, any>;
 }
 

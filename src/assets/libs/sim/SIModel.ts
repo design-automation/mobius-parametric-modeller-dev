@@ -77,6 +77,8 @@ export class SIModel {
      * Check model for internal consistency
      */
     public check(): string[] {
+        this.geom.data.print('Geometry...');
+        this.attribs.data.print('Attributes...');
         return this.geom.data.check();
     }
     /**
