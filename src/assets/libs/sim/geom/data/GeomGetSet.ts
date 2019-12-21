@@ -104,6 +104,7 @@ function decodeArr(arr: any): any[] {
             }
         } else {
             new_arr[idx_count] = arr[i];
+            idx_count++;
         }
     }
     return new_arr;
