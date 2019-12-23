@@ -658,14 +658,14 @@ function _delete(__model__: SIModel, ents_arr: TEntTypeIdx[], invert: boolean): 
     for (const posi_i of pgon_posis_i) { set_posis_to_del_i.add(posi_i); }
     for (const posi_i of pline_posis_i) { set_posis_to_del_i.add(posi_i); }
     for (const posi_i of point_posis_i) { set_posis_to_del_i.add(posi_i); }
-    // includ eor exclude the selected posis
+    // include or exclude the selected posis
     if (invert) {
         for (const posi_i of geom_pack.posis_i) { set_posis_to_del_i.delete(posi_i); }
     } else {
         for (const posi_i of geom_pack.posis_i) { set_posis_to_del_i.add(posi_i); }
     }
-    // delete the posis
-    __model__.geom.del.delPosis(Array.from(set_posis_to_del_i));
+    // delete the posis, only if they are unused
+    __model__.geom.del.delUnusedPosis(Array.from(set_posis_to_del_i));
 }
 
 
