@@ -170,5 +170,15 @@
             "module": "material",
             "name": "Standard"
         }
+    },
+    {
+        "old_func": {
+            "module": "virtual",
+            "name": "GetBBox"
+        },
+        "new_func": {
+            "module": "calc",
+            "name": "BBox"
+        }
     }
 ]
