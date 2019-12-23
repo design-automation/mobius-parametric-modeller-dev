@@ -1,6 +1,6 @@
 import { Geom } from './Geom';
 import { TTri, TEdge, TPoint, EEntType, ETjsMaterialType, ITjsGeomData } from '../common';
-import { GIAttribMap } from '../attribs/data/AttribMap';
+import { AttribMap } from '../attribs/data/AttribMap';
 import * as THREE from 'three';
 import { ITjsMaterial } from '../common';
 import __ from 'underscore';
@@ -65,7 +65,7 @@ export class GeomThreejs {
         const materials: ITjsMaterial[] = [this._getMaterial( mat_f ), this._getMaterial( mat_b )];
         const material_names:  string[] = ['default_front', 'default_back'];
         // get the material attribute from polygons
-        const material_attrib: GIAttribMap = this._geom.model.attribs._attribs_maps.pg.get('material');
+        const material_attrib: AttribMap = this._geom.model.attribs._attribs_maps.pg.get('material');
         // loop through all tris
         const tris_i: number[] = this._geom.data.getEnts(EEntType.TRI);
         const mat_to_tri_i_map: Map<string, {tris_i_same_mat: number[], mats: number[]} > = new Map();

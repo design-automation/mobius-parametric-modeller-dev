@@ -1,5 +1,5 @@
 import { TAttribDataTypes, EEntType, EEntTypeStr } from '../common';
-import { GIAttribMap } from './data/AttribMap';
+import { AttribMap } from './data/AttribMap';
 import { isString } from 'util';
 import { sortByKey } from '../../util/maps';
 import { Attribs } from './Attribs';
@@ -39,7 +39,7 @@ export class AttribsTable {
     public getEntAttribsForTable(ent_type: EEntType): {data: any[], ents: number[]} {
         // get the attribs map for this ent type
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
 
         // create a map of objects to store the data
         // const data_obj_map: Map< number, { '#': number, _id: string} > = new Map();
@@ -109,7 +109,7 @@ export class AttribsTable {
      */
     public getEntsVals(selected_ents: Map<string, number>, ent_type: EEntType): any[] {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         const data_obj_map: Map< number, { _id: string} > = new Map();
         if (!selected_ents || selected_ents === undefined) {
             return [];

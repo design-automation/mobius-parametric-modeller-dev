@@ -11,7 +11,7 @@ import { deepCopy } from '../../../util/copy';
  * The keys would be [1,0,,0,1] (Note the undefined value in the middle.)
  *
  */
-export class GIAttribMap {
+export class AttribMap {
     private _name: string;
     private _data_type: EAttribDataTypeStrs;
     private _data_length: number;

@@ -1,12 +1,12 @@
 import { TAttribDataTypes, EEntType, IAttribsMaps, EEntTypeStr } from '../../common';
-import { GIAttribMap } from './AttribMap';
-import { AttribsBase } from './AttribsBase';
+import { AttribMap } from './AttribMap';
+import { AttribsPrint } from './AttribsPrint';
 import { Attribs } from '../Attribs';
 
 /**
  * Class for attributes.
  */
-export class AttribsMerge extends AttribsBase {
+export class AttribsMerge extends AttribsPrint {
     /**
      * Constructor
      */
@@ -53,16 +53,16 @@ export class AttribsMerge extends AttribsBase {
      * @param attribs_maps
      */
     private _mergeAttribs(attribs_maps: IAttribsMaps, ent_type: EEntType) {
-        const from_attribs: Map<string, GIAttribMap> = attribs_maps[EEntTypeStr[ ent_type ]];
-        const to_attribs: Map<string, GIAttribMap> = this.attribs_maps[EEntTypeStr[ ent_type ]];
+        const from_attribs: Map<string, AttribMap> = attribs_maps[EEntTypeStr[ ent_type ]];
+        const to_attribs: Map<string, AttribMap> = this.attribs_maps[EEntTypeStr[ ent_type ]];
         const num_ents: number = this.attribs.model.geom.data.numEnts(ent_type, true); // incude deleted ents
         from_attribs.forEach( from_attrib => {
             const name: string = from_attrib.getName();
             // get or create the existing attrib
             if (!to_attribs.has(name)) {
-                to_attribs.set(name, new GIAttribMap( name, from_attrib.getDataType()) );
+                to_attribs.set(name, new AttribMap( name, from_attrib.getDataType()) );
             }
-            const to_attrib: GIAttribMap = to_attribs.get(name);
+            const to_attrib: AttribMap = to_attribs.get(name);
             // get the data and shift the ents_i indices
             const ents_i_values: [number[], TAttribDataTypes][] = from_attrib.getEntsVals();
 

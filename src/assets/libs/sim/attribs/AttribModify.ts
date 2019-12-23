@@ -1,5 +1,5 @@
 import { EEntType, EEntTypeStr } from '../common';
-import { GIAttribMap } from './data/AttribMap';
+import { AttribMap } from './data/AttribMap';
 import { Attribs } from './Attribs';
 
 /**
@@ -22,7 +22,7 @@ export class AttribsModify {
      */
     public delAttrib(ent_type: EEntType, name: string): boolean {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         return attribs.delete(name);
     }
     /**
@@ -35,11 +35,11 @@ export class AttribsModify {
      */
     public renameAttrib(ent_type: EEntType, old_name: string, new_name: string): boolean {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         if (!attribs.has(old_name)) { return false; }
         if (attribs.has(new_name)) { return false; }
         if (old_name === new_name) { return false; }
-        const attrib: GIAttribMap = attribs.get(old_name);
+        const attrib: AttribMap = attribs.get(old_name);
         attrib.setName(new_name);
         const result = attribs.set(new_name, attrib);
         return attribs.delete(old_name);

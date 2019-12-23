@@ -1,6 +1,6 @@
 import { TAttribDataTypes, EEntType,
     EAttribDataTypeStrs, EAttribNames, Txyz, EEntTypeStr, EAttribPush } from '../common';
-import { GIAttribMap } from './data/AttribMap';
+import { AttribMap } from './data/AttribMap';
 import { vecAdd } from '@libs/geom/vectors';
 import * as mathjs from 'mathjs';
 import { Attribs } from './Attribs';
@@ -35,7 +35,7 @@ export class AttribsAdd {
             }
         } else {
             if (!attribs.has(name)) {
-                const attrib: GIAttribMap = new GIAttribMap(name, data_type);
+                const attrib: AttribMap = new AttribMap(name, data_type);
                 attribs.set(name, attrib);
             } else {
                 if (attribs.get(name).getDataType() !== data_type) {
@@ -98,7 +98,7 @@ export class AttribsAdd {
      */
     public setAttribVal(ent_type: EEntType, ents_i: number|number[], name: string, value: TAttribDataTypes): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         if (attribs.get(name) === undefined) {
             const new_data_type: EAttribDataTypeStrs = this._checkDataType(value);
             this.addAttrib(ent_type, name, new_data_type);
@@ -115,8 +115,8 @@ export class AttribsAdd {
     public setAttribListIdxVal(ent_type: EEntType, ents_i: number|number[], name: string,
             idx: number, value: any): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
-        const attrib: GIAttribMap = attribs.get(name);
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attrib: AttribMap = attribs.get(name);
         if (attrib === undefined) { throw new Error('Attribute does not exist.'); }
         if (attrib.getDataType() !== EAttribDataTypeStrs.LIST) {
             throw new Error('Attribute is not a list, so indexed values are not allowed.');
@@ -133,8 +133,8 @@ export class AttribsAdd {
     public setAttribDictKeyVal(ent_type: EEntType, ents_i: number|number[], name: string,
         key: string, value: any): void {
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
-        const attrib: GIAttribMap = attribs.get(name);
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attrib: AttribMap = attribs.get(name);
         if (attrib === undefined) { throw new Error('Attribute does not exist.'); }
         if (attrib.getDataType() !== EAttribDataTypeStrs.DICT) {
             throw new Error('Attribute is not a dictionary, so keyed values are not allowed.');
@@ -151,7 +151,7 @@ export class AttribsAdd {
     public delEntFromAttribs(ent_type: EEntType, ents_i: number|number[]): void {
         // get the attrib names
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         attribs.forEach( attrib => attrib.delEnt(ents_i) );
     }
     /**
@@ -180,11 +180,11 @@ export class AttribsAdd {
     public copyAttribs(ent_type: EEntType, from_ent_i: number, to_ent_i: number): void {
         // get the attrib names
         const attribs_maps_key: string = EEntTypeStr[ent_type];
-        const attribs: Map<string, GIAttribMap> = this._attribs._attribs_maps[attribs_maps_key];
+        const attribs: Map<string, AttribMap> = this._attribs._attribs_maps[attribs_maps_key];
         const attrib_names: string[] = Array.from(attribs.keys());
         // copy each attrib
         for (const attrib_name of attrib_names) {
-            const attrib: GIAttribMap = attribs.get(attrib_name);
+            const attrib: AttribMap = attribs.get(attrib_name);
             const attrib_value: TAttribDataTypes =  attrib.getEntVal(from_ent_i) as TAttribDataTypes;
             attrib.setEntVal(to_ent_i, attrib_value);
         }
