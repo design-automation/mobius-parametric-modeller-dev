@@ -301,7 +301,10 @@ posisIdxToILength():number {
  */
 posisIdxToIArray():Uint32Array|null {
   var offset = this.bb!.__offset(this.bb_pos, 24);
-  return offset ? new Uint32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+  return offset? Uint32Array.from(new Array(this.bb!.__vector_len(this.bb_pos + offset)).keys()) : null;
+  // return offset ? new Uint32Array(this.bb!.bytes().buffer, 
+  //                                 this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), 
+  //                                 this.bb!.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
