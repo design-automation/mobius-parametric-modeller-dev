@@ -1,4 +1,4 @@
-import { GIModel } from '@libs/geo-info/GIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 
 /**
 * Return certain value from the model for the flowchart's end node
@@ -7,6 +7,6 @@ import { GIModel } from '@libs/geo-info/GIModel';
  * @param {number} value  Index of the value to be returned.
  * @returns {any} Value
  */
-export function Return(__model__: GIModel, value: any): any {
+export function Return(__model__: SIModel, value: any): any {
     return value;
 }

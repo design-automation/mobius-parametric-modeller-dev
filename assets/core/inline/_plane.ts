@@ -1,4 +1,4 @@
-import { TPlane, TRay, Txyz } from '@assets/libs/geo-info/common';
+import { TPlane, TRay, Txyz } from '@assets/libs/sim/common';
 import { vecCross, vecMult, vecsAdd, vecRot, vecNorm, vecMakeOrtho, vecAdd, vecFromTo, vecDot } from '@assets/libs/geom/vectors';
 
 /**

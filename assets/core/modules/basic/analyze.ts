@@ -8,9 +8,9 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, Txyz, EEntType, TEntTypeIdx, TRay, TPlane, Txy, XYPLANE } from '@libs/geo-info/common';
-import { isPline, isWire, isEdge, isPgon, isFace, getArrDepth, isVert, isPosi, isPoint, idsMakeFromIndicies } from '@libs/geo-info/id';
+import { SIModel } from '@assets/libs/sim/SIModel';
+import { TId, Txyz, EEntType, TEntTypeIdx, TRay, TPlane, Txy, XYPLANE } from '@libs/sim/common';
+import { isPline, isWire, isEdge, isPgon, isFace, getArrDepth, isVert, isPosi, isPoint, idsMakeFromIndicies } from '@libs/sim/id';
 import { distance } from '@libs/geom/distance';
 import { vecSum, vecDiv, vecAdd, vecSub, vecCross, vecMult, vecFromTo, vecLen, vecDot, vecNorm, vecAng2 } from '@libs/geom/vectors';
 import { triangulate } from '@libs/triangulate/triangulate';
@@ -34,7 +34,7 @@ import { XAXIS, YAXIS, ZAXIS } from '@assets/libs/geom/constants';
 // but it seems that is not the case, the big non-buffered mesh seems faster
 // so for now that is the one that is being used
 // ----
-function _createMeshesTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mesh[] {
+function _createMeshesTjs(__model__: SIModel, ents_arrs: TEntTypeIdx[]): THREE.Mesh[] {
     // Note that for meshes, faces must be pointed towards the origin of the ray in order to be detected;
     // intersections of the ray passing through the back of a face will not be detected.
     // To raycast against both faces of an object, you'll want to set the material's side property to THREE.DoubleSide.
@@ -43,7 +43,7 @@ function _createMeshesTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.M
     // get all unique posis
     const posis_i_set: Set<number> = new Set();
     for (const [ent_type, ent_i] of ents_arrs) {
-        const ent_posis_i: number[] = __model__.geom.nav.navAnyToPosi(ent_type, ent_i);
+        const ent_posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, ent_i);
         ent_posis_i.forEach( ent_posi_i => posis_i_set.add(ent_posi_i) );
     }
     // create tjs vectors for each posi and save them in a sparse array
@@ -62,7 +62,7 @@ function _createMeshesTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.M
                 faces_i.push(ent_i);
                 break;
             default:
-                const coll_faces_i: number[] = __model__.geom.nav.navAnyToFace(ent_type, ent_i);
+                const coll_faces_i: number[] = __model__.geom.data.navAnyToFace(ent_type, ent_i);
                 coll_faces_i.forEach( coll_face_i => faces_i.push(coll_face_i) );
                 break;
         }
@@ -72,9 +72,9 @@ function _createMeshesTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.M
     for (const face_i of faces_i) {
         // create the tjs geometry
         const geom_tjs = new THREE.Geometry();
-        const tris_i: number[] = __model__.geom.nav.navFaceToTri(face_i);
+        const tris_i: number[] = __model__.geom.data.navFaceToTri(face_i);
         for (const tri_i of tris_i) {
-            const tri_posis_i: number[] = __model__.geom.nav.navAnyToPosi(EEntType.TRI, tri_i);
+            const tri_posis_i: number[] = __model__.geom.data.navAnyToPosi(EEntType.TRI, tri_i);
             // add the three vertices to the geometry
             const a: number = geom_tjs.vertices.push(posis_tjs[tri_posis_i[0]]) - 1;
             const b: number = geom_tjs.vertices.push(posis_tjs[tri_posis_i[1]]) - 1;
@@ -87,7 +87,7 @@ function _createMeshesTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.M
     }
     return meshes_tjs;
 }
-function _createMeshTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mesh {
+function _createMeshTjs(__model__: SIModel, ents_arrs: TEntTypeIdx[]): THREE.Mesh {
     // Note that for meshes, faces must be pointed towards the origin of the ray in order to be detected;
     // intersections of the ray passing through the back of a face will not be detected.
     // To raycast against both faces of an object, you'll want to set the material's side property to THREE.DoubleSide.
@@ -96,7 +96,7 @@ function _createMeshTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mes
     // get all unique posis
     const posis_i_set: Set<number> = new Set();
     for (const [ent_type, ent_i] of ents_arrs) {
-        const ent_posis_i: number[] = __model__.geom.nav.navAnyToPosi(ent_type, ent_i);
+        const ent_posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, ent_i);
         ent_posis_i.forEach( ent_posi_i => posis_i_set.add(ent_posi_i) );
     }
     // create tjs vectors for each posi and save them in a sparse array
@@ -115,7 +115,7 @@ function _createMeshTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mes
                 faces_i.push(ent_i);
                 break;
             default:
-                const coll_faces_i: number[] = __model__.geom.nav.navAnyToFace(ent_type, ent_i);
+                const coll_faces_i: number[] = __model__.geom.data.navAnyToFace(ent_type, ent_i);
                 coll_faces_i.forEach( coll_face_i => faces_i.push(coll_face_i) );
                 break;
         }
@@ -124,9 +124,9 @@ function _createMeshTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mes
     const geom_tjs = new THREE.Geometry();
     for (const face_i of faces_i) {
         // create the tjs geometry
-        const tris_i: number[] = __model__.geom.nav.navFaceToTri(face_i);
+        const tris_i: number[] = __model__.geom.data.navFaceToTri(face_i);
         for (const tri_i of tris_i) {
-            const tri_posis_i: number[] = __model__.geom.nav.navAnyToPosi(EEntType.TRI, tri_i);
+            const tri_posis_i: number[] = __model__.geom.data.navAnyToPosi(EEntType.TRI, tri_i);
             // add the three vertices to the geometry
             const a: number = geom_tjs.vertices.push(posis_tjs[tri_posis_i[0]]) - 1;
             const b: number = geom_tjs.vertices.push(posis_tjs[tri_posis_i[1]]) - 1;
@@ -138,7 +138,7 @@ function _createMeshTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mes
     }
     return new THREE.Mesh(geom_tjs, mat_tjs);
 }
-function _createMeshBufTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.Mesh {
+function _createMeshBufTjs(__model__: SIModel, ents_arrs: TEntTypeIdx[]): THREE.Mesh {
     // Note that for meshes, faces must be pointed towards the origin of the ray in order to be detected;
     // intersections of the ray passing through the back of a face will not be detected.
     // To raycast against both faces of an object, you'll want to set the material's side property to THREE.DoubleSide.
@@ -147,7 +147,7 @@ function _createMeshBufTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.
     // get all unique posis
     const posis_i_set: Set<number> = new Set();
     for (const [ent_type, ent_i] of ents_arrs) {
-        const ent_posis_i: number[] = __model__.geom.nav.navAnyToPosi(ent_type, ent_i);
+        const ent_posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, ent_i);
         ent_posis_i.forEach( ent_posi_i => posis_i_set.add(ent_posi_i) );
     }
     // create a flat list of xyz coords
@@ -168,7 +168,7 @@ function _createMeshBufTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.
                 faces_i.push(ent_i);
                 break;
             default:
-                const coll_faces_i: number[] = __model__.geom.nav.navAnyToFace(ent_type, ent_i);
+                const coll_faces_i: number[] = __model__.geom.data.navAnyToFace(ent_type, ent_i);
                 coll_faces_i.forEach( coll_face_i => faces_i.push(coll_face_i) );
                 break;
         }
@@ -177,9 +177,9 @@ function _createMeshBufTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.
     const tris_flat: number[] = [];
     for (const face_i of faces_i) {
         // create the tjs geometry
-        const tris_i: number[] = __model__.geom.nav.navFaceToTri(face_i);
+        const tris_i: number[] = __model__.geom.data.navFaceToTri(face_i);
         for (const tri_i of tris_i) {
-            const tri_posis_i: number[] = __model__.geom.nav.navAnyToPosi(EEntType.TRI, tri_i);
+            const tri_posis_i: number[] = __model__.geom.data.navAnyToPosi(EEntType.TRI, tri_i);
             tris_flat.push( posi_i_to_xyzs_map.get( tri_posis_i[0]) );
             tris_flat.push( posi_i_to_xyzs_map.get( tri_posis_i[1]) );
             tris_flat.push( posi_i_to_xyzs_map.get( tri_posis_i[2]) );
@@ -205,7 +205,7 @@ function _createMeshBufTjs(__model__: GIModel, ents_arrs: TEntTypeIdx[]): THREE.
  * @example distance1 = calc.Distance (position1, position2, p_to_p_distance)
  * @example_info position1 = [0,0,0], position2 = [[0,0,10],[0,0,20]], Expected value of distance is [10,20].
  */
-export function Raytrace(__model__: GIModel, origins: Txyz|Txyz[], directions: Txyz|Txyz[],
+export function Raytrace(__model__: SIModel, origins: Txyz|Txyz[], directions: Txyz|Txyz[],
         entities: TId|TId[]|TId[][], limits: number|[number, number], method: _ERaytraceMethod): number[]|number[][] {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
@@ -227,11 +227,11 @@ export function Raytrace(__model__: GIModel, origins: Txyz|Txyz[], directions: T
     // return teh results
     return result;
 }
-function _raytraceOriginsTjs(__model__: GIModel, origins: Txyz|Txyz[]): THREE.Vector3[] {
+function _raytraceOriginsTjs(__model__: SIModel, origins: Txyz|Txyz[]): THREE.Vector3[] {
     origins = Array.isArray(origins[0]) ? origins as Txyz[] : [origins] as Txyz[];
     return origins.map(origin => new THREE.Vector3(...origin));
 }
-function _raytraceDirectionsTjs(__model__: GIModel, directions: Txyz|Txyz[]): THREE.Vector3[] {
+function _raytraceDirectionsTjs(__model__: SIModel, directions: Txyz|Txyz[]): THREE.Vector3[] {
     directions = Array.isArray(directions[0]) ? directions as Txyz[] : [directions] as Txyz[];
     for (let i = 0; i < directions.length; i++) {
         directions[i] = vecNorm(directions[i]);
@@ -346,7 +346,7 @@ function _raytrace(origins_tjs: THREE.Vector3[], matrices_tjs: THREE.Matrix4[], 
  * @example distance1 = calc.Distance (position1, position2, p_to_p_distance)
  * @example_info position1 = [0,0,0], position2 = [[0,0,10],[0,0,20]], Expected value of distance is [10,20].
  */
-export function Solar(__model__: GIModel, origins: TPlane[], detail: number,
+export function Solar(__model__: SIModel, origins: TPlane[], detail: number,
     entities: TId|TId[]|TId[][], limits: number|[number, number], method: _ESolarMethod): number[] {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
@@ -400,7 +400,7 @@ export enum _ESolarMethod {
     DIRECT_EXPOSURE = 'direct_exposure',
     INDIRECT_EXPOSURE = 'indirect_exposure'
 }
-function _solarOriginsTjs(__model__: GIModel, origins: TRay[]|TPlane[], offset: number): [THREE.Vector3, THREE.Vector3][] {
+function _solarOriginsTjs(__model__: SIModel, origins: TRay[]|TPlane[], offset: number): [THREE.Vector3, THREE.Vector3][] {
     const vectors_tjs: [THREE.Vector3, THREE.Vector3][] = [];
     for (const origin of origins) {
         let normal_xyz: Txyz = null;
@@ -537,7 +537,7 @@ function _solarRaytrace(origins_tjs: [THREE.Vector3, THREE.Vector3][],
  * @example distance1 = calc.Distance (position1, position2, p_to_p_distance)
  * @example_info position1 = [0,0,0], position2 = [[0,0,10],[0,0,20]], Expected value of distance is [10,20].
  */
-export function SunPath(__model__: GIModel, origin: Txyz|TPlane, detail: number, radius: number, method: _ESolarMethod): TId[] {
+export function SunPath(__model__: SIModel, origin: Txyz|TPlane, detail: number, radius: number, method: _ESolarMethod): TId[] {
     // --- Error Check ---
     const fn_name = 'analyze.SunPath';
     // TODO
@@ -584,8 +584,7 @@ export function SunPath(__model__: GIModel, origin: Txyz|TPlane, detail: number,
         for (const direction_tjs of one_day_tjs) {
             let xyz: Txyz = vecMult([direction_tjs.x, direction_tjs.y, direction_tjs.z], radius);
             xyz = multMatrix(xyz, matrix);
-            const posi_i: number = __model__.geom.add.addPosi();
-            __model__.attribs.add.setPosiCoords(posi_i, xyz);
+            const posi_i: number = __model__.createPosi(xyz);
             one_day_posis_i.push(posi_i);
         }
         posis_i.push(one_day_posis_i);

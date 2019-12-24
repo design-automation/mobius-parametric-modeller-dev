@@ -1,0 +1,68 @@
+// export interface ITjsGeomData {
+//     // tris
+//     tris_verts_idx_flat: number[];
+//     tris_select_idx_to_i: number[];
+//     materials: ITjsMaterial[];
+//     material_groups: [number, number, number][];
+
+//     // edges
+//     edges_verts_idx_flat: number[];
+//     edges_select_idx_to_i: number[];
+
+//     // points
+//     points_verts_idx_flat: number[];
+//     points_select_idx_to_i: number[];
+// }
+
+// export interface ITjsAttribData {
+//     coords_flat: number[];
+//     colors_flat: number[];
+//     normals_flat: number[];
+//     posis_idx_to_i: number[];
+//     verts_idx_to_i: number[];
+//     verts_i_to_idx: number[];
+// }
+
+
+// export interface ITjsMaterial {
+//     type: ETjsMaterialType;
+//     side: THREE.Side;
+//     vertexColors: THREE.Colors;
+//     color?: THREE.Color;
+//     emissive?: THREE.Color;
+//     specular?: THREE.Color;
+//     opacity?: number;
+//     transparent?: number;,
+//     shininess?: number;
+//     roughness?: number;
+//     metalness?: number;
+//     reflectivity?: number;
+// }
+
+// export enum ETjsMaterialType {
+//     MeshBasicMaterial = 'MeshBasicMaterial',
+//     MeshStandardMaterial = 'MeshStandardMaterial',
+//     MeshLambertMaterial = 'MeshLambertMaterial',
+//     MeshPhongMaterial = 'MeshPhongMaterial',
+//     MeshPhysicalMaterial = 'MeshPhysicalMaterial'
+// }
+
+namespace tjs.data;
+
+table TjsData {
+  material_groups_flat:[uint];
+  tris_verts_idx_flat:[uint];
+  tris_select_idx_to_i:[uint];
+  edges_verts_idx_flat:[uint];
+  edges_select_idx_to_i:[uint];
+  points_verts_idx_flat:[uint];
+  points_select_idx_to_i:[uint];
+  coords_flat:[float];
+  colors_flat:[float];
+  normals_flat:[float];
+  posis_idx_to_i:[uint];
+  verts_idx_to_i:[uint];
+  verts_i_to_idx:[uint];
+}
+
+root_type TjsData;

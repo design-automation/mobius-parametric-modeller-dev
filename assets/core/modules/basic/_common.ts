@@ -6,18 +6,18 @@
 
 /**
  *
- */import { GIModel } from '@libs/geo-info/GIModel';
-import { TId, TPlane, Txyz, EEntType, TRay, TEntTypeIdx, EEntTypeStr, Txy} from '@libs/geo-info/common';
+ */import { SIModel } from '@assets/libs/sim/SIModel';
+import { TId, TPlane, Txyz, EEntType, TRay, TEntTypeIdx, EEntTypeStr, Txy} from '@libs/sim/common';
 import { checkArgTypes, TypeCheckObj, checkIDs, IDcheckObj} from '../_check_args';
-import { getArrDepth, isColl } from '@assets/libs/geo-info/id';
+import { getArrDepth, isColl } from '@assets/libs/sim/id';
 import { vecDiv, vecSum, vecAvg, vecFromTo, vecLen, vecCross, vecNorm, vecAdd, vecSetLen, vecDot } from '@assets/libs/geom/vectors';
-import { isRay, isPlane, isVec3 } from '@assets/libs/geo-info/virtual';
+import { isRay, isPlane, isVec3 } from '@assets/libs/sim/virtual';
 import { rayFromPln } from '@assets/core/inline/_ray';
 import { plnFromRay } from '@assets/core/inline/_plane';
 const EPS = 1e-8;
 
 // ================================================================================================
-export function getOrigin(__model__: GIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_name: string): Txyz {
+export function getOrigin(__model__: SIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_name: string): Txyz {
     if (isVec3(data)) { return data as Txyz; }
     if (isRay(data)) { return data[0] as Txyz; }
     if (isPlane(data)) { return data[0] as Txyz; }
@@ -26,7 +26,7 @@ export function getOrigin(__model__: GIModel, data: Txyz|TRay|TPlane|TId|TId[], 
     return origin as Txyz;
 }
 // ================================================================================================
-export function getRay(__model__: GIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_name: string): TRay {
+export function getRay(__model__: SIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_name: string): TRay {
     if (isVec3(data)) { return [data, [0, 0, 1]] as TRay; }
     if (isRay(data)) { return data as TRay; }
     if (isPlane(data)) { return rayFromPln(data as TPlane) as TRay; }
@@ -35,16 +35,16 @@ export function getRay(__model__: GIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_
     return [origin, [0, 0, 1]] as TRay;
 }
 // ================================================================================================
-export function getPlane(__model__: GIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_name: string): TPlane {
+export function getPlane(__model__: SIModel, data: Txyz|TRay|TPlane|TId|TId[], fn_name: string): TPlane {
     if (isVec3(data)) { return [data, [1, 0, 0], [0, 1, 0]] as TPlane; }
-    if (isRay(data)) { return data as TPlane; }
-    if (isPlane(data)) { return plnFromRay(data as TRay) as TPlane; }
+    if (isRay(data)) { return plnFromRay(data as TRay) as TPlane; }
+    if (isPlane(data)) { return data as TPlane; }
     const ents: TId|TId[] = data as TId|TId[];
     const origin: Txyz = getCentoridFromEnts(__model__, ents, fn_name);
     return [origin, [1, 0, 0], [0, 1, 0]] as TPlane;
 }
 // ================================================================================================
-export function getCentoridFromEnts(__model__: GIModel, ents: TId|TId[], fn_name: string): Txyz {
+export function getCentoridFromEnts(__model__: SIModel, ents: TId|TId[], fn_name: string): Txyz {
     // this must be an ID or an array of IDs, so lets get the centroid
     const ent_id: TId|TId[] = origin as TId|TId[];
     const ents_arr: TEntTypeIdx|TEntTypeIdx[] = checkIDs(fn_name, 'origin', ent_id,
@@ -58,10 +58,10 @@ export function getCentoridFromEnts(__model__: GIModel, ents: TId|TId[], fn_name
     return centroid as Txyz;
 }
 // ================================================================================================
-export function getCentroid(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]): Txyz|Txyz[] {
+export function getCentroid(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]): Txyz|Txyz[] {
     if (getArrDepth(ents_arr) === 1) {
         const [ent_type, index]: [EEntType, number] = ents_arr as TEntTypeIdx;
-        const posis_i: number[] = __model__.geom.nav.navAnyToPosi(ent_type, index);
+        const posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, index);
         return _centroidPosis(__model__, posis_i);
     } else {
         // divide the input into posis and non posis
@@ -89,7 +89,7 @@ export function getCentroid(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeId
         return np_cents;
     }
 }
-function _centroidPosis(__model__: GIModel, posis_i: number[]): Txyz {
+function _centroidPosis(__model__: SIModel, posis_i: number[]): Txyz {
     const unique_posis_i = Array.from(new Set(posis_i));
     const unique_xyzs: Txyz[] = unique_posis_i.map( posi_i => __model__.attribs.query.getPosiCoords(posi_i));
     return vecDiv(vecSum(unique_xyzs), unique_xyzs.length);

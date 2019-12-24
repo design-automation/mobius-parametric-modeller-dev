@@ -6,15 +6,24 @@
  *
  */
 
-import { GIModel } from '@libs/geo-info/GIModel';
+import { SIModel } from '@assets/libs/sim/SIModel';
 
 import { download } from '@libs/filesys/download';
-import { EEntType, IModelData } from '@libs/geo-info/common';
+import { EEntType, IModelData } from '@libs/sim/common';
 import { __merge__ } from '../_model';
 import { _model } from '..';
 
 
 // ================================================================================================
+export enum _EIOExportParams {
+    YES = 'Add Params',
+    NO = 'No Params'
+}
+export enum _EIOExportContents {
+    BOTH = 'Both',
+    CONSOLE = 'Console Only',
+    MODEL = 'Model Only'
+}
 /**
  * Export data from the model as a file.
  * This will result in a popup in your browser, asking you to save the filel.
@@ -29,7 +38,7 @@ import { _model } from '..';
  * @example util.ExportIO('my_model.json')
  * @example_info Exports all the data in the model as an OBJ.
  */
-export function ExportIO(__model__: GIModel, __console__: string[], __constList__: any, __fileName__: string,
+export function ExportIO(__model__: SIModel, __console__: string[], __constList__: any, __fileName__: string,
                         file_name: string, exportParams: _EIOExportParams, exportContent: _EIOExportContents): boolean {
     // let gi_data: string = JSON.stringify(__model__.getData());
     // gi_data = gi_data.replace(/\\\"/g, '\\\\\\"'); // TODO temporary fix
@@ -65,15 +74,6 @@ export function ExportIO(__model__: GIModel, __console__: string[], __constList_
 
     return download(JSON.stringify(edxAnswer) , file_name);
 }
-export enum _EIOExportParams {
-    YES = 'Add Params',
-    NO = 'No Params'
-}
-export enum _EIOExportContents {
-    BOTH = 'Both',
-    CONSOLE = 'Console Only',
-    MODEL = 'Model Only'
-}
 function convertString(value) {
     let val;
     if (!value) {
@@ -99,7 +99,7 @@ function convertString(value) {
  * @param __constList__
  * @returns Text that summarises what is in the model.
  */
-export function ParamInfo(__model__: GIModel, __constList__: {}): string {
+export function ParamInfo(__model__: SIModel, __constList__: {}): string {
     return JSON.stringify(__constList__);
 }
 // ================================================================================================
@@ -109,19 +109,19 @@ export function ParamInfo(__model__: GIModel, __constList__: {}): string {
  * @param __model__
  * @returns Text that summarises what is in the model, click print to see this text.
  */
-export function ModelInfo(__model__: GIModel): string {
+export function ModelInfo(__model__: SIModel): string {
     return JSON.stringify(
         {
             'geometry': {
-                'num_positions': __model__.geom.query.numEnts(EEntType.POSI, false),
-                'num_vertices': __model__.geom.query.numEnts(EEntType.VERT, false),
-                'num_edges': __model__.geom.query.numEnts(EEntType.EDGE, false),
-                'num_wires': __model__.geom.query.numEnts(EEntType.WIRE, false),
-                'num_faces': __model__.geom.query.numEnts(EEntType.FACE, false),
-                'num_points': __model__.geom.query.numEnts(EEntType.POINT, false),
-                'num_polylines': __model__.geom.query.numEnts(EEntType.PLINE, false),
-                'num_polygons': __model__.geom.query.numEnts(EEntType.PGON, false),
-                'num_collections': __model__.geom.query.numEnts(EEntType.COLL, false)
+                'num_positions': __model__.geom.data.numEnts(EEntType.POSI, false),
+                'num_vertices': __model__.geom.data.numEnts(EEntType.VERT, false),
+                'num_edges': __model__.geom.data.numEnts(EEntType.EDGE, false),
+                'num_wires': __model__.geom.data.numEnts(EEntType.WIRE, false),
+                'num_faces': __model__.geom.data.numEnts(EEntType.FACE, false),
+                'num_points': __model__.geom.data.numEnts(EEntType.POINT, false),
+                'num_polylines': __model__.geom.data.numEnts(EEntType.PLINE, false),
+                'num_polygons': __model__.geom.data.numEnts(EEntType.PGON, false),
+                'num_collections': __model__.geom.data.numEnts(EEntType.COLL, false)
             },
             'attributes': {
                 'position_attribs': __model__.attribs.query.getAttribNames(EEntType.POSI),
@@ -156,9 +156,9 @@ export enum _ECOmpareMethod {
  * @param method Enum, method used to compare this model to the other model specified in the gi_model parameter.
  * @returns Text that summarises the comparison between the two models.
  */
-export function ModelCompare(__model__: GIModel, gi_model: string, method: _ECOmpareMethod): string {
+export function ModelCompare(__model__: SIModel, gi_model: string, method: _ECOmpareMethod): string {
     const gi_obj: IModelData = JSON.parse(gi_model) as IModelData;
-    const other_model = new GIModel(gi_obj);
+    const other_model = new SIModel(gi_obj);
     let result: {score: number, total: number, comment: string} = null;
     switch (method) {
         case _ECOmpareMethod.THIS_IS_SUBSET:
@@ -182,10 +182,10 @@ export function ModelCompare(__model__: GIModel, gi_model: string, method: _ECOm
  * @param __model__
  * @returns Text that summarises what is in the model, click print to see this text.
  */
-export function ModelCheck(__model__: GIModel): string {
+export function ModelCheck(__model__: SIModel): string {
     const check: string[] = __model__.check();
     if (check.length > 0) {
-        console.log(__model__);
+        // console.log(__model__);
         return String(check);
     }
     return 'No internal inconsistencies have been found.';
