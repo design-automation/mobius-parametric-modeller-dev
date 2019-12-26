@@ -92,7 +92,7 @@ export class GeomBase {
             if (del) {
                 delete arr[val_idxs];
             } else {
-                arr[val_idxs] = null;
+                arr[val_idxs] = undefined;
             }
         } else {
             val_idxs.forEach( val_idx => this._clearValsInArr(arr, val_idx, del) );
