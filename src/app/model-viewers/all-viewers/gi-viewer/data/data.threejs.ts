@@ -321,6 +321,10 @@ export class DataThreejs extends DataThreejsLookAt {
             }
         }
         this.axesHelper = new THREE.AxesHelper(size);
+        this.axesHelper.geometry['attributes'].color = new THREE.Int16BufferAttribute(
+            [1, 0, 0, 1, 0, 0,
+             0, 1, 0, 0, 1, 0,
+             0, 0, 1, 0, 0, 1], 3 );
         this.axesHelper.visible = this.settings.axes.show;
         if (this.axesHelper.visible) {
             this.axesHelper.name = 'AxesHelper';
