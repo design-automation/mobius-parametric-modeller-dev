@@ -147,9 +147,9 @@ export class DataThreejs extends DataThreejsLookAt {
                 this.origin = new THREE.Vector3(center.x, center.y, 0);
                 this.settings.camera.target = this.origin ;
                 localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
-                this.axesHelper.position.set(center.x, center.y, 0);
+                this.axesHelper.position.set(center.x, center.y, 0.01);
             } else {
-                this.axesHelper.position.set(this.origin.x, this.origin.y, 0);
+                this.axesHelper.position.set(this.origin.x, this.origin.y, 0.01);
             }
         // }
 
@@ -318,25 +318,15 @@ export class DataThreejs extends DataThreejsLookAt {
                         this.scene.remove(this.scene.children[i]);
                     }
                 }
-        // if (threejs_data.posis_indices.length !== 0) {
-        //     if (this.dataService.newFlowchart) {
-        //         this.dataService.newFlowchart = false;
-        //         this.origin = new Vector3(center.x, center.y, 0);
-        //         // this.settings.camera.target = this.origin ;
-        //         localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
-        //         this.axesHelper.position.set(center.x, center.y, 0);
-        //     } else {
-        //         this.axesHelper.position.set(this.origin.x, this.origin.y, 0);
             }
         }
         this.axesHelper = new THREE.AxesHelper(size);
         this.axesHelper.visible = this.settings.axes.show;
         if (this.axesHelper.visible) {
             this.axesHelper.name = 'AxesHelper';
-            this.axesHelper.position.set(this.axes_pos.x, this.axes_pos.y, 0);
+            this.axesHelper.position.set(this.axes_pos.x, this.axes_pos.y, 0.01);
             this.scene.add(this.axesHelper);
         }
-        // this.axesHelper.position.set(0, 0, 0);
     }
     /**
      * Draws a grid on the XY plane.

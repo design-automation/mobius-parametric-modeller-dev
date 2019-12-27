@@ -37,9 +37,6 @@ export class DataThreejsLookAt extends DataThreejsSelect {
             center = this.scene.position;
             radius = 10;
         }
-        // set grid and axeshelper to center of the objs
-        // this.grid.position.set(center.x, center.y, 0);
-        // this.axesHelper.position.set(center.x, center.y, 0);
 
         this._cameraLookat(center, radius);
     }
