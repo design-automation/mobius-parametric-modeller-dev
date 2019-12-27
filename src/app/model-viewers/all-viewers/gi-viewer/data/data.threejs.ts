@@ -210,7 +210,6 @@ export class DataThreejs extends DataThreejsLookAt {
         this.verts_idx_to_i = fb_tjs_data.vertsIdxToIArray();
         const coords_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.coordsFlatArray(), 3 );
         const colors_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.colorsFlatArray(), 3 );
-        console.log(colors_buff_attrib)
         const normals_buff_attrib = fb_tjs_data.normalsFlatArray() === null ?
             null : new THREE.BufferAttribute( fb_tjs_data.normalsFlatArray(), 3 );
         const tris_idx_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.trisVertsIdxFlatArray(), 1);
