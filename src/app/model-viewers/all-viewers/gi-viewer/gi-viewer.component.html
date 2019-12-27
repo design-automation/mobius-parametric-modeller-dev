@@ -26,7 +26,7 @@
 					<tab tabTitle="Scene">
 						<div class="mat-elevation-z1">
 							<dl>
-								<dd [title] = "!normalsEnabled?'No models available':''">
+								<!-- <dd [title] = "!normalsEnabled?'No models available':''">
 									<div class="label">Normals</div>
 									<div class="onoffswitch">
 										<input type="checkbox"
@@ -50,7 +50,7 @@
 										[disabled] = "!normalsEnabled">
 										<input type="text" [value]="settings.normals.size" disabled>
 									</div>
-								</dd>
+								</dd> -->
 								<dd>
 									<div class="label">Axes</div>
 									<div class="onoffswitch">
@@ -66,8 +66,11 @@
 										</label>
 									</div>
 									<div class="slidecontainer">
-										<input type="range" min="1" max="1000" step="1" [value]="settings.axes.size" class="slider" id="axesSize" (input)="settingOnChange('axes.size', $event.target.value)">
-										<input type="text" [value]="settings.axes.size" disabled>
+                                        <input type="range" min="1" max="1000" step="1" 
+                                        [value]="settings.axes.size" class="slider" id="axesSize" 
+                                        (input)="settingOnChange('axes.size', $event.target.value)">
+                                        <input type="text" [value]="settings.axes.size" 
+                                        (input)="settingOnChange('axes.size', $event.target.value)">
 									</div>
 								</dd>
 								<dd>

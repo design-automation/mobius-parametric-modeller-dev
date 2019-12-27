@@ -235,23 +235,24 @@ export class GeomBase {
     /**
      * Check if a wire is closed
      */
-    public wireIsCLosed(wire_i: number): boolean {
+    public wireIsClosed(wire_i: number): boolean {
         const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-        return this._geom_arrays.dn_edges_verts[wire[0]][0] !== undefined;
+        const start_vert_i: number = this._geom_arrays.dn_edges_verts[wire[0]][0];
+        return this._geom_arrays.up_verts_edges[start_vert_i][0] !== null;
     }
     /**
      * Get the vertices of a wire
      */
     public wireGetVerts(wire_i: number): number[] {
         const edges_i: number[] = this._geom_arrays.dn_wires_edges[wire_i];
-        if (this.wireIsCLosed(wire_i)) {
+        if (this.wireIsClosed(wire_i)) {
             return edges_i.map(edge_i => this._geom_arrays.dn_edges_verts[edge_i][0]);
         } else {
             const verts_i: number[] = [];
-            for (let i = 0; i < edges_i.length - 1; i++) {
-                verts_i.push( this._geom_arrays.dn_edges_verts[edges_i[i]][1] );
+            for (let i = 0; i < edges_i.length; i++) {
+                verts_i.push( this._geom_arrays.dn_edges_verts[edges_i[i]][0] );
             }
-            verts_i.push( this._geom_arrays.dn_edges_verts[edges_i[edges_i.length - 1]][0] );
+            verts_i.push( this._geom_arrays.dn_edges_verts[edges_i[edges_i.length - 1]][1] );
             return verts_i;
         }
     }

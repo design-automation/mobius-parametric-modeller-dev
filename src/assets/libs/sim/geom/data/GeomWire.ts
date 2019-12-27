@@ -25,19 +25,6 @@ export class GeomWire extends GeomNav {
         const face_wires: TFaceWires = this._geom_arrays.dn_faces_wires[face_i];
         return face_wires.indexOf(wire_i) > 0;
     }
-    /**
-     * Check if a wire is closed.
-     * @param wire_i
-     */
-    public wireIsClosed(wire_i: number): boolean {
-        const wire: TWire = this._geom_arrays.dn_wires_edges[wire_i];
-        return this._geom_arrays.dn_edges_verts[wire[0]][0] !== undefined;
-        // const start_vert_i: number = this._geom_arrays.dn_edges_verts[wire[0]][0];
-        // if (start_vert_i === undefined) { return false; }
-        // const end_vert_i: number =   this._geom_arrays.dn_edges_verts[wire[wire.length - 1]][1];
-        // if (start_vert_i === undefined) { return false; }
-        // return (start_vert_i === end_vert_i);
-    }
     public wireIsOpen(wire_i: number): boolean {
         return !this.wireIsClosed(wire_i);
     }

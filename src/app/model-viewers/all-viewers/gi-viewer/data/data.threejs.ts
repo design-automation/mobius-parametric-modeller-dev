@@ -147,9 +147,9 @@ export class DataThreejs extends DataThreejsLookAt {
                 this.origin = new THREE.Vector3(center.x, center.y, 0);
                 this.settings.camera.target = this.origin ;
                 localStorage.setItem('mpm_settings', JSON.stringify(this.settings));
-                this.axesHelper.position.set(center.x, center.y, 0.01);
+                this.axesHelper.position.set(center.x, center.y, 0.05);
             } else {
-                this.axesHelper.position.set(this.origin.x, this.origin.y, 0.01);
+                this.axesHelper.position.set(this.origin.x, this.origin.y, 0.05);
             }
         // }
 
@@ -210,6 +210,7 @@ export class DataThreejs extends DataThreejsLookAt {
         this.verts_idx_to_i = fb_tjs_data.vertsIdxToIArray();
         const coords_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.coordsFlatArray(), 3 );
         const colors_buff_attrib = new THREE.BufferAttribute( fb_tjs_data.colorsFlatArray(), 3 );
+        console.log(colors_buff_attrib)
         const normals_buff_attrib = fb_tjs_data.normalsFlatArray() === null ?
             null : new THREE.BufferAttribute( fb_tjs_data.normalsFlatArray(), 3 );
         const tris_idx_buff_attrib  = new THREE.BufferAttribute(fb_tjs_data.trisVertsIdxFlatArray(), 1);
@@ -321,14 +322,14 @@ export class DataThreejs extends DataThreejsLookAt {
             }
         }
         this.axesHelper = new THREE.AxesHelper(size);
-        this.axesHelper.geometry['attributes'].color = new THREE.Int16BufferAttribute(
+        this.axesHelper.geometry['attributes'].color = new THREE.Float32BufferAttribute(
             [1, 0, 0, 1, 0, 0,
              0, 1, 0, 0, 1, 0,
              0, 0, 1, 0, 0, 1], 3 );
         this.axesHelper.visible = this.settings.axes.show;
         if (this.axesHelper.visible) {
             this.axesHelper.name = 'AxesHelper';
-            this.axesHelper.position.set(this.axes_pos.x, this.axes_pos.y, 0.01);
+            this.axesHelper.position.set(this.axes_pos.x, this.axes_pos.y, 0.05);
             this.scene.add(this.axesHelper);
         }
     }
