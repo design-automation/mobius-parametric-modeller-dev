@@ -629,7 +629,32 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
                     const pos_y = event.clientY - event.target.getBoundingClientRect().top;
                     this.dropdownPosition = { x: pos_x, y: pos_y };
                 }
-                this.selectObj(intersects[0]);
+                let intsType = '';
+                switch (this.SelectingEntityType.id) {
+                    case EEntType.POSI:
+                    case EEntType.POINT:
+                    case EEntType.VERT:
+                        intsType = 'Points';
+                        break;
+                    case EEntType.EDGE:
+                    case EEntType.WIRE:
+                    case EEntType.PLINE:
+                        intsType = 'LineSegments';
+                        break;
+                    case EEntType.FACE:
+                    case EEntType.PGON:
+                        intsType = 'Mesh';
+                        break;
+                }
+
+                let intsObj = intersects[0];
+                for (const inst of intersects) {
+                    if (inst.object.type === intsType) {
+                        intsObj = inst;
+                        break;
+                    }
+                }
+                this.selectObj(intsObj);
                 // setTimeout(() => {
                 //     this.activateRender();
                 // }, 50);
@@ -717,6 +742,7 @@ export class ThreejsViewerComponent implements OnInit, DoCheck, OnChanges, OnDes
         // this.getSelectingEntityType();
         switch (this.SelectingEntityType.id) {
             case EEntType.POSI:
+
                 if (intersect0.object.type === 'Points') {
                     // const posi = scene.posis_map.get(intersect0.index);
                     const posi = scene.posis_idx_to_i[intersect0.index];
