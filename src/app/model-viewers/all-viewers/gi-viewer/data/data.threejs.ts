@@ -410,7 +410,11 @@ export class DataThreejs extends DataThreejsLookAt {
         const mesh = new THREE.Mesh(tris_geom_buff, tris_mat_arr);
         if (this.settings.background.show) {
             tris_mat_arr.forEach(element => {
-                element.envMap = this.scene.background;
+                try {
+                    // @ts-ignore
+                    element.envMap = this.scene.background;
+                } catch (ex) {
+                }
             });
             // element.refractionRatio = 1;
             // element.envMap.mapping = THREE.CubeRefractionMapping;
