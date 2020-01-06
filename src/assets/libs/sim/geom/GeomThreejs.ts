@@ -171,12 +171,15 @@ export class GeomThreejs {
         const edges_verts_idx_filt: TEdge[] = [];
         const edges_select_idx_to_i: number[] = [];
         const edges_i: number[] = this._geom.data.getEnts(EEntType.EDGE);
+        const has_vis = this._geom.model.attribs.query.hasAttrib(EEntType.EDGE, 'visibility');
         for (const edge_i of edges_i) {
-            const edge_verts_i: TEdge = this._geom.data.navEdgeToVert(edge_i);
-            if (edge_verts_i !== null) {
-                const new_edge_verts_i: TEdge = edge_verts_i.map(v => verts_i_to_idx[v]) as TEdge;
-                const tjs_i = edges_verts_idx_filt.push(new_edge_verts_i) - 1;
-                edges_select_idx_to_i[tjs_i] = edge_i;
+            if (!has_vis || this._geom.model.attribs.query.getAttribVal(EEntType.EDGE, 'visibility', edge_i) !== 'hidden') {
+                const edge_verts_i: TEdge = this._geom.data.navEdgeToVert(edge_i);
+                if (edge_verts_i !== null) {
+                    const new_edge_verts_i: TEdge = edge_verts_i.map(v => verts_i_to_idx[v]) as TEdge;
+                    const tjs_i = edges_verts_idx_filt.push(new_edge_verts_i) - 1;
+                    edges_select_idx_to_i[tjs_i] = edge_i;
+                }
             }
         }
         return [__.flatten(edges_verts_idx_filt, true), edges_select_idx_to_i];

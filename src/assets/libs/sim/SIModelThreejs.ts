@@ -172,11 +172,6 @@ export class SIModelThreejs {
                     mat = new THREE.MeshPhongMaterial(material);
                 } else if (material.type === ETjsMaterialType.MeshPhysicalMaterial) {
                     delete material.type;
-                    // if (this.settings.background.show) {
-                    //     element.envMap = this._scene.background;
-                    //     // element.refractionRatio = 1;
-                    //     // element.envMap.mapping = THREE.CubeRefractionMapping;
-                    // }
                     mat = new THREE.MeshPhysicalMaterial(material);
                 } else if (material.type === ETjsMaterialType.MeshLambertMaterial) {
                     delete material.type;

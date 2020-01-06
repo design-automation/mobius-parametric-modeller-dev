@@ -406,7 +406,15 @@ export class DataThreejs extends DataThreejsLookAt {
      */
     private _addTris(tris_geom_buff: THREE.BufferGeometry, tris_mat_arr: THREE.Material[]): void {
         this._buffer_geoms.push(tris_geom_buff);
+
         const mesh = new THREE.Mesh(tris_geom_buff, tris_mat_arr);
+        if (this.settings.background.show) {
+            tris_mat_arr.forEach(element => {
+                element.envMap = this.scene.background;
+            });
+            // element.refractionRatio = 1;
+            // element.envMap.mapping = THREE.CubeRefractionMapping;
+        }
         mesh.geometry.computeBoundingSphere();
         mesh.geometry.computeVertexNormals();
         mesh.castShadow = true;
