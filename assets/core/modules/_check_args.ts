@@ -1,67 +1,66 @@
-import { EEntType, EAttribNames, TEntTypeIdx, EEntTypeStr } from '@libs/sim/common';
-import { idsBreak } from '@libs/sim/id';
+import { EEntType, EAttribNames, TEntTypeIdx, EEntTypeStr } from '@libs/geo-info/common';
+import { idsBreak } from '@libs/geo-info/id';
 
-
-export class IDcheckObj {
-    // static default_ent_type_strs = ['POSI', 'TRI', 'VERT', 'EDGE', 'WIRE', 'FACE', 'POINT', 'PLINE', 'PGON', 'COLL'];
-    static default_ent_type_strs = [EEntType.POSI,
-                                    EEntType.TRI,
-                                    EEntType.VERT,
-                                    EEntType.EDGE,
-                                    EEntType.WIRE,
-                                    EEntType.FACE,
-                                    EEntType.POINT,
-                                    EEntType.PLINE,
-                                    EEntType.PGON,
-                                    EEntType.COLL];
-    // IDs
-    // entity types
-    // POSI, TRI, VERT, EDGE, WIRE, FACE, POINT, PLINE, PGON, COLL
-    static isID(fn_name: string, arg_name: string, arg: any, ent_type_strs: EEntType[]|null): TEntTypeIdx {
-        let ent_arr;
-        try {
-            ent_arr = idsBreak(arg) as TEntTypeIdx; // split
-        } catch (err) {
-            throw new Error(fn_name + ': ' + arg_name + ' is not a valid Entity ID'); // check valid id
-        }
-        if (ent_type_strs === null) {
-            ent_type_strs = IDcheckObj.default_ent_type_strs;
-        }
-        let pass = false;
-        for (let i = 0; i < ent_type_strs.length; i++) {
-            if (ent_arr[0] === ent_type_strs[i]) {
-                pass = true;
-                break;
-            }
-        }
-        if (pass === false) {
-            throw new Error(fn_name + ': ' + arg_name + ' is not one of the following valid types - ' +
-                            ent_type_strs.map((test_ent) => EEntType[test_ent]).toString());
-        }
-        return ent_arr;
+// =========================================================================================================================================
+// Attribute Checks
+// =========================================================================================================================================
+export function checkAttribName(fn_name: string, attrib_name: string): void {
+    TypeCheckObj.isString(fn_name, 'attrib_name', attrib_name); // check arg is string
+    if (attrib_name.length === 0) {
+        throw new Error (fn_name + ': ' + 'attrib_name not specified');
     }
-    static isIDList(fn_name: string, arg_name: string, arg_list: any[], ent_type_strs: EEntType[]|null): TEntTypeIdx[] {
-        isListArg(fn_name, arg_name, arg_list, 'valid Entity IDs');
-        const ret_arr = [];
-        if (ent_type_strs === null) {
-            ent_type_strs = IDcheckObj.default_ent_type_strs;
-        }
-        for (let i = 0; i < arg_list.length; i++) {
-            ret_arr.push(IDcheckObj.isID(fn_name, arg_name + '[' + i + ']', arg_list[i], ent_type_strs));
-        }
-        return ret_arr as TEntTypeIdx[];
+    if (attrib_name.search(/\W/) !== -1) {
+        throw new Error (fn_name + ': ' + 'attrib_name contains restricted characters');
     }
-    static isIDList_list(fn_name: string, arg_name: string, arg_list: any, ent_type_strs: EEntType[]|null): TEntTypeIdx[][] {
-        isListArg(fn_name, arg_name, arg_list, 'list of valid Entity IDs');
-        const ret_arr = [];
-        if (ent_type_strs === null) {
-            ent_type_strs = IDcheckObj.default_ent_type_strs;
-        }
-        for (let i = 0; i < arg_list.length; i++) {
-            ret_arr.push(IDcheckObj.isIDList(fn_name, arg_name + '[' + i + ']', arg_list[i], ent_type_strs));
-        }
-        return ret_arr as TEntTypeIdx[][];
+    if (attrib_name[0].search(/[0-9]/) !== -1) {
+        throw new Error (fn_name + ': ' + 'attrib_name should not start with numbers');
     }
+    // blocks writing to id
+    if (attrib_name === 'id') {
+        throw new Error(fn_name + ': id is not modifiable!');
+    }
+}
+export function checkAttribIdxKey(fn_name: string, idx_or_key?: number|string): void {
+    // -- check defined index
+    if (typeof idx_or_key === 'number') {
+        // check if index is number
+        TypeCheckObj.isNumber(fn_name, 'attrib_index', idx_or_key);
+        // this is an item in a list, the item value can be any
+    } else if (typeof idx_or_key === 'string') {
+        // check if index is number
+        TypeCheckObj.isString(fn_name, 'attrib_key', idx_or_key);
+        // this is an item in an object, the item value can be any
+    } else {
+        throw new Error(fn_name + ': index or key is not a valid type: ' + idx_or_key);
+    }
+}
+export function checkAttribNameIdxKey(fn_name: string, attrib: string|[string, number|string]): [string, number|string] {
+    let attrib_name: string = null;
+    let attrib_idx_key: number|string = null;
+    // deconstruct the attrib arg
+    if (Array.isArray(attrib)) {
+        if (attrib.length !== 2) {
+            throw new Error (fn_name + ': ' + 'attrib_name not specified');
+        }
+        attrib_name = attrib[0] as string;
+        attrib_idx_key = attrib[1] as number|string;
+    } else {
+        attrib_name = attrib as string;
+    }
+    // check that the name is ok
+    checkAttribName(fn_name, attrib_name);
+    // check that the array index or object key is ok
+    if (attrib_idx_key !== null) {
+        checkAttribIdxKey(fn_name, attrib_idx_key);
+    }
+    // return the deconstructed attrib arg, attrib_idx_key may be null
+    return [attrib_name, attrib_idx_key];
+}
+export function checkAttribValue(fn_name: string, attrib_value: any): void {
+    // check the actual value
+    checkArgTypes(fn_name, 'attrib_value', attrib_value,
+            [TypeCheckObj.isString, TypeCheckObj.isNumber, TypeCheckObj.isBoolean,
+                TypeCheckObj.isNull, TypeCheckObj.isList, TypeCheckObj.isDict]);
 }
 // =========================================================================================================================================
 // Function Dictionaries
@@ -245,7 +244,67 @@ export class TypeCheckObj {
         return;
     }
 }
-
+export class IDcheckObj {
+    // static default_ent_type_strs = ['POSI', 'TRI', 'VERT', 'EDGE', 'WIRE', 'FACE', 'POINT', 'PLINE', 'PGON', 'COLL'];
+    static default_ent_type_strs = [EEntType.POSI,
+                                    EEntType.TRI,
+                                    EEntType.VERT,
+                                    EEntType.EDGE,
+                                    EEntType.WIRE,
+                                    EEntType.FACE,
+                                    EEntType.POINT,
+                                    EEntType.PLINE,
+                                    EEntType.PGON,
+                                    EEntType.COLL];
+    // IDs
+    // entity types
+    // POSI, TRI, VERT, EDGE, WIRE, FACE, POINT, PLINE, PGON, COLL
+    static isID(fn_name: string, arg_name: string, arg: any, ent_type_strs: EEntType[]|null): TEntTypeIdx {
+        let ent_arr;
+        try {
+            ent_arr = idsBreak(arg) as TEntTypeIdx; // split
+        } catch (err) {
+            throw new Error(fn_name + ': ' + arg_name + ' is not a valid Entity ID'); // check valid id
+        }
+        if (ent_type_strs === null) {
+            ent_type_strs = IDcheckObj.default_ent_type_strs;
+        }
+        let pass = false;
+        for (let i = 0; i < ent_type_strs.length; i++) {
+            if (ent_arr[0] === ent_type_strs[i]) {
+                pass = true;
+                break;
+            }
+        }
+        if (pass === false) {
+            throw new Error(fn_name + ': ' + arg_name + ' is not one of the following valid types - ' +
+                            ent_type_strs.map((test_ent) => EEntType[test_ent]).toString());
+        }
+        return ent_arr;
+    }
+    static isIDList(fn_name: string, arg_name: string, arg_list: any[], ent_type_strs: EEntType[]|null): TEntTypeIdx[] {
+        isListArg(fn_name, arg_name, arg_list, 'valid Entity IDs');
+        const ret_arr = [];
+        if (ent_type_strs === null) {
+            ent_type_strs = IDcheckObj.default_ent_type_strs;
+        }
+        for (let i = 0; i < arg_list.length; i++) {
+            ret_arr.push(IDcheckObj.isID(fn_name, arg_name + '[' + i + ']', arg_list[i], ent_type_strs));
+        }
+        return ret_arr as TEntTypeIdx[];
+    }
+    static isIDList_list(fn_name: string, arg_name: string, arg_list: any, ent_type_strs: EEntType[]|null): TEntTypeIdx[][] {
+        isListArg(fn_name, arg_name, arg_list, 'list of valid Entity IDs');
+        const ret_arr = [];
+        if (ent_type_strs === null) {
+            ent_type_strs = IDcheckObj.default_ent_type_strs;
+        }
+        for (let i = 0; i < arg_list.length; i++) {
+            ret_arr.push(IDcheckObj.isIDList(fn_name, arg_name + '[' + i + ']', arg_list[i], ent_type_strs));
+        }
+        return ret_arr as TEntTypeIdx[][];
+    }
+}
 // =========================================================================================================================================
 // Specific Checks
 // =========================================================================================================================================
@@ -455,65 +514,4 @@ function isIntListArg(fn_name: string, arg_name: string, arg_list: any[]): void 
         }
     }
     return;
-}
-// =========================================================================================================================================
-// Attribute Checks
-// =========================================================================================================================================
-export function checkAttribName(fn_name: string, attrib_name: string): void {
-    TypeCheckObj.isString(fn_name, 'attrib_name', attrib_name); // check arg is string
-    if (attrib_name.length === 0) {
-        throw new Error (fn_name + ': ' + 'attrib_name not specified');
-    }
-    if (attrib_name.search(/\W/) !== -1) {
-        throw new Error (fn_name + ': ' + 'attrib_name contains restricted characters');
-    }
-    if (attrib_name[0].search(/[0-9]/) !== -1) {
-        throw new Error (fn_name + ': ' + 'attrib_name should not start with numbers');
-    }
-    // blocks writing to id
-    if (attrib_name === 'id') {
-        throw new Error(fn_name + ': id is not modifiable!');
-    }
-}
-export function checkAttribIdxKey(fn_name: string, idx_or_key?: number|string): void {
-    // -- check defined index
-    if (typeof idx_or_key === 'number') {
-        // check if index is number
-        TypeCheckObj.isNumber(fn_name, 'attrib_index', idx_or_key);
-        // this is an item in a list, the item value can be any
-    } else if (typeof idx_or_key === 'string') {
-        // check if index is number
-        TypeCheckObj.isString(fn_name, 'attrib_key', idx_or_key);
-        // this is an item in an object, the item value can be any
-    } else {
-        throw new Error(fn_name + ': index or key is not a valid type: ' + idx_or_key);
-    }
-}
-export function checkAttribNameIdxKey(fn_name: string, attrib: string|[string, number|string]): [string, number|string] {
-    let attrib_name: string = null;
-    let attrib_idx_key: number|string = null;
-    // deconstruct the attrib arg
-    if (Array.isArray(attrib)) {
-        if (attrib.length !== 2) {
-            throw new Error (fn_name + ': ' + 'attrib_name not specified');
-        }
-        attrib_name = attrib[0] as string;
-        attrib_idx_key = attrib[1] as number|string;
-    } else {
-        attrib_name = attrib as string;
-    }
-    // check that the name is ok
-    checkAttribName(fn_name, attrib_name);
-    // check that the array index or object key is ok
-    if (attrib_idx_key !== null) {
-        checkAttribIdxKey(fn_name, attrib_idx_key);
-    }
-    // return the deconstructed attrib arg, attrib_idx_key may be null
-    return [attrib_name, attrib_idx_key];
-}
-export function checkAttribValue(fn_name: string, attrib_value: any): void {
-    // check the actual value
-    checkArgTypes(fn_name, 'attrib_value', attrib_value,
-            [TypeCheckObj.isString, TypeCheckObj.isNumber, TypeCheckObj.isBoolean,
-                TypeCheckObj.isNull, TypeCheckObj.isList, TypeCheckObj.isDict]);
 }

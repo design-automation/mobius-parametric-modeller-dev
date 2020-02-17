@@ -59,36 +59,7 @@ export function scaleMatrix(plane: TPlane, factor: Txyz): three.Matrix4 {
     const matrix_xform1: three.Matrix4 = xformMatrix(plane, true);
     const matrix_xform2: three.Matrix4 = xformMatrix(plane, false);
     // final matrix
-    let s = ''
-    let count = 0
-    for (const i of matrix_xform1.elements) {
-        let si = String(i);
-        if (si.length > 6) {
-            si = si.slice(0, 6);
-        }
-        s += si + ' '.repeat(7 - si.length);
-        count += 1;
-        if (count === 4) { count = 0; s += '\n'; }
-    }
-    console.log('matrix_xform1')
-    console.log(s)
-
-    s = ''
-    count = 0
-    for (const i of matrix_xform2.elements) {
-        let si = String(i);
-        if (si.length > 6) {
-            si = si.slice(0, 6);
-        }
-        s += si + ' '.repeat(7 - si.length);
-        count += 1;
-        if (count === 4) { count = 0; s += '\n'; }
-    }
-    console.log('matrix_xform1')
-    console.log(s)
-
     const xform_scale_xform: three.Matrix4 = matrix_xform2.multiply(matrix_scale.multiply(matrix_xform1));
-    // const xform_scale_xform: three.Matrix4 = matrix_scale.multiply(matrix_xform1);
     // do the xform
     return xform_scale_xform;
 }
@@ -123,8 +94,9 @@ function xformMatrix(plane: TPlane, neg: boolean): three.Matrix4 {
     // combine two matrices
     const m3: three.Matrix4 = new three.Matrix4();
     if (neg) {
+        const m2x = (new three.Matrix4()).getInverse(m2);
         // first translate to origin, then xform, so m2 x m1
-        m3.multiplyMatrices(m2, m1);
+        m3.multiplyMatrices(m2x, m1);
     } else {
         // first xform, then translate to origin, so m1 x m2
         m3.multiplyMatrices(m1, m2);

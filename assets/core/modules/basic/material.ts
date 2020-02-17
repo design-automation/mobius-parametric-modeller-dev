@@ -9,11 +9,11 @@
  *
  */
 
-import { SIModel } from '@assets/libs/sim/SIModel';
-import { Txyz, EAttribNames, EAttribDataTypeStrs } from '@libs/sim/common';
+import { GIModel } from '@libs/geo-info/GIModel';
+import { Txyz, EAttribNames, EAttribDataTypeStrs } from '@libs/geo-info/common';
 import * as THREE from 'three';
-import { TId, EEntType, TEntTypeIdx } from '@libs/sim/common';
-import { isEmptyArr } from '@libs/sim/id';
+import { TId, EEntType, TEntTypeIdx } from '@libs/geo-info/common';
+import { isEmptyArr } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj, checkArgTypes, TypeCheckObj } from '../_check_args';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 
@@ -63,14 +63,8 @@ function _clampArr01(vals: number[]): void {
 function _getTjsColor(col: Txyz): THREE.Color {
     return new THREE.Color(col[0], col[1], col[2]);
 }
-enum _EMaterialType {
-    BASIC = 'MeshBasicMaterial',
-    LAMBERT = 'MeshLambertMaterial',
-    PHONG = 'MeshPhongMaterial',
-    STANDARD = 'MeshStandardMaterial',
-    PHYSICAL = 'MeshPhysicalMaterial'
-}
-function _setMaterialModelAttrib(__model__: SIModel, name: string, settings_obj: object) {
+
+function _setMaterialModelAttrib(__model__: GIModel, name: string, settings_obj: object) {
     // if the material already exists, then existing settings will be added
     // but new settings will take precedence
     if (__model__.attribs.query.hasModelAttrib(name)) {
@@ -93,6 +87,13 @@ function _setMaterialModelAttrib(__model__: SIModel, name: string, settings_obj:
     // const settings_str: string = JSON.stringify(settings_obj);
     __model__.attribs.add.setModelAttribVal(name, settings_obj);
 }
+enum _EMaterialType {
+    BASIC = 'MeshBasicMaterial',
+    LAMBERT = 'MeshLambertMaterial',
+    PHONG = 'MeshPhongMaterial',
+    STANDARD = 'MeshStandardMaterial',
+    PHYSICAL = 'MeshPhysicalMaterial'
+}
 // ================================================================================================
 /**
  * Sets material by creating a polygon attribute called 'material' and setting the value.
@@ -103,7 +104,7 @@ function _setMaterialModelAttrib(__model__: SIModel, name: string, settings_obj:
  * @param color The name of the material.
  * @returns void
  */
-export function Set(__model__: SIModel, entities: TId|TId[], material: string): void {
+export function Set(__model__: GIModel, entities: TId|TId[], material: string): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -116,13 +117,13 @@ export function Set(__model__: SIModel, entities: TId|TId[], material: string): 
         _material(__model__, ents_arr, material);
     }
 }
-function _material(__model__: SIModel, ents_arr: TEntTypeIdx[], material: string): void {
+function _material(__model__: GIModel, ents_arr: TEntTypeIdx[], material: string): void {
     if (!__model__.attribs.query.hasAttrib(EEntType.PGON, EAttribNames.MATERIAL)) {
         __model__.attribs.add.addAttrib(EEntType.PGON, EAttribNames.MATERIAL, EAttribDataTypeStrs.STRING);
     }
     for (const ent_arr of ents_arr) {
         const [ent_type, ent_i]: [number, number] = ent_arr as TEntTypeIdx;
-        const pgons_i: number[] = __model__.geom.data.navAnyToPgon(ent_type, ent_i);
+        const pgons_i: number[] = __model__.geom.nav.navAnyToPgon(ent_type, ent_i);
         for (const pgon_i of pgons_i) {
             __model__.attribs.add.setAttribVal(EEntType.PGON, pgon_i, EAttribNames.MATERIAL, material);
         }
@@ -139,7 +140,7 @@ function _material(__model__: SIModel, ents_arr: TEntTypeIdx[], material: string
  * @param opacity The opacity of the glass, between 0 (totally transparent) and 1 (totally opaque).
  * @returns void
  */
-export function Glass(__model__: SIModel, name: string, opacity: number): void {
+export function Glass(__model__: GIModel, name: string, opacity: number): void {
     // --- Error Check ---
     const fn_name = 'material.Glass';
     checkArgTypes(fn_name, 'name', name, [TypeCheckObj.isString]);
@@ -185,7 +186,7 @@ export function Glass(__model__: SIModel, name: string, opacity: number): void {
  * @param select_vert_colors Enum, select whether to use vertex colors if they exist.
  * @returns void
  */
-export function Basic(__model__: SIModel, name: string,
+export function Basic(__model__: GIModel, name: string,
             color: Txyz,
             opacity: number,
             select_side: _ESide,
@@ -227,7 +228,7 @@ export function Basic(__model__: SIModel, name: string,
  * @param emissive The emissive color, as [r, g, b] values between 0 and 1. White is [1, 1, 1].
  * @returns void
  */
-export function Lambert(__model__: SIModel, name: string, emissive: Txyz): void {
+export function Lambert(__model__: GIModel, name: string, emissive: Txyz): void {
     // --- Error Check ---
     const fn_name = 'material.Lambert';
     checkArgTypes(fn_name, 'name', name, [TypeCheckObj.isString]);
@@ -256,7 +257,7 @@ export function Lambert(__model__: SIModel, name: string, emissive: Txyz): void 
  * @param shininess The shininess, between 0 and 100.
  * @returns void
  */
-export function Phong(__model__: SIModel, name: string,
+export function Phong(__model__: GIModel, name: string,
             emissive: Txyz,
             specular: Txyz,
             shininess: number
@@ -297,7 +298,7 @@ export function Phong(__model__: SIModel, name: string,
  * @param reflectivity The reflectivity, between 0 (non-reflective) and 1 (reflective).
  * @returns void
  */
-export function Standard(__model__: SIModel, name: string,
+export function Standard(__model__: GIModel, name: string,
             emissive: Txyz,
             roughness: number,
             metalness: number
@@ -338,7 +339,7 @@ export function Standard(__model__: SIModel, name: string,
  * @param reflectivity The reflectivity, between 0 (non-reflective) and 1 (reflective).
  * @returns void
  */
-export function Physical(__model__: SIModel, name: string,
+export function Physical(__model__: GIModel, name: string,
             emissive: Txyz,
             roughness: number,
             metalness: number,

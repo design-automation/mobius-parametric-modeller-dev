@@ -8,9 +8,9 @@
  *
  */
 
-import { SIModel } from '@assets/libs/sim/SIModel';
-import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack, IObjPack} from '@libs/sim/common';
-import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/sim/id';
+import { GIModel } from '@libs/geo-info/GIModel';
+import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack} from '@libs/geo-info/common';
+import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/geo-info/id';
 import { vecAdd, vecSum, vecDiv, vecFromTo, vecNorm, vecCross, vecSetLen, vecLen, vecDot } from '@libs/geom/vectors';
 import { checkArgTypes, checkIDs, IDcheckObj, TypeCheckObj} from '../_check_args';
 import { rotateMatrix, multMatrix, scaleMatrix, mirrorMatrix, xfromSourceTargetMatrix } from '@libs/geom/matrix';
@@ -18,7 +18,6 @@ import { Matrix4 } from 'three';
 import __ from 'underscore';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 import { getOrigin, getRay, getPlane } from './_common';
-import { INode } from '@models/node';
 
 // ================================================================================================
 /**
@@ -42,7 +41,7 @@ import { INode } from '@models/node';
  * @example modify.Move([pgon1, pgon2], [1,2,3] )
  * @example_info Moves both pgon1 and pgon2 by [1,2,3].
  */
-export function Move(__model__: SIModel, entities: TId|TId[], vectors: Txyz|Txyz[]): void {
+export function Move(__model__: GIModel, entities: TId|TId[], vectors: Txyz|Txyz[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -55,12 +54,12 @@ export function Move(__model__: SIModel, entities: TId|TId[], vectors: Txyz|Txyz
         _move(__model__, ents_arr, vectors);
     }
 }
-function _move(__model__: SIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]): void {
+function _move(__model__: GIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]): void {
     if (getArrDepth(vectors) === 1) {
         const posis_i: number[] = [];
         const vec: Txyz = vectors as Txyz;
         for (const ents of ents_arr) {
-            __model__.geom.data.navAnyToPosi(ents[0], ents[1]).forEach(posi_i => posis_i.push(posi_i));
+            __model__.geom.nav.navAnyToPosi(ents[0], ents[1]).forEach(posi_i => posis_i.push(posi_i));
         }
         const unique_posis_i: number[] = Array.from(new Set(posis_i));
         for (const unique_posi_i of unique_posis_i) {
@@ -77,7 +76,7 @@ function _move(__model__: SIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]
         for (let i = 0; i < ents_arr.length; i++) {
             const [ent_type, index]: [EEntType, number] = ents_arr[i] as TEntTypeIdx;
             const vec: Txyz = vectors[i] as Txyz;
-            const ent_posis_i: number [] = __model__.geom.data.navAnyToPosi(ent_type, index);
+            const ent_posis_i: number [] = __model__.geom.nav.navAnyToPosi(ent_type, index);
             for (const ent_posi_i of ent_posis_i) {
                 posis_i.push(ent_posi_i);
                 if (! vecs_map.has(ent_posi_i)) {
@@ -112,7 +111,7 @@ function _move(__model__: SIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]
  * @example modify.Rotate(polyline1, plane1, PI)
  * @example_info Rotates polyline1 around the z-axis of plane1 by PI (i.e. 180 degrees).
  */
-export function Rotate(__model__: SIModel, entities: TId|TId[], ray: Txyz|TRay|TPlane|TId|TId[], angle: number): void {
+export function Rotate(__model__: GIModel, entities: TId|TId[], ray: Txyz|TRay|TPlane|TId|TId[], angle: number): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -126,11 +125,11 @@ export function Rotate(__model__: SIModel, entities: TId|TId[], ray: Txyz|TRay|T
         _rotate(__model__, ents_arr, ray, angle);
     }
 }
-function _rotate(__model__: SIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: number): void {
+function _rotate(__model__: GIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: number): void {
     // rotate all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
-        posis_i.push(...__model__.geom.data.navAnyToPosi(ents[0], ents[1]));
+        posis_i.push(...__model__.geom.nav.navAnyToPosi(ents[0], ents[1]));
     }
     const unique_posis_i: number[] = Array.from(new Set(posis_i));
     const matrix: Matrix4 = rotateMatrix(ray, angle);
@@ -159,7 +158,7 @@ function _rotate(__model__: SIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: 
  * @example modify.Scale(entities, plane1, [0.5, 1, 1])
  * @example_info Scales entities by 0.5 along the x axis of plane1, with no scaling along the y and z axes.
  */
-export function Scale(__model__: SIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[], scale: number|Txyz): void {
+export function Scale(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[], scale: number|Txyz): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -169,15 +168,11 @@ export function Scale(__model__: SIModel, entities: TId|TId[], plane: Txyz|TRay|
                                 EEntType.FACE, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
         checkArgTypes(fn_name, 'scale', scale, [TypeCheckObj.isNumber, TypeCheckObj.isXYZlist]);
         plane = getPlane(__model__, plane, fn_name) as TPlane;
-        console.log()
-        console.log(' _polyline 0 ' + plane[0][0] + ',' + plane[0][1] + ',' + plane[0][2] + ' EnterEnd\n' +
-        ' _polyline 0 ' + plane[1][0] + ',' + plane[1][1] + ',' + plane[1][2] + ' EnterEnd\n' +
-        ' _polyline 0 ' + plane[2][0] + ',' + plane[2][1] + ',' + plane[2][2] + ' EnterEnd')
         // --- Error Check ---
         _scale(__model__, ents_arr, plane, scale);
     }
 }
-function _scale(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scale: number|Txyz): void {
+function _scale(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scale: number|Txyz): void {
     // handle scale type
     if (!Array.isArray(scale)) {
         scale = [scale, scale, scale];
@@ -185,28 +180,13 @@ function _scale(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scal
     // scale all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
-        posis_i.push(...__model__.geom.data.navAnyToPosi(ents[0], ents[1]));
+        posis_i.push(...__model__.geom.nav.navAnyToPosi(ents[0], ents[1]));
     }
-
     const unique_posis_i: number[] = Array.from(new Set(posis_i));
     const matrix: Matrix4 = scaleMatrix(plane, scale);
-    let s = ''
-    let count = 0
-    for (const i of matrix.elements) {
-        let si = String(i);
-        if (si.length > 6) {
-            si = si.slice(0, 6);
-        }
-        s += si + ' '.repeat(7 - si.length);
-        count += 1;
-        if (count === 4) { count = 0; s += '\n'; }
-    }
-    console.log(s)
     for (const unique_posi_i of unique_posis_i) {
         const old_xyz: Txyz = __model__.attribs.query.getPosiCoords(unique_posi_i);
         const new_xyz: Txyz = multMatrix(old_xyz, matrix);
-        console.log(' _point ' + old_xyz[0] + ',' + old_xyz[1] + ',' + old_xyz[2] +
-        '\n _point ' + new_xyz[0] + ',' + new_xyz[1] + ',' + new_xyz[2])
         __model__.attribs.add.setPosiCoords(unique_posi_i, new_xyz);
     }
     return; // specifies that nothing is returned
@@ -226,7 +206,7 @@ function _scale(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scal
  * @example modify.Mirror(polygon1, plane1)
  * @example_info Mirrors polygon1 across plane1.
  */
-export function Mirror(__model__: SIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[]): void {
+export function Mirror(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay|TPlane|TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -239,12 +219,12 @@ export function Mirror(__model__: SIModel, entities: TId|TId[], plane: Txyz|TRay
         _mirror(__model__, ents_arr, plane);
     }
 }
-function _mirror(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane): void {
+function _mirror(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane): void {
     // mirror all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
         const [ent_type, index]: TEntTypeIdx = ents as TEntTypeIdx;
-        posis_i.push(...__model__.geom.data.navAnyToPosi(ent_type, index));
+        posis_i.push(...__model__.geom.nav.navAnyToPosi(ent_type, index));
     }
     const unique_posis_i: number[] = Array.from(new Set(posis_i));
     const matrix: Matrix4 = mirrorMatrix(plane);
@@ -274,7 +254,7 @@ function _mirror(__model__: SIModel, ents_arr: TEntTypeIdx[], plane: TPlane): vo
  * @example modify.XForm(polygon1, plane1, plane2)
  * @example_info Transforms polygon1 from plane1 to plane2.
  */
-export function XForm(__model__: SIModel, entities: TId|TId[],
+export function XForm(__model__: GIModel, entities: TId|TId[],
         from_plane: Txyz|TRay|TPlane|TId|TId[], to_plane: Txyz|TRay|TPlane|TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
@@ -289,12 +269,12 @@ export function XForm(__model__: SIModel, entities: TId|TId[],
         _xform(__model__, ents_arr, from_plane, to_plane);
     }
 }
-function _xform(__model__: SIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: TPlane): void {
+function _xform(__model__: GIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: TPlane): void {
     // xform all positions
     const posis_i: number[] = [];
     for (const ents of ents_arr) {
         const [ent_type, index]: [EEntType, number] = ents as TEntTypeIdx;
-        posis_i.push(...__model__.geom.data.navAnyToPosi(ent_type, index));
+        posis_i.push(...__model__.geom.nav.navAnyToPosi(ent_type, index));
     }
     const unique_posis_i: number[] = Array.from(new Set(posis_i));
     const matrix: Matrix4 = xfromSourceTargetMatrix(from, to);
@@ -315,7 +295,7 @@ function _xform(__model__: SIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: T
  * @example modify.Offset(polygon1, 10)
  * @example_info Offsets the wires inside polygon1 by 10 units. Holes will also be offset.
  */
-export function Offset(__model__: SIModel, entities: TId|TId[], dist: number): void {
+export function Offset(__model__: GIModel, entities: TId|TId[], dist: number): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -327,17 +307,17 @@ export function Offset(__model__: SIModel, entities: TId|TId[], dist: number): v
         _offset(__model__, ents_arr, dist);
     }
 }
-function _offset(__model__: SIModel, ents_arr: TEntTypeIdx[], dist: number): void {
+function _offset(__model__: GIModel, ents_arr: TEntTypeIdx[], dist: number): void {
     // get all wires and offset
     const pgons_i: number[] = [];
     for (const ents of ents_arr) {
         const [ent_type, index]: [EEntType, number] = ents as TEntTypeIdx;
-        const wires_i: number[] = __model__.geom.data.navAnyToWire(ent_type, index);
+        const wires_i: number[] = __model__.geom.nav.navAnyToWire(ent_type, index);
         for (const wire_i of wires_i) {
             _offsetWire(__model__, wire_i, dist);
         }
         // save all pgons for re-tri
-        const pgon_i: number[] = __model__.geom.data.navAnyToPgon(ent_type, index);
+        const pgon_i: number[] = __model__.geom.nav.navAnyToPgon(ent_type, index);
         if (pgon_i.length === 1) {
             if (pgons_i.indexOf(pgon_i[0]) === -1) {
                 pgons_i.push(pgon_i[0]);
@@ -345,20 +325,19 @@ function _offset(__model__: SIModel, ents_arr: TEntTypeIdx[], dist: number): voi
         }
     }
     // re-tri all polygons
-    for (const pgon_i of pgons_i) {
-        const face_i:  number = __model__.geom.data.navPgonToFace(pgon_i);
-        __model__.geom.data.faceTri(face_i);
+    if (pgons_i.length > 0) {
+        __model__.geom.modify_pgon.triPgons(pgons_i);
     }
 }
-function _offsetWire(__model__: SIModel, wire_i: number, dist: number): void {
+function _offsetWire(__model__: GIModel, wire_i: number, dist: number): void {
     // get the normal of the wire
-    let vec_norm: Txyz = __model__.calc.getWireNormal(wire_i);
+    let vec_norm: Txyz = __model__.geom.query.getWireNormal(wire_i);
     if (vecLen(vec_norm) === 0) {
         vec_norm = [0, 0, 1];
     }
     // loop through all edges and collect the required data
-    const edges_i: number[] = __model__.geom.data.navAnyToEdge(EEntType.WIRE, wire_i).slice(); // make a copy
-    const is_closed: boolean = __model__.geom.data.wireIsClosed(wire_i);
+    const edges_i: number[] = __model__.geom.nav.navAnyToEdge(EEntType.WIRE, wire_i).slice(); // make a copy
+    const is_closed: boolean = __model__.geom.query.isWireClosed(wire_i);
     // the index to these arrays is the edge_i
     let perp_vec: Txyz = null;
     let has_bad_edges = false;
@@ -366,7 +345,7 @@ function _offsetWire(__model__: SIModel, wire_i: number, dist: number): void {
     const pairs_xyzs: [Txyz, Txyz][] = [];        // index is edge_i
     const pairs_posis_i: [number, number][] = [];   // index is edge_i
     for (const edge_i of edges_i) {
-        const posis_i: [number, number] = __model__.geom.data.navAnyToPosi(EEntType.EDGE, edge_i) as [number, number];
+        const posis_i: [number, number] = __model__.geom.nav.navAnyToPosi(EEntType.EDGE, edge_i) as [number, number];
         const xyzs: [Txyz, Txyz] = posis_i.map(posi_i => __model__.attribs.query.getPosiCoords(posi_i)) as [Txyz, Txyz];
         const edge_vec: Txyz = vecFromTo(xyzs[0], xyzs[1]);
         const edge_len: number = vecLen(edge_vec);
@@ -448,7 +427,7 @@ function _offsetWire(__model__: SIModel, wire_i: number, dist: number): void {
  * @example modify.Reverse(polyline1)
  * @example_info Reverses the order of vertices to reverse the direction of the polyline.
  */
-export function Reverse(__model__: SIModel, entities: TId|TId[]): void {
+export function Reverse(__model__: GIModel, entities: TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -459,10 +438,10 @@ export function Reverse(__model__: SIModel, entities: TId|TId[]): void {
         _reverse(__model__, ents_arr);
     }
 }
-function _reverse(__model__: SIModel, ents_arr: TEntTypeIdx[]): void {
+function _reverse(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
     for (const [ent_type, index] of ents_arr) {
-        const wires_i: number[] = __model__.geom.data.navAnyToWire(ent_type, index);
-        wires_i.forEach( wire_i => __model__.geom.data.wireReverse(wire_i) );
+        const wires_i: number[] = __model__.geom.nav.navAnyToWire(ent_type, index);
+        wires_i.forEach( wire_i => __model__.geom.modify.reverse(wire_i) );
     }
 }
 // ================================================================================================
@@ -484,7 +463,7 @@ function _reverse(__model__: SIModel, ents_arr: TEntTypeIdx[]): void {
  * @example_info Shifts the edges in the closed polyline wire, so that every edge moves back by one position
  * in the ring. The first edge will become the last edge.
  */
-export function Shift(__model__: SIModel, entities: TId|TId[], offset: number): void {
+export function Shift(__model__: GIModel, entities: TId|TId[], offset: number): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -495,10 +474,10 @@ export function Shift(__model__: SIModel, entities: TId|TId[], offset: number): 
         _shift(__model__, ents_arr, offset);
     }
 }
-function _shift(__model__: SIModel, ents_arr: TEntTypeIdx[], offset: number): void {
+function _shift(__model__: GIModel, ents_arr: TEntTypeIdx[], offset: number): void {
     for (const [ent_type, index] of ents_arr) {
-        const wires_i: number[] = __model__.geom.data.navAnyToWire(ent_type, index);
-        wires_i.forEach( wire_i => __model__.geom.data.wireShift(wire_i, offset) );
+        const wires_i: number[] = __model__.geom.nav.navAnyToWire(ent_type, index);
+        wires_i.forEach( wire_i => __model__.geom.modify.shift(wire_i, offset) );
     }
 }
 // ================================================================================================
@@ -511,7 +490,7 @@ function _shift(__model__: SIModel, ents_arr: TEntTypeIdx[], offset: number): vo
  * @example modify.Close([polyline1,polyline2,...], method='close')
  * @example_info If open, polylines are changed to closed; if already closed, nothing happens.
  */
-export function Ring(__model__: SIModel, entities: TId|TId[], method: _ERingMethod): void {
+export function Ring(__model__: GIModel, entities: TId|TId[], method: _ERingMethod): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -526,14 +505,14 @@ export enum _ERingMethod {
     OPEN =  'open',
     CLOSE  =  'close',
 }
-function _ring(__model__: SIModel, ents_arr: TEntTypeIdx[], method: _ERingMethod): void {
-    for (const [ent_type, ent_i] of ents_arr) {
+function _ring(__model__: GIModel, ents_arr: TEntTypeIdx[], method: _ERingMethod): void {
+    for (const [ent_type, index] of ents_arr) {
         switch (method) {
             case _ERingMethod.CLOSE:
-                __model__.geom.modify.plineClose(ent_i);
+                __model__.geom.modify_pline.closePline(index);
                 break;
             case _ERingMethod.OPEN:
-                __model__.geom.modify.plineOpen(ent_i);
+                __model__.geom.modify_pline.openPline(index);
                 break;
             default:
                 break;
@@ -551,7 +530,7 @@ function _ring(__model__: SIModel, ents_arr: TEntTypeIdx[], method: _ERingMethod
  * @example mod.Unweld(polyline1)
  * @example_info Unwelds the vertices of polyline1 from all other vertices that shares the same position.
  */
-export function Weld(__model__: SIModel, entities: TId|TId[], method: _EWeldMethod): void {
+export function Weld(__model__: GIModel, entities: TId|TId[], method: _EWeldMethod): void {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
     const fn_name = 'modify.Weld';
@@ -565,19 +544,19 @@ export enum _EWeldMethod {
     MERGE_POSITIONS =  'merge_positions',
     CLONE_POSITIONS  =  'clone_positions',
 }
-export function _weld(__model__: SIModel, ents_arr: TEntTypeIdx[], method: _EWeldMethod): void {
+export function _weld(__model__: GIModel, ents_arr: TEntTypeIdx[], method: _EWeldMethod): void {
     // get verts_i
     const all_verts_i: number[] = []; // count number of posis
     for (const ents of ents_arr) {
-        const verts_i: number[] = __model__.geom.data.navAnyToVert(ents[0], ents[1]);
+        const verts_i: number[] = __model__.geom.nav.navAnyToVert(ents[0], ents[1]);
         for (const vert_i of verts_i) { all_verts_i.push(vert_i); }
     }
     switch (method) {
         case _EWeldMethod.CLONE_POSITIONS:
-            __model__.geom.modify.cloneVertPosis(all_verts_i);
+            __model__.geom.modify.cloneVertPositions(all_verts_i);
             break;
         case _EWeldMethod.MERGE_POSITIONS:
-            __model__.geom.modify.cloneVertPosis(all_verts_i);
+            __model__.geom.modify.mergeVertPositions(all_verts_i);
             break;
         default:
             break;
@@ -598,7 +577,7 @@ export function _weld(__model__: SIModel, ents_arr: TEntTypeIdx[], method: _EWel
  * @example modify.Remesh(polygon1)
  * @example_info Remeshs the face of the polygon.
  */
-export function Remesh(__model__: SIModel, entities: TId[]): void {
+export function Remesh(__model__: GIModel, entities: TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -608,21 +587,18 @@ export function Remesh(__model__: SIModel, entities: TId[]): void {
         _remesh(__model__, ents_arr);
     }
 }
-function _remesh(__model__: SIModel, ents_arr: TEntTypeIdx[]): void {
-    for (const [ent_type, ent_i] of ents_arr) {
-        if (ent_type === EEntType.FACE) {
-            __model__.geom.data.faceTri(ent_i);
+function _remesh(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
+    for (const [ent_type, index] of ents_arr) {
+        if (ent_type === EEntType.PGON) {
+            __model__.geom.modify_pgon.triPgons(index);
         } else {
-            const faces_i: number[] = __model__.geom.data.navAnyToFace(ent_type, ent_i);
-            faces_i.forEach( face_i => __model__.geom.data.faceTri(face_i) );
+            const pgons_i: number[] = __model__.geom.nav.navAnyToPgon(ent_type, index);
+            __model__.geom.modify_pgon.triPgons(pgons_i);
         }
     }
 }
 // ================================================================================================
-export enum _EDeleteMethod {
-    DELETE_SELECTED  =  'delete_selected',
-    KEEP_SELECTED =  'keep_selected'
-}
+
 /**
  * Deletes geometric entities: positions, points, polylines, polygons, and collections.
  * ~
@@ -641,7 +617,7 @@ export enum _EDeleteMethod {
  * @example modify.Delete(polygon1)
  * @example_info Deletes polygon1 from the model.
  */
-export function Delete(__model__: SIModel, entities: TId|TId[], method: _EDeleteMethod  ): void {
+export function Delete(__model__: GIModel, entities: TId|TId[], method: _EDeleteMethod  ): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
@@ -662,29 +638,19 @@ export function Delete(__model__: SIModel, entities: TId|TId[], method: _EDelete
         }
     }
 }
-function _delete(__model__: SIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
+export enum _EDeleteMethod {
+    DELETE_SELECTED  =  'delete_selected',
+    KEEP_SELECTED =  'keep_selected'
+}
+function _delete(__model__: GIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
     // get the ents
-    const geom_pack: IGeomPack = __model__.geom.data.getGeomPackFromEnts(ents_arr);
-    const obj_pack: IObjPack = invert ? __model__.geom.data.invertObjPack(geom_pack) : geom_pack;
-    // delete the objects
-    const pgon_posis_i: number[] = __model__.geom.del.delPgons(obj_pack.pgons_i);
-    const pline_posis_i: number[] = __model__.geom.del.delPlines(obj_pack.plines_i);
-    const point_posis_i: number[] = __model__.geom.del.delPoints(obj_pack.points_i);
-    // delete the collections
-    __model__.geom.del.delColls(obj_pack.colls_i);
-    // get the posis
-    const set_posis_to_del_i: Set<number> = new Set();
-    for (const posi_i of pgon_posis_i) { set_posis_to_del_i.add(posi_i); }
-    for (const posi_i of pline_posis_i) { set_posis_to_del_i.add(posi_i); }
-    for (const posi_i of point_posis_i) { set_posis_to_del_i.add(posi_i); }
-    // include or exclude the selected posis
-    if (invert) {
-        for (const posi_i of geom_pack.posis_i) { set_posis_to_del_i.delete(posi_i); }
-    } else {
-        for (const posi_i of geom_pack.posis_i) { set_posis_to_del_i.add(posi_i); }
-    }
-    // delete the posis, only if they are unused
-    __model__.geom.del.delUnusedPosis(Array.from(set_posis_to_del_i));
+    const gp: IGeomPack = __model__.geom.query.createGeomPack(ents_arr, invert);
+    // delete the ents
+    __model__.geom.del.delColls(gp.colls_i, true);
+    __model__.geom.del.delPgons(gp.pgons_i, true);
+    __model__.geom.del.delPlines(gp.plines_i, true);
+    __model__.geom.del.delPoints(gp.points_i, true);
+    __model__.geom.del.delUnusedPosis(gp.posis_i);
 }
 
 
@@ -797,7 +763,7 @@ function _delete(__model__: SIModel, ents_arr: TEntTypeIdx[], invert: boolean): 
 //  * Note that in order to create an attribute at the collection level, the two polygons should be part of a
 //  * collection. If they are not part of the collection, then no attribute values will be push.
 //  */
-// export function PushAttribs(__model__: SIModel, entities: TId|TId[], attrib_name: string,
+// export function PushAttribs(__model__: GIModel, entities: TId|TId[], attrib_name: string,
 //         to_level: _EPromoteTarget, method: _EPromoteMethod): void {
 //     // --- Error Check ---
 //     let ents_arr: TEntTypeIdx|TEntTypeIdx[];

@@ -2,7 +2,7 @@
 import * as three from 'three';
 import * as threex from './threex';
 import * as earcut from './earcut';
-import { Txyz } from '../sim/common';
+import { Txyz } from '../geo-info/common';
 import { area } from '../geom/triangle';
 
 //  3D to 2D ======================================================================================================

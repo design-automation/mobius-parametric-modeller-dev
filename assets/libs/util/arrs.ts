@@ -1,4 +1,6 @@
 import __ from 'underscore';
+import { deepCopy } from './copy';
+import { isDim2 } from '../geo-info/id';
 
 /**
  * Remove an item from an array
@@ -110,3 +112,16 @@ export function arrFill(data: any, length: number): any[] {
     return data;
 }
 
+export function getArrDepth2(arr: any): number {
+    if (Array.isArray(arr)) {
+        return 1 + getArrDepth2(arr[0]);
+    }
+    return 0;
+}
+
+export function isEmptyArr2(arr: any): boolean {
+    if (Array.isArray(arr) && !arr.length) {
+        return true;
+    }
+    return false;
+}

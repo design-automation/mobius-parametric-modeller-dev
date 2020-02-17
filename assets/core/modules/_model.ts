@@ -1,6 +1,7 @@
-import { SIModel } from '@assets/libs/sim/SIModel';
-import { EAttribDataTypeStrs, EAttribNames, EEntType, TEntTypeIdx } from '@libs/sim/common';
-import { idsBreak } from '@libs/sim/id';
+import { GIModel } from '@libs/geo-info/GIModel';
+import { EAttribDataTypeStrs, TAttribDataTypes, EAttribNames, EEntType, TId, TEntTypeIdx, EEntTypeStr } from '@libs/geo-info/common';
+import { getArrDepth, idsBreak } from '@libs/geo-info/id';
+import { checkIDs, checkArgTypes, TypeCheckObj, IDcheckObj, checkAttribName, checkAttribValue } from './_check_args';
 import __ from 'underscore';
 
 //  ===============================================================================================
@@ -11,8 +12,8 @@ import __ from 'underscore';
  *
  * @returns New model empty.
  */
-export function __new__(): SIModel {
-    const model: SIModel = new SIModel();
+export function __new__(): GIModel {
+    const model: GIModel = new GIModel();
     model.attribs.add.addAttrib(EEntType.POSI, EAttribNames.COORDS, EAttribDataTypeStrs.LIST);
     return model;
 }
@@ -24,7 +25,7 @@ export function __new__(): SIModel {
  *
  * @param model The model to preprocess.
  */
-export function __preprocess__(__model__: SIModel): void {
+export function __preprocess__(__model__: GIModel): void {
     // TODO
 }
 //  ===============================================================================================
@@ -33,7 +34,7 @@ export function __preprocess__(__model__: SIModel): void {
  *
  * @param model The model to postprocess.
  */
-export function __postprocess__(__model__: SIModel): void {
+export function __postprocess__(__model__: GIModel): void {
     // TODO
     // Remove all undefined values for the arrays
 }
@@ -45,23 +46,23 @@ export function __postprocess__(__model__: SIModel): void {
  * @param model1 The model to merge into.
  * @param model2 The model to merge from    .
  */
-export function __merge__(model1: SIModel, model2: SIModel): void {
+export function __merge__(model1: GIModel, model2: GIModel): void {
     model1.merge(model2);
 }
 //  ===============================================================================================
-// /**
-//  * Returns a string representation of this model.
-//  * @param __model__
-//  */
-// export function __stringify__(__model__: SIModel): string {
-//     return JSON.stringify(__model__.getData());
-// }
+/**
+ * Returns a string representation of this model.
+ * @param __model__
+ */
+export function __stringify__(__model__: GIModel): string {
+    return JSON.stringify(__model__.getData());
+}
 //  ===============================================================================================
 /**
  * Select entities in the model.
  * @param __model__
  */
-export function __select__(__model__: SIModel, ents_id: string|string[]|string[][], var_name: string): void {
+export function __select__(__model__: GIModel, ents_id: string|string[]|string[][], var_name: string): void {
     __model__.geom.selected = [];
     ents_id = ((Array.isArray(ents_id)) ? ents_id : [ents_id]) as string[];
     const [ents_id_flat, ents_indices] = _flatten(ents_id);
@@ -103,7 +104,7 @@ function _flatten(arrs: string|string[]|string[][]): [string[], number[][]] {
  * Checks the model for internal consistency.
  * @param __model__
  */
-export function __checkModel__(__model__: SIModel): string[] {
+export function __checkModel__(__model__: GIModel): string[] {
     return __model__.check();
 }
 
@@ -113,7 +114,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //  * Sets an attribute value in the model.
 //  * @param __model__
 //  */
-// export function __setAttrib__(__model__: SIModel, entities: TId|TId[]|TId[][],
+// export function __setAttrib__(__model__: GIModel, entities: TId|TId[]|TId[][],
 //                               attrib_name: string, attrib_values: TAttribDataTypes|TAttribDataTypes[], attrib_index?: number): void {
 //     // @ts-ignore
 //     if (entities !== null && getArrDepth(entities) === 2) { entities = __.flatten(entities); }
@@ -127,7 +128,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //     // --- Error Check ---
 //     _setAttrib(__model__, ents_arr, attrib_name, attrib_values, attrib_index);
 // }
-// function _setAttrib(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
+// function _setAttrib(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
 //         attrib_name: string, attrib_values: TAttribDataTypes|TAttribDataTypes[], attrib_index?: number): void {
 //     // check the ents_arr
 //     if (ents_arr === null) {
@@ -165,7 +166,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //     _setEachEntSameAttribValue(__model__, ents_arr, attrib_name, attrib_values as TAttribDataTypes, attrib_index);
 //     return;
 // }
-// function _setModelAttrib(__model__: SIModel, attrib_name: string, attrib_value: TAttribDataTypes, idx_or_key?: number): void {
+// function _setModelAttrib(__model__: GIModel, attrib_name: string, attrib_value: TAttribDataTypes, idx_or_key?: number): void {
 //     if (typeof idx_or_key === 'number') {
 //         __model__.attribs.add.setModelAttribListIdxVal(attrib_name, idx_or_key, attrib_value);
 //     } if (typeof idx_or_key === 'string') {
@@ -174,7 +175,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //         __model__.attribs.add.setModelAttribVal(attrib_name, attrib_value);
 //     }
 // }
-// function _setEachEntDifferentAttribValue(__model__: SIModel, ents_arr: TEntTypeIdx[],
+// function _setEachEntDifferentAttribValue(__model__: GIModel, ents_arr: TEntTypeIdx[],
 //         attrib_name: string, attrib_values: TAttribDataTypes[], attrib_index?: number): void {
 //     if (ents_arr.length !== attrib_values.length) {
 //         throw new Error(
@@ -194,7 +195,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //         }
 //     }
 // }
-// function _setEachEntSameAttribValue(__model__: SIModel, ents_arr: TEntTypeIdx[],
+// function _setEachEntSameAttribValue(__model__: GIModel, ents_arr: TEntTypeIdx[],
 //         attrib_name: string, attrib_value: TAttribDataTypes, attrib_index?: number): void {
 //     // --- Error Check ---
 //     const fn_name = 'entities@' + attrib_name;
@@ -208,7 +209,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //         __model__.attribs.add.setAttribVal(ent_type, ents_i, attrib_name, attrib_value);
 //     }
 // }
-// function _getEntsIndices(__model__: SIModel, ents_arr: TEntTypeIdx[]): number[] {
+// function _getEntsIndices(__model__: GIModel, ents_arr: TEntTypeIdx[]): number[] {
 //     const ent_type: number = ents_arr[0][0];
 //     const ents_i: number[] = [];
 //     for (let i = 0; i < ents_arr.length; i++) {
@@ -224,7 +225,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //  * Gets an attribute value from the model.
 //  * @param __model__
 //  */
-// export function __getAttrib__(__model__: SIModel, entities: TId|TId[]|TId[][],
+// export function __getAttrib__(__model__: GIModel, entities: TId|TId[]|TId[][],
 //         attrib_name: string, idx_or_key?: number|string): TAttribDataTypes|TAttribDataTypes[] {
 //     // @ts-ignore
 //     if (entities !== null && getArrDepth(entities) === 2) { entities = __.flatten(entities); }
@@ -241,7 +242,7 @@ export function __checkModel__(__model__: SIModel): string[] {
 //     // --- Error Check ---
 //     return _getAttrib(__model__, ents_arr, attrib_name, idx_or_key);
 // }
-// function _getAttrib(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
+// function _getAttrib(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[],
 //         attrib_name: string, idx_or_key?: number|string): TAttribDataTypes|TAttribDataTypes[] {
 //     const has_idx_or_key: boolean = idx_or_key !== null && idx_or_key !== undefined;
 //     if (ents_arr === null) {

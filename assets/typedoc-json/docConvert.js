@@ -7,34 +7,18 @@ const config = require('../gallery/__config__.json');
 const urlString = 'https://mobius.design-automation.net';
 
 // Edit this ModuleList to include modules that are to be converted into MD file
-// const ModuleList = [
-//     'query',
-//     'make',
-//     'modify',
-//     'isect',
-//     'calc',
-//     'util',
-//     'pattern',
-//     'virtual',
-//     'list',
-// ];
 const ModuleList = [
     'query',
-    'pattern',
     'make',
     'modify',
-    'attrib',
+    'isect',
     'calc',
-    'intersect',
-    'collection',
+    'util',
+    'pattern',
+    'virtual',
     'list',
-    'dict',
-    'analyze',
-    'visualize',
-    'material',
-    'io',
-    'util'
 ];
+
 
 let examples;
 for (const s of config.data){

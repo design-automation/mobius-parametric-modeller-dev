@@ -8,8 +8,8 @@
  *
  */
 
-import { SIModel } from '@assets/libs/sim/SIModel';
-import { TId, TPlane } from '@libs/sim/common';
+import { GIModel } from '@libs/geo-info/GIModel';
+import { TId, TPlane } from '@libs/geo-info/common';
 import { __merge__ } from '../_model';
 import { checkIDs, checkArgTypes, checkIDnTypes, IDcheckObj} from '../_check_args';
 
@@ -22,7 +22,7 @@ import { checkIDs, checkArgTypes, checkIDnTypes, IDcheckObj} from '../_check_arg
  * @example intersect1 = isect.Intersect (object1, object2)
  * @example_info Returns a list of positions at the intersections between both objects.
  */
-export function Intersect(__model__: SIModel, entities1: TId, entities2: TId): TId[] {
+export function Intersect(__model__: GIModel, entities1: TId, entities2: TId): TId[] {
     // --- Error Check ---
     // const fn_name = 'isect.Intersect';
     // const ents_arr_1 = checkIDnTypes(fn_name, 'object1', entities1,
@@ -50,7 +50,7 @@ export enum _EKnifeKeep {
  * @example knife1 = isect.Knife ([p1,p2,p3,p4,p5], plane1, keepabove)
  * @example_info Returns [[p1,p2,p3],[p4,p5]] if p1, p2, p3 are points above the plane and p4, p5 are points below the plane.
  */
-export function Knife(__model__: SIModel, geometry: TId[], plane: TPlane, keep: _EKnifeKeep): TId[] {
+export function Knife(__model__: GIModel, geometry: TId[], plane: TPlane, keep: _EKnifeKeep): TId[] {
     // --- Error Check ---
     // const fn_name = 'isect.Knife';
     // const ents_arr = checkIDs(fn_name, 'geometry', geometry, ['isIDList'], [EEntType.POINT, EEntType.PLINE, EEntType.PGON]);
@@ -67,7 +67,7 @@ export function Knife(__model__: SIModel, geometry: TId[], plane: TPlane, keep: 
  * @example splitresult = isect.Split (pl1, pl2)
  * @example_info Returns [[pl1A],[pl1B]], where pl1A and pl1B are polylines resulting from the split occurring where pl1 and pl2 intersect.
  */
-export function Split(__model__: SIModel, geometry: TId[], polyline: TId): TId[] {
+export function Split(__model__: GIModel, geometry: TId[], polyline: TId): TId[] {
     // --- Error Check ---
     // const fn_name = 'isect.Split';
     // const ents_arr = checkIDs(fn_name, 'objects', geometry, ['isIDList'], [EEntType.PLINE, EEntType.PGON]);

@@ -9,22 +9,17 @@
  */
 
 import { checkArgTypes, TypeCheckObj } from '../_check_args';
-import { Txyz, TPlane, XYPLANE, TId, EEntType } from '@libs/sim/common';
-import { getArrDepth, idsMakeFromIndicies } from '@libs/sim/id';
+import { Txyz, TPlane, XYPLANE, TId, EEntType } from '@libs/geo-info/common';
+import { getArrDepth, idsMakeFromIndicies } from '@libs/geo-info/id';
 import { vecAdd, vecFromTo, vecDiv, vecMult } from '@libs/geom/vectors';
 import { xfromSourceTargetMatrix, multMatrix } from '@libs/geom/matrix';
 import { Matrix4 } from 'three';
 import { __merge__ } from '../_model';
-import { SIModel } from '@assets/libs/sim/SIModel';
+import { GIModel } from '@libs/geo-info/GIModel';
 import * as THREE from 'three';
 import * as VERB from '@assets/libs/verb/verb';
 import { arrFill, arrMakeFlat } from '@assets/libs/util/arrs';
 // import * as VERB from 'verb';
-
-export enum _EClose {
-    OPEN = 'open',
-    CLOSE = 'close'
-}
 // ================================================================================================
 /**
  * Creates a row of positions in a line pattern. Returns a list of new positions.
@@ -33,7 +28,7 @@ export enum _EClose {
  * @param size Size of the line.
  * @returns Entities, a list of four positions.
  */
-export function Line(__model__: SIModel, origin: Txyz|TPlane, size: number, num_positions: number): TId[] {
+export function Line(__model__: GIModel, origin: Txyz|TPlane, size: number, num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Line';
     checkArgTypes(fn_name, 'origin', origin, [TypeCheckObj.isCoord, TypeCheckObj.isPlane]);
@@ -60,7 +55,8 @@ export function Line(__model__: SIModel, origin: Txyz|TPlane, size: number, num_
         } else { // we have a plane
             xyz = vecAdd(xyz, origin as Txyz);
         }
-        const posi_i: number = __model__.createPosi(xyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, xyz);
         posis_i.push(posi_i);
     }
     // return
@@ -78,7 +74,7 @@ export function Line(__model__: SIModel, origin: Txyz|TPlane, size: number, num_
  * @example coordinates1 = pattern.Rectangle([0,0,0], [10,20])
  * @example_info Creates a list of 4 coords, being the vertices of a 10 by 20 rectangle.
  */
-export function Rectangle(__model__: SIModel, origin: Txyz|TPlane, size: number|[number, number]): TId[] {
+export function Rectangle(__model__: GIModel, origin: Txyz|TPlane, size: number|[number, number]): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Rectangle';
     checkArgTypes(fn_name, 'origin', origin, [TypeCheckObj.isCoord, TypeCheckObj.isPlane]);
@@ -106,19 +102,14 @@ export function Rectangle(__model__: SIModel, origin: Txyz|TPlane, size: number|
         } else { // we have a plane
             xyz = vecAdd(xyz, origin as Txyz);
         }
-        const posi_i: number = __model__.createPosi(xyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, xyz);
         posis_i.push(posi_i);
     }
     // return
     return idsMakeFromIndicies(EEntType.POSI, posis_i) as TId[];
 }
 // ================================================================================================
-export enum _EGridMethod {
-    FLAT = 'flat',
-    COLUMNS = 'columns',
-    ROWS = 'rows',
-    QUADS = 'quads'
-}
 /**
 * Creates positions in a grid pattern. Returns a list (or list of lists) of new positions.
 * @param __model__
@@ -135,7 +126,7 @@ export enum _EGridMethod {
 * @example coordinates1 = pattern.Grid([0,0,0], [10,20], [2,4])
 * @example_info Creates a list of 8 XYZ coordinates on a 2x4 grid of length 10 by 20.
 */
-export function Grid(__model__: SIModel, origin: Txyz|TPlane, size: number|[number, number],
+export function Grid(__model__: GIModel, origin: Txyz|TPlane, size: number|[number, number],
         num_positions: number|[number, number], method: _EGridMethod): TId[]|TId[][] {
     // --- Error Check ---
     const fn_name = 'pattern.Grid';
@@ -166,7 +157,8 @@ export function Grid(__model__: SIModel, origin: Txyz|TPlane, size: number|[numb
             } else { // we have a plane
                 xyz = vecAdd(xyz, origin as Txyz);
             }
-            const posi_i: number = __model__.createPosi(xyz);
+            const posi_i: number = __model__.geom.add.addPosi();
+            __model__.attribs.add.setPosiCoords(posi_i, xyz);
             posis_i.push(posi_i);
         }
     }
@@ -208,15 +200,13 @@ export function Grid(__model__: SIModel, origin: Txyz|TPlane, size: number|[numb
     }
     return idsMakeFromIndicies(EEntType.POSI, posis_i2) as TId[][];
 }
-// ================================================================================================
-export enum _EBoxMethod {
+export enum _EGridMethod {
     FLAT = 'flat',
-    ROWS = 'rows',
     COLUMNS = 'columns',
-    LAYERS = 'layers',
-    // SIDES = 'sides',
+    ROWS = 'rows',
     QUADS = 'quads'
 }
+// ================================================================================================
 /**
  * Creates positions in a box pattern. Returns a list of new positions.
  * @param __model__
@@ -228,7 +218,7 @@ export enum _EBoxMethod {
  * @param method Enum
  * @returns Entities, a list of 6 positions.
  */
-export function Box(__model__: SIModel, origin: Txyz | TPlane,
+export function Box(__model__: GIModel, origin: Txyz | TPlane,
     size: number | [number, number] | [number, number, number],
     num_positions: number | [number, number] | [number, number, number],
     method: _EBoxMethod): TId[] | TId[][] {
@@ -281,7 +271,8 @@ export function Box(__model__: SIModel, origin: Txyz | TPlane,
                     } else { // we have a plane
                         xyz = vecAdd(xyz, origin as Txyz);
                     }
-                    const posi_i: number = __model__.createPosi(xyz);
+                    const posi_i: number = __model__.geom.add.addPosi();
+                    __model__.attribs.add.setPosiCoords(posi_i, xyz);
                     if (create_perim_layer) {
                         if (i === 0) {
                             layer_perim_x0_posis_i.push(posi_i);
@@ -465,6 +456,14 @@ export function Box(__model__: SIModel, origin: Txyz | TPlane,
     }
     return [];
 }
+export enum _EBoxMethod {
+    FLAT = 'flat',
+    ROWS = 'rows',
+    COLUMNS = 'columns',
+    LAYERS = 'layers',
+    // SIDES = 'sides',
+    QUADS = 'quads'
+}
 // ================================================================================================
 /**
  * Creates positions in a polyhedron pattern. Returns a list of new positions.
@@ -476,7 +475,7 @@ export function Box(__model__: SIModel, origin: Txyz | TPlane,
  * @param method Enum
  * @returns Entities, a list of positions.
  */
-export function Polyhedron(__model__: SIModel, origin: Txyz | TPlane, radius: number, detail: number,
+export function Polyhedron(__model__: GIModel, origin: Txyz | TPlane, radius: number, detail: number,
         method: _EPolyhedronMethod): TId[]|TId[][] {
     // --- Error Check ---
     const fn_name = 'pattern.Polyhedron';
@@ -510,7 +509,7 @@ export enum _EPolyhedronMethod {
     FACE_ICOSA = 'face_icosa',
     FACE_DODECA = 'face_dodeca'
 }
-export function _polyhedron(__model__: SIModel, matrix: Matrix4, radius: number, detail: number,
+export function _polyhedron(__model__: GIModel, matrix: Matrix4, radius: number, detail: number,
     method: _EPolyhedronMethod): number[]|number[][] {
     // create the posis
     let hedron_tjs: THREE.TetrahedronGeometry|THREE.OctahedronGeometry|THREE.IcosahedronGeometry|THREE.DodecahedronGeometry = null;
@@ -538,7 +537,8 @@ export function _polyhedron(__model__: SIModel, matrix: Matrix4, radius: number,
     const posis_i: number[] = [];
     for (const vert_tjs of hedron_tjs.vertices) {
         const xyz: Txyz = multMatrix(vert_tjs.toArray() as Txyz, matrix);
-        const posi_i: number = __model__.createPosi(xyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, xyz);
         posis_i.push(posi_i);
     }
     // if the method is flat, then we are done, return the posis
@@ -578,7 +578,7 @@ export function _polyhedron(__model__: SIModel, matrix: Matrix4, radius: number,
  * @example coordinates1 = pattern.Arc([0,0,0], 10, 12, PI)
  * @example_info Creates a list of 12 positions distributed equally along a semicircle of radius 10.
  */
-export function Arc(__model__: SIModel, origin: Txyz|TPlane, radius: number, num_positions: number, arc_angle: number): TId[] {
+export function Arc(__model__: GIModel, origin: Txyz|TPlane, radius: number, num_positions: number, arc_angle: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Arc';
     checkArgTypes(fn_name, 'origin', origin, [TypeCheckObj.isCoord, TypeCheckObj.isPlane]);
@@ -606,7 +606,8 @@ export function Arc(__model__: SIModel, origin: Txyz|TPlane, radius: number, num
         } else { // we have a plane
             xyz = vecAdd(xyz, origin as Txyz);
         }
-        const posi_i: number = __model__.createPosi(xyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, xyz);
         posis_i.push(posi_i);
     }
     // return the list of posis
@@ -633,7 +634,7 @@ export function Arc(__model__: SIModel, origin: Txyz|TPlane, radius: number, num
  * @example coordinates1 = pattern.Bezier([[0,0,0], [10,0,50], [20,0,10]], 20)
  * @example_info Creates a list of 20 positions distributed along a Bezier curve pattern.
  */
-export function Bezier(__model__: SIModel, coords: Txyz[], num_positions: number): TId[] {
+export function Bezier(__model__: GIModel, coords: Txyz[], num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Bezier';
     checkArgTypes(fn_name, 'coords', coords, [TypeCheckObj.isCoordList]);
@@ -655,7 +656,8 @@ export function Bezier(__model__: SIModel, coords: Txyz[], num_positions: number
     // create positions
     const posis_i: number[] = [];
     for (let i = 0; i < num_positions; i++) {
-        const posi_i: number = __model__.createPosi(points_tjs[i].toArray() as Txyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, points_tjs[i].toArray() as Txyz);
         posis_i.push(posi_i);
     }
     // return the list of posis
@@ -688,7 +690,7 @@ export function Bezier(__model__: SIModel, coords: Txyz[], num_positions: number
  * @example coordinates1 = pattern.Nurbs([[0,0,0], [10,0,50], [20,0,10]], 20)
  * @example_info Creates a list of 20 positions distributed along a Bezier curve pattern.
  */
-export function Nurbs(__model__: SIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
+export function Nurbs(__model__: GIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Nurbs';
     checkArgTypes(fn_name, 'coords', coords, [TypeCheckObj.isCoordList]);
@@ -765,7 +767,7 @@ export function Nurbs(__model__: SIModel, coords: Txyz[], degree: number, close:
  * @example coordinates1 = pattern.Nurbs([[0,0,0], [10,0,50], [20,0,10]], 20)
  * @example_info Creates a list of 20 positions distributed along a Bezier curve pattern.
  */
-export function _Interpolate(__model__: SIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
+export function _Interpolate(__model__: GIModel, coords: Txyz[], degree: number, close: _EClose, num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern._Interpolate';
     checkArgTypes(fn_name, 'coords', coords, [TypeCheckObj.isCoordList]);
@@ -795,7 +797,7 @@ export function _Interpolate(__model__: SIModel, coords: Txyz[], degree: number,
     const posis_i: number[] = nurbsToPosis(__model__, curve_verb, degree, closed, num_positions, coords[0]);
     return idsMakeFromIndicies(EEntType.POSI, posis_i) as TId[];
 }
-function nurbsToPosis(__model__: SIModel, curve_verb: any, degree: number, closed: boolean,
+function nurbsToPosis(__model__: GIModel, curve_verb: any, degree: number, closed: boolean,
         num_positions: number, start: Txyz, ): number[] {
     // create positions
     const posis_i: number[] = [];
@@ -820,7 +822,8 @@ function nurbsToPosis(__model__: SIModel, curve_verb: any, degree: number, close
         }
         const xyz: Txyz  = curve_verb.point(u) as Txyz;
         // xyz[2] = i / 10;
-        const posi_i: number = __model__.createPosi(xyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, xyz);
         posis_i.push(posi_i);
         const dist =    Math.abs(start[0] - xyz[0]) +
                         Math.abs(start[1] - xyz[1]) +
@@ -835,6 +838,10 @@ function nurbsToPosis(__model__: SIModel, curve_verb: any, degree: number, close
     const posis_i_sorted: number[] = posis_i_start.concat(posis_i_end);
     // return the list of posis
     return posis_i_sorted;
+}
+export enum _EClose {
+    OPEN = 'open',
+    CLOSE = 'close'
 }
 // ================================================================================================
 /**
@@ -866,7 +873,7 @@ function nurbsToPosis(__model__: SIModel, curve_verb: any, degree: number, close
  * @example coordinates1 = pattern.Spline([[0,0,0], [10,0,50], [20,0,0], [30,0,20], [40,0,10]], 'chordal','close', 0.2, 50)
  * @example_info Creates a list of 50 positions distributed along a spline curve pattern.
  */
-export function Interpolate(__model__: SIModel, coords: Txyz[], type: _ECurveCatRomType, tension: number, close: _EClose,
+export function Interpolate(__model__: GIModel, coords: Txyz[], type: _ECurveCatRomType, tension: number, close: _EClose,
     num_positions: number): TId[] {
     // --- Error Check ---
     const fn_name = 'pattern.Interpolate';
@@ -888,7 +895,8 @@ export function Interpolate(__model__: SIModel, coords: Txyz[], type: _ECurveCat
     // create positions
     const posis_i: number[] = [];
     for (let i = 0; i < num_positions; i++) {
-        const posi_i: number = __model__.createPosi(points_tjs[i].toArray() as Txyz);
+        const posi_i: number = __model__.geom.add.addPosi();
+        __model__.attribs.add.setPosiCoords(posi_i, points_tjs[i].toArray() as Txyz);
         posis_i.push(posi_i);
     }
     // return the list of posis

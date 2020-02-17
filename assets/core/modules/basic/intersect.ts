@@ -6,10 +6,10 @@
  *
  */
 
-import { TId, Txyz, EEntType, TPlane, TRay, TEntTypeIdx, TBBox } from '@libs/sim/common';
+import { TId, Txyz, EEntType, TPlane, TRay, TEntTypeIdx, TBBox } from '@libs/geo-info/common';
 import { checkArgTypes, checkIDs, TypeCheckObj, IDcheckObj } from '../_check_args';
-import { SIModel } from '@assets/libs/sim/SIModel';
-import { getArrDepth } from '@libs/sim/id';
+import { GIModel } from '@libs/geo-info/GIModel';
+import { getArrDepth } from '@libs/geo-info/id';
 import { vecCross} from '@libs/geom/vectors';
 import { _normal } from './calc';
 import * as THREE from 'three';
@@ -32,7 +32,7 @@ import * as THREE from 'three';
  * @example coords = virtual.Intersect(plane, polyline1)
  * @example_info Returns a list of coordinates where the plane intersects with polyline1.
  */
-export function RayFace(__model__: SIModel, ray: TRay, entities: TId|TId[]): Txyz[] {
+export function RayFace(__model__: GIModel, ray: TRay, entities: TId|TId[]): Txyz[] {
     // --- Error Check ---
     const fn_name = 'intersect.RayFace';
     checkArgTypes(fn_name, 'ray', ray, [TypeCheckObj.isRay]);
@@ -44,10 +44,10 @@ export function RayFace(__model__: SIModel, ray: TRay, entities: TId|TId[]): Txy
     const ray_tjs: THREE.Ray = new THREE.Ray(new THREE.Vector3(...ray[0]), new THREE.Vector3(...ray[1]));
     return _intersectRay(__model__, ents_arr, ray_tjs);
 }
-function _intersectRay(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], ray_tjs: THREE.Ray): Txyz[] {
+function _intersectRay(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], ray_tjs: THREE.Ray): Txyz[] {
     if (getArrDepth(ents_arr) === 1) {
         const [ent_type, index]: [EEntType, number] = ents_arr as TEntTypeIdx;
-        const posis_i: number[] = __model__.geom.data.navAnyToPosi(ent_type, index);
+        const posis_i: number[] = __model__.geom.nav.navAnyToPosi(ent_type, index);
         const posis_tjs: THREE.Vector3[] = [];
         for (const posi_i of posis_i) {
             const xyz: Txyz = __model__.attribs.query.getPosiCoords(posi_i);
@@ -56,9 +56,9 @@ function _intersectRay(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], 
         }
         const isect_xyzs: Txyz[] = [];
         // triangles
-        const tris_i: number[] = __model__.geom.data.navAnyToTri(ent_type, index);
+        const tris_i: number[] = __model__.geom.nav.navAnyToTri(ent_type, index);
         for (const tri_i of tris_i) {
-            const tri_posis_i: number[] = __model__.geom.data.navAnyToPosi(EEntType.TRI, tri_i);
+            const tri_posis_i: number[] = __model__.geom.nav.navAnyToPosi(EEntType.TRI, tri_i);
             const tri_posis_tjs: THREE.Vector3[] = tri_posis_i.map(tri_posi_i => posis_tjs[tri_posi_i]);
             const isect_tjs: THREE.Vector3 = new THREE.Vector3();
             const result: THREE.Vector3 = ray_tjs.intersectTriangle(tri_posis_tjs[0], tri_posis_tjs[1], tri_posis_tjs[2], false, isect_tjs);
@@ -97,7 +97,7 @@ function _intersectRay(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], 
  * @example coords = virtual.Intersect(plane, polyline1)
  * @example_info Returns a list of coordinates where the plane intersects with polyline1.
  */
-export function PlaneEdge(__model__: SIModel, plane: TRay|TPlane, entities: TId|TId[]): Txyz[] {
+export function PlaneEdge(__model__: GIModel, plane: TRay|TPlane, entities: TId|TId[]): Txyz[] {
     // --- Error Check ---
     const fn_name = 'intersect.PlaneEdge';
     checkArgTypes(fn_name, 'plane', plane, [TypeCheckObj.isPlane]);
@@ -111,13 +111,13 @@ export function PlaneEdge(__model__: SIModel, plane: TRay|TPlane, entities: TId|
     plane_tjs.setFromNormalAndCoplanarPoint( new THREE.Vector3(...plane_normal), new THREE.Vector3(...plane[0]) );
     return _intersectPlane(__model__, ents_arr, plane_tjs);
 }
-function _intersectPlane(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], plane_tjs: THREE.Plane): Txyz[] {
+function _intersectPlane(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], plane_tjs: THREE.Plane): Txyz[] {
     if (getArrDepth(ents_arr) === 1) {
         const [ent_type, index]: [EEntType, number] = ents_arr as TEntTypeIdx;
         const isect_xyzs: Txyz[] = [];
-        const wires_i: number[] = __model__.geom.data.navAnyToWire(ent_type, index);
+        const wires_i: number[] = __model__.geom.nav.navAnyToWire(ent_type, index);
         for (const wire_i of wires_i) {
-            const wire_posis_i: number[] = __model__.geom.data.navAnyToPosi(EEntType.WIRE, wire_i);
+            const wire_posis_i: number[] = __model__.geom.nav.navAnyToPosi(EEntType.WIRE, wire_i);
             // create threejs posis for all posis
             const posis_tjs: THREE.Vector3[] = [];
             for (const wire_posi_i of wire_posis_i) {
@@ -125,7 +125,7 @@ function _intersectPlane(__model__: SIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]
                 const posi_tjs: THREE.Vector3 = new THREE.Vector3(...xyz);
                 posis_tjs.push(posi_tjs);
             }
-            if (__model__.geom.data.wireIsClosed(wire_i)) {
+            if (__model__.geom.query.isWireClosed(wire_i)) {
                 posis_tjs.push(posis_tjs[0]);
             }
             // for each pair of posis, create a threejs line and do the intersect
