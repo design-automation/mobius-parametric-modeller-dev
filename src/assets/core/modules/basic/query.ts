@@ -11,7 +11,7 @@
 
 import { GIModel } from '@libs/geo-info/GIModel';
 import { TId, EEntType, ESort, TEntTypeIdx, EFilterOperatorTypes, TAttribDataTypes} from '@libs/geo-info/common';
-import { idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
+import { getArrDepth, isEmptyArr } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj, TypeCheckObj, checkArgTypes, checkAttribNameIdxKey, checkAttribValue } from '../_check_args';
 import { isEmptyArr2, arrMakeFlat } from '@assets/libs/util/arrs';
 // ================================================================================================
@@ -93,28 +93,28 @@ export function Get(__model__: GIModel, ent_type_enum: _EEntType, entities: TId|
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'query.Get';
-    let ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] = null;
+    let ents_arrs: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list], null) as TEntTypeIdx|TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDListOfList], null);
     }
     // --- Error Check ---
     // get the entity type // TODO deal with multiple ent types
     const ent_type: EEntType = _getEntTypeFromStr(ent_type_enum) as EEntType;
     // if ents_arr is null, then get all entities in the model of type ent_type
-    if (ents_arr === null) {
+    if (ents_arrs === null) {
         // return the result
-        return idsMake(_getAll(__model__, ent_type)) as TId[];
+        return __model__.geom.id.getIDFromTypeIdx(_getAll(__model__, ent_type)) as TId[];
     }
-    if (isEmptyArr(ents_arr)) { return []; }
+    if (isEmptyArr(ents_arrs)) { return []; }
     // make sure that the ents_arr is at least depth 2
-    const depth: number = getArrDepth(ents_arr);
-    if (depth === 1) { ents_arr = [ents_arr] as TEntTypeIdx[]; }
-    ents_arr = ents_arr as TEntTypeIdx[]|TEntTypeIdx[][];
+    const depth: number = getArrDepth(ents_arrs);
+    if (depth === 1) { ents_arrs = [ents_arrs] as TEntTypeIdx[]; }
+    ents_arrs = ents_arrs as TEntTypeIdx[]|TEntTypeIdx[][];
     // get the entities
-    const found_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][] = _getFrom(__model__, ent_type, ents_arr);
+    const found_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][] = _getFrom(__model__, ent_type, ents_arrs);
     // return the result
-    return idsMake(found_ents_arr) as TId[]|TId[][];
+    return __model__.geom.id.getIDFromTypeIdx(found_ents_arr) as TId[]|TId[][];
 }
 function _getAll(__model__: GIModel, ent_type: EEntType): TEntTypeIdx[] {
     const ents_i: number[] = __model__.geom.query.getEnts(ent_type, false);
@@ -166,24 +166,24 @@ export function Filter(__model__: GIModel,
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'query.Filter';
-    let ents_arr: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] = null;
+    let ents_arrs: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list], null) as TEntTypeIdx|TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDListOfList], null);
     }
     const [attrib_name, attrib_idx_key]: [string, number|string] = checkAttribNameIdxKey(fn_name, attrib);
     checkAttribValue(fn_name, value);
     // --- Error Check ---
     // make sure that the ents_arr is at least depth 2
-    const depth: number = getArrDepth(ents_arr);
-    if (depth === 1) { ents_arr = [ents_arr] as TEntTypeIdx[]; }
-    ents_arr = ents_arr as TEntTypeIdx[]|TEntTypeIdx[][];
+    const depth: number = getArrDepth(ents_arrs);
+    if (depth === 1) { ents_arrs = [ents_arrs] as TEntTypeIdx[]; }
+    ents_arrs = ents_arrs as TEntTypeIdx[]|TEntTypeIdx[][];
     // get the oeprator
     const op_type: EFilterOperatorTypes = _filterOperator(operator_enum);
     // do the query
-    const found_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][] = _filter(__model__, ents_arr, attrib_name, attrib_idx_key, op_type, value);
+    const found_ents_arr: TEntTypeIdx[]|TEntTypeIdx[][] = _filter(__model__, ents_arrs, attrib_name, attrib_idx_key, op_type, value);
     // return the result
-    return idsMake(found_ents_arr) as TId[]|TId[][];
+    return __model__.geom.id.getIDFromTypeIdx(found_ents_arr) as TId[]|TId[][];
 }
 export enum _EFilterOperator {
     IS_EQUAL =              '==',
@@ -263,14 +263,15 @@ export function Invert(__model__: GIModel, ent_type_enum: _EEntType, entities: T
     if (isEmptyArr(entities)) { return []; }
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs('query.Invert', 'entities', entities, [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs('query.Invert', 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     }
     // --- Error Check ---
     const select_ent_types: EEntType = _getEntTypeFromStr(ent_type_enum);
-    const found_ents_arr: TEntTypeIdx[] = _invert(__model__, select_ent_types, ents_arr);
-    return idsMake(found_ents_arr) as TId[];
+    const found_ents_arr: TEntTypeIdx[] = _invert(__model__, select_ent_types, ents_arrs);
+    return __model__.geom.id.getIDFromTypeIdx(found_ents_arr) as TId[];
 }
 function _invert(__model__: GIModel, select_ent_type: EEntType, ents_arr: TEntTypeIdx[]): TEntTypeIdx[] {
     // get the ents to exclude
@@ -307,12 +308,13 @@ export function Sort(__model__: GIModel, entities: TId[], attrib: string|[string
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
     const fn_name = 'query.Sort';
-    const ents_arr = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     const [attrib_name, attrib_idx_key]: [string, number|string] = checkAttribNameIdxKey(fn_name, attrib);
     // --- Error Check ---
     const sort_method: ESort = (method_enum === _ESortMethod.DESCENDING) ? ESort.DESCENDING : ESort.ASCENDING;
-    const sorted_ents_arr: TEntTypeIdx[] = _sort(__model__, ents_arr, attrib_name, attrib_idx_key, sort_method);
-    return idsMake(sorted_ents_arr) as TId[];
+    const sorted_ents_arr: TEntTypeIdx[] = _sort(__model__, ents_arrs, attrib_name, attrib_idx_key, sort_method);
+    return __model__.geom.id.getIDFromTypeIdx(sorted_ents_arr) as TId[];
 }
 function _sort(__model__: GIModel, ents_arr: TEntTypeIdx[], attrib_name: string, idx_or_key: number|string, method: ESort): TEntTypeIdx[] {
     // get the list of ents_i
@@ -352,14 +354,15 @@ export function Perimeter(__model__: GIModel, ent_type: _EEntType, entities: TId
     if (isEmptyArr2(entities)) { return []; }
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs('query.Perimeter', 'entities', entities, [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs('query.Perimeter', 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     }
     // --- Error Check ---
     const select_ent_type: EEntType = _getEntTypeFromStr(ent_type);
-    const found_ents_arr: TEntTypeIdx[] = _perimeter(__model__, select_ent_type, ents_arr);
-    return idsMake(found_ents_arr) as TId[];
+    const found_ents_arr: TEntTypeIdx[] = _perimeter(__model__, select_ent_type, ents_arrs);
+    return __model__.geom.id.getIDFromTypeIdx(found_ents_arr) as TId[];
 }
 export function _perimeter(__model__: GIModel,  select_ent_type: EEntType, ents_arr: TEntTypeIdx[]): TEntTypeIdx[] {
     // get an array of all edges
@@ -391,14 +394,15 @@ export function Neighbor(__model__: GIModel, ent_type_enum: _EEntType, entities:
     if (isEmptyArr(entities)) { return []; }
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs('query.neighbor', 'entities', entities, [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs('query.neighbor', 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     }
     // --- Error Check ---
     const select_ent_type: EEntType = _getEntTypeFromStr(ent_type_enum);
-    const found_ents_arr: TEntTypeIdx[] = _neighbors(__model__, select_ent_type, ents_arr);
-    return idsMake(found_ents_arr) as TId[];
+    const found_ents_arr: TEntTypeIdx[] = _neighbors(__model__, select_ent_type, ents_arrs);
+    return __model__.geom.id.getIDFromTypeIdx(found_ents_arr) as TId[];
 }
 export function _neighbors(__model__: GIModel,  select_ent_type: EEntType, ents_arr: TEntTypeIdx[]): TEntTypeIdx[] {
     // get an array of all vertices
@@ -441,9 +445,10 @@ export function Type(__model__: GIModel, entities: TId|TId[], type_query_enum: _
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'query.Type';
-    const ents_arr = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx|TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     // --- Error Check ---
-    return _type(__model__, ents_arr, type_query_enum);
+    return _type(__model__, ents_arrs, type_query_enum);
 }
 function _isClosed(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[]): boolean|boolean[] {
     if (!Array.isArray(ents_arr[0])) {

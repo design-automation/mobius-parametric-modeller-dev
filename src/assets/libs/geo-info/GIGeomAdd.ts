@@ -34,8 +34,11 @@ export class GIGeomAdd {
     public addPoint(posi_i: number): number {
         // create vert
         const vert_i = this._addVertex(posi_i);
-        // create point
+        // create point, update down arrays
         const point_i: number = this._geom_arrays.dn_points_verts.push(vert_i) - 1;
+        // update IDs
+        this._geom.id.newPointID(point_i);
+        // update up arrays
         this._geom_arrays.up_verts_points[vert_i] = point_i;
         return point_i;
     }
@@ -54,8 +57,11 @@ export class GIGeomAdd {
             edges_i_arr.push( this._addEdge(vert_i_arr[vert_i_arr.length - 1], vert_i_arr[0]));
         }
         const wire_i: number = this._addWire(edges_i_arr, close);
-        // create pline
+        // create pline, update doawn arrays
         const pline_i: number = this._geom_arrays.dn_plines_wires.push(wire_i) - 1;
+        // update IDs
+        this._geom.id.newPlineID(pline_i);
+        // update up arrays
         this._geom_arrays.up_wires_plines[wire_i] = pline_i;
         return pline_i;
     }
@@ -92,8 +98,11 @@ export class GIGeomAdd {
         } else {
             face_i = this._addFace(wire_i);
         }
-        // create polygon
+        // create polygon, update doawn arrays
         const pgon_i: number = this._geom_arrays.dn_pgons_faces.push(face_i) - 1;
+        // update IDs
+        this._geom.id.newPgonID(pgon_i);
+        // update up arrays
         this._geom_arrays.up_faces_pgons[face_i] = pgon_i;
         return pgon_i;
     }
@@ -106,8 +115,11 @@ export class GIGeomAdd {
      */
     public addColl(parent_i: number, points_i: number[], plines_i: number[], pgons_i: number[]): number {
         parent_i = parent_i === null ? -1 : parent_i;
-        // create collection
+        // create collection, update doawn arrays
         const coll_i: number = this._geom_arrays.dn_colls_objs.push([parent_i, points_i, plines_i, pgons_i]) - 1;
+        // update IDs
+        this._geom.id.newCollID(coll_i);
+        // update up arrays
         for (const point_i of points_i) {
             if (this._geom_arrays.up_points_colls[point_i] === undefined) {
                 this._geom_arrays.up_points_colls[point_i] = [coll_i];
@@ -302,6 +314,8 @@ export class GIGeomAdd {
         // because posis are the bottom of the hierarchy
         // update up arrays
         const posi_i: number = this._geom_arrays.up_posis_verts.push([]) - 1;
+        // update IDs
+        this._geom.id.newPosiID(posi_i);
         // return the numeric index of the posi
         return posi_i;
     }
@@ -312,6 +326,8 @@ export class GIGeomAdd {
     public _addVertex(posi_i: number): number {
         // update down arrays
         const vert_i: number = this._geom_arrays.dn_verts_posis.push(posi_i) - 1;
+        // update IDs
+        this._geom.id.newVertID(vert_i);
         // update up arrays
             // if (this._geom_arrays.up_posis_verts[posi_i] === undefined) {
             //     this._geom_arrays.up_posis_verts[posi_i] = [];
@@ -331,6 +347,8 @@ export class GIGeomAdd {
     public _addEdge(vert_i1: number, vert_i2: number): number {
         // update down arrays
         const edge_i: number = this._geom_arrays.dn_edges_verts.push([vert_i1, vert_i2]) - 1;
+        // update IDs
+        this._geom.id.newEdgeID(edge_i);
         // assume there are three edges, prev, edge_i, next
         // for vert_i1, [prev, edge_i] or [edge_i]
         // update up arrays for the start vertex
@@ -378,6 +396,8 @@ export class GIGeomAdd {
     public _addWire(edges_i: number[], close: boolean = false): number {
         // update down arrays
         const wire_i: number = this._geom_arrays.dn_wires_edges.push(edges_i) - 1;
+        // update IDs
+        this._geom.id.newWireID(wire_i);
         // update up arrays
         edges_i.forEach( edge_i => this._geom_arrays.up_edges_wires[edge_i] = wire_i );
         // return the numeric index of the wire
@@ -396,6 +416,8 @@ export class GIGeomAdd {
         const face: TFace = [[wire_i], tris_i];
         // update down arrays
         const face_i: number = this._geom_arrays.dn_faces_wirestris.push(face) - 1;
+        // update IDs
+        this._geom.id.newFaceID(face_i);
         // update up arrays
         this._geom_arrays.up_wires_faces[wire_i] = face_i;
         tris_i.forEach( tri_i => this._geom_arrays.up_tris_faces[tri_i] = face_i );
@@ -416,6 +438,8 @@ export class GIGeomAdd {
         const face: TFace = [face_wires_i, tris_i];
         // update down arrays
         const face_i: number = this._geom_arrays.dn_faces_wirestris.push(face) - 1;
+        // update IDs
+        this._geom.id.newFaceID(face_i);
         // update up arrays
         face_wires_i.forEach(face_wire_i => this._geom_arrays.up_wires_faces[face_wire_i] = face_i);
         tris_i.forEach( tri_i => this._geom_arrays.up_tris_faces[tri_i] = face_i );
@@ -453,9 +477,18 @@ export class GIGeomAdd {
         const tris_verts_i: TTri[] = tris_corners.map(tri_corners => tri_corners.map( corner => all_verts_i[corner] ) as TTri );
         // update down arrays, tris->verts
         const tris_i: number[] = tris_verts_i.map(tri_verts_i => this._geom_arrays.dn_tris_verts.push(tri_verts_i) - 1);
-        // update up arrays, verts->tris
+        // const tris_i: number[] = [];
+        // for (let i = 0; i < tris_verts_i.length; i++) {
+        //     const tri_verts_i: TTri = tris_verts_i[i];
+        //     const tri_i: number = this._geom_arrays.dn_tris_verts.push(tri_verts_i) - 1;
+        //     // no need to update any IDs
+        //     tris_i.push(tri_i);
+        // }
+        // TODO - merge these two loops <<<<<<<<<<<<<<<
+        // update down arrays, tris->verts
         for (let i = 0; i < tris_verts_i.length; i++) {
             const tri_verts_i: TTri = tris_verts_i[i];
+            // update down arrays, tris->verts
             const tri_i: number = tris_i[i];
             for (const tri_vert_i of tri_verts_i) {
                 if (this._geom_arrays.up_verts_tris[tri_vert_i] === undefined) {

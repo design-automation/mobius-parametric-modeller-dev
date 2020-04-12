@@ -9,7 +9,7 @@
  */
 import { GIModel } from '@libs/geo-info/GIModel';
 import { TId, TPlane, Txyz, EEntType, TRay, TEntTypeIdx, EEntTypeStr, Txy} from '@libs/geo-info/common';
-import { checkArgTypes, TypeCheckObj, checkIDs, IDcheckObj} from '../_check_args';
+import { checkIDs, IDcheckObj} from '../_check_args';
 import { getArrDepth, isColl } from '@assets/libs/geo-info/id';
 import { vecDiv, vecSum, vecAvg, vecFromTo, vecLen, vecCross, vecNorm, vecAdd, vecSetLen, vecDot } from '@assets/libs/geom/vectors';
 import { isRay, isPlane, isVec3 } from '@assets/libs/geo-info/virtual';
@@ -46,14 +46,15 @@ export function getPlane(__model__: GIModel, data: Txyz|TRay|TPlane|TId|TId[], f
     return [origin, [1, 0, 0], [0, 1, 0]] as TPlane;
 }
 // ================================================================================================
-export function getCentoridFromEnts(__model__: GIModel, ents: TId|TId[], fn_name: string): Txyz {
+export function getCentoridFromEnts(__model__: GIModel, entities: TId|TId[], fn_name: string): Txyz {
     // this must be an ID or an array of IDs, so lets get the centroid
     // TODO this error message is confusing
-    const ents_arr: TEntTypeIdx|TEntTypeIdx[] = checkIDs(fn_name, 'ents', ents,
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+    checkIDs(fn_name, 'ents', ents_arrs,
         [IDcheckObj.isID, IDcheckObj.isIDList],
         [EEntType.POSI, EEntType.VERT, EEntType.POINT, EEntType.EDGE, EEntType.WIRE,
-            EEntType.PLINE, EEntType.FACE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx;
-    const centroid: Txyz|Txyz[] = getCentroid(__model__, ents_arr);
+            EEntType.PLINE, EEntType.FACE, EEntType.PGON, EEntType.COLL]);
+    const centroid: Txyz|Txyz[] = getCentroid(__model__, ents_arrs);
     if (Array.isArray(centroid[0])) {
         return vecAvg(centroid as Txyz[]) as Txyz;
     }

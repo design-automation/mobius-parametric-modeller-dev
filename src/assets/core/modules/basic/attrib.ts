@@ -137,7 +137,8 @@ export function Set(__model__: GIModel, entities: TId|TId[]|TId[][],
     const fn_name = 'attrib.Set';
     let ents_arr: TEntTypeIdx|TEntTypeIdx[] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx|TEntTypeIdx[];
+        ents_arr = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arr, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     }
     const [attrib_name, attrib_idx_key]: [string, number|string] = checkAttribNameIdxKey(fn_name, attrib);
     checkAttribName(fn_name , attrib_name);
@@ -246,7 +247,8 @@ export function Get(__model__: GIModel, entities: TId|TId[]|TId[][],
     const fn_name = 'attrib.Get';
     let ents_arr: TEntTypeIdx|TEntTypeIdx[] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx|TEntTypeIdx[];
+        ents_arr = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arr, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     }
     const [attrib_name, attrib_idx_key]: [string, number|string] = checkAttribNameIdxKey(fn_name, attrib);
     checkAttribName(fn_name, attrib_name);
@@ -432,7 +434,8 @@ export function Push(__model__: GIModel, entities: TId|TId[],
     const fn_name = 'attrib.Push';
     let ents_arr: TEntTypeIdx[] = null;
     if (entities !== null && entities !== undefined) {
-        ents_arr = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
+        ents_arr = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arr, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     }
     let source_attrib: [string, number|string] = null;
     let target_attrib: [string, number|string] = null;

@@ -10,13 +10,13 @@
 
 import { GIModel } from '@libs/geo-info/GIModel';
 import { TId, TPlane, Txyz, EEntType, TEntTypeIdx, TRay, IGeomPack} from '@libs/geo-info/common';
-import { getArrDepth, isColl, isPgon, isPline, isPoint, isPosi, isEmptyArr, idsMake } from '@libs/geo-info/id';
+import { getArrDepth, isEmptyArr } from '@libs/geo-info/id';
 import { vecAdd, vecSum, vecDiv, vecFromTo, vecNorm, vecCross, vecSetLen, vecLen, vecDot } from '@libs/geom/vectors';
 import { checkArgTypes, checkIDs, IDcheckObj, TypeCheckObj} from '../_check_args';
 import { rotateMatrix, multMatrix, scaleMatrix, mirrorMatrix, xfromSourceTargetMatrix } from '@libs/geom/matrix';
 import { Matrix4 } from 'three';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
-import { getOrigin, getRay, getPlane } from './_common';
+import { getRay, getPlane } from './_common';
 
 // ================================================================================================
 /**
@@ -45,12 +45,11 @@ export function Move(__model__: GIModel, entities: TId|TId[], vectors: Txyz|Txyz
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Move';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                                [EEntType.POSI, EEntType.VERT, EEntType.EDGE, EEntType.WIRE,
-                                EEntType.FACE, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
         checkArgTypes(fn_name, 'vectors', vectors, [TypeCheckObj.isVector, TypeCheckObj.isVectorList]);
         // --- Error Check ---
-        _move(__model__, ents_arr, vectors);
+        _move(__model__, ents_arrs, vectors);
     }
 }
 function _move(__model__: GIModel, ents_arr: TEntTypeIdx[], vectors: Txyz|Txyz[]): void {
@@ -115,13 +114,12 @@ export function Rotate(__model__: GIModel, entities: TId|TId[], ray: Txyz|TRay|T
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Rotate';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                                [EEntType.POSI, EEntType.VERT, EEntType.EDGE, EEntType.WIRE,
-                                EEntType.FACE, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
         checkArgTypes(fn_name, 'angle', angle, [TypeCheckObj.isNumber]);
         ray = getRay(__model__, ray, fn_name) as TRay;
         // --- Error Check ---
-        _rotate(__model__, ents_arr, ray, angle);
+        _rotate(__model__, ents_arrs, ray, angle);
     }
 }
 function _rotate(__model__: GIModel, ents_arr: TEntTypeIdx[], ray: TRay, angle: number): void {
@@ -162,13 +160,12 @@ export function Scale(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay|
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Scale';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                                [EEntType.POSI, EEntType.VERT, EEntType.EDGE, EEntType.WIRE,
-                                EEntType.FACE, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
         checkArgTypes(fn_name, 'scale', scale, [TypeCheckObj.isNumber, TypeCheckObj.isXYZlist]);
         plane = getPlane(__model__, plane, fn_name) as TPlane;
         // --- Error Check ---
-        _scale(__model__, ents_arr, plane, scale);
+        _scale(__model__, ents_arrs, plane, scale);
     }
 }
 function _scale(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane, scale: number|Txyz): void {
@@ -210,12 +207,11 @@ export function Mirror(__model__: GIModel, entities: TId|TId[], plane: Txyz|TRay
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Mirror';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                                [EEntType.POSI, EEntType.VERT, EEntType.EDGE, EEntType.WIRE,
-                                EEntType.FACE, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
         plane = getPlane(__model__, plane, fn_name) as TPlane;
         // --- Error Check ---
-        _mirror(__model__, ents_arr, plane);
+        _mirror(__model__, ents_arrs, plane);
     }
 }
 function _mirror(__model__: GIModel, ents_arr: TEntTypeIdx[], plane: TPlane): void {
@@ -259,13 +255,12 @@ export function XForm(__model__: GIModel, entities: TId|TId[],
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.XForm';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                                [EEntType.POSI, EEntType.VERT, EEntType.EDGE, EEntType.WIRE,
-                                EEntType.FACE, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
         from_plane = getPlane(__model__, from_plane, fn_name) as TPlane;
         to_plane = getPlane(__model__, to_plane, fn_name) as TPlane;
         // --- Error Check ---
-        _xform(__model__, ents_arr, from_plane, to_plane);
+        _xform(__model__, ents_arrs, from_plane, to_plane);
     }
 }
 function _xform(__model__: GIModel, ents_arr: TEntTypeIdx[], from: TPlane, to: TPlane): void {
@@ -299,11 +294,13 @@ export function Offset(__model__: GIModel, entities: TId|TId[], dist: number): v
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Offset';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                                [EEntType.WIRE, EEntType.FACE, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
+            [IDcheckObj.isID, IDcheckObj.isIDList],
+            [EEntType.WIRE, EEntType.FACE, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
         checkArgTypes(fn_name, 'dist', dist, [TypeCheckObj.isNumber]);
         // --- Error Check ---
-        _offset(__model__, ents_arr, dist);
+        _offset(__model__, ents_arrs, dist);
     }
 }
 function _offset(__model__: GIModel, ents_arr: TEntTypeIdx[], dist: number): void {
@@ -430,11 +427,12 @@ export function Reverse(__model__: GIModel, entities: TId|TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
-        const ents_arr: TEntTypeIdx[] = checkIDs('modify.Reverse', 'entities', entities,
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs('modify.Reverse', 'entities', ents_arrs,
             [IDcheckObj.isID, IDcheckObj.isIDList],
-            [EEntType.WIRE, EEntType.PLINE, EEntType.FACE, EEntType.PGON])  as TEntTypeIdx[];
+            [EEntType.WIRE, EEntType.PLINE, EEntType.FACE, EEntType.PGON]);
         // --- Error Check ---
-        _reverse(__model__, ents_arr);
+        _reverse(__model__, ents_arrs);
     }
 }
 function _reverse(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
@@ -466,11 +464,12 @@ export function Shift(__model__: GIModel, entities: TId|TId[], offset: number): 
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
-        const ents_arr: TEntTypeIdx[] = checkIDs('modify.Reverse', 'entities', entities,
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs('modify.Reverse', 'entities', ents_arrs,
             [IDcheckObj.isID, IDcheckObj.isIDList],
-            [EEntType.WIRE, EEntType.PLINE, EEntType.FACE, EEntType.PGON])  as TEntTypeIdx[];
+            [EEntType.WIRE, EEntType.PLINE, EEntType.FACE, EEntType.PGON]);
         // --- Error Check ---
-        _shift(__model__, ents_arr, offset);
+        _shift(__model__, ents_arrs, offset);
     }
 }
 function _shift(__model__: GIModel, ents_arr: TEntTypeIdx[], offset: number): void {
@@ -494,10 +493,11 @@ export function Ring(__model__: GIModel, entities: TId|TId[], method: _ERingMeth
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Ring';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.PLINE]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
+            [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.PLINE]);
         // --- Error Check ---
-        _ring(__model__, ents_arr, method);
+        _ring(__model__, ents_arrs, method);
     }
 }
 export enum _ERingMethod {
@@ -533,11 +533,10 @@ export function Weld(__model__: GIModel, entities: TId|TId[], method: _EWeldMeth
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
     const fn_name = 'modify.Weld';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities, [IDcheckObj.isID, IDcheckObj.isIDList],
-                            [EEntType.VERT, EEntType.EDGE, EEntType.WIRE, EEntType.FACE,
-                            EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     // --- Error Check ---
-    _weld(__model__, ents_arr, method);
+    _weld(__model__, ents_arrs, method);
 }
 export enum _EWeldMethod {
     MERGE_POSITIONS =  'merge_positions',
@@ -580,10 +579,12 @@ export function Remesh(__model__: GIModel, entities: TId[]): void {
     entities = arrMakeFlat(entities) as TId[];
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
-        const ents_arr: TEntTypeIdx[] = checkIDs('modify.Remesh', 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.FACE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs('modify.Remesh', 'entities', ents_arrs,
+            [IDcheckObj.isID, IDcheckObj.isIDList], 
+            [EEntType.FACE, EEntType.PGON, EEntType.COLL]);
         // --- Error Check ---
-        _remesh(__model__, ents_arr);
+        _remesh(__model__, ents_arrs);
     }
 }
 function _remesh(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
@@ -597,7 +598,10 @@ function _remesh(__model__: GIModel, ents_arr: TEntTypeIdx[]): void {
     }
 }
 // ================================================================================================
-
+export enum _EDeleteMethod {
+    DELETE_SELECTED  =  'delete_selected',
+    KEEP_SELECTED =  'keep_selected'
+}
 /**
  * Deletes geometric entities: positions, points, polylines, polygons, and collections.
  * ~
@@ -621,25 +625,22 @@ export function Delete(__model__: GIModel, entities: TId|TId[], method: _EDelete
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'modify.Delete';
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
             [IDcheckObj.isID, IDcheckObj.isIDList],
-            [EEntType.POSI, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+            [EEntType.POSI, EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
         // --- Error Check ---
         switch (method) {
             case _EDeleteMethod.DELETE_SELECTED:
-                _delete(__model__, ents_arr, false); //  do not invert
+                _delete(__model__, ents_arrs, false); //  do not invert
                 break;
             case _EDeleteMethod.KEEP_SELECTED:
-                _delete(__model__, ents_arr, true); // invert
+                _delete(__model__, ents_arrs, true); // invert
                 break;
             default:
                 throw new Error(fn_name + ' : Method not recognised.');
         }
     }
-}
-export enum _EDeleteMethod {
-    DELETE_SELECTED  =  'delete_selected',
-    KEEP_SELECTED =  'keep_selected'
 }
 function _delete(__model__: GIModel, ents_arr: TEntTypeIdx[], invert: boolean): void {
     // get the ents

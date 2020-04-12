@@ -1,5 +1,4 @@
-import { EEntType, EAttribNames, TEntTypeIdx, EEntTypeStr } from '@libs/geo-info/common';
-import { idsBreak } from '@libs/geo-info/id';
+import { EEntType, TEntTypeIdx } from '@libs/geo-info/common';
 
 // =========================================================================================================================================
 // Attribute Checks
@@ -244,10 +243,25 @@ export class TypeCheckObj {
         return;
     }
 }
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+
 export class IDcheckObj {
     // static default_ent_type_strs = ['POSI', 'TRI', 'VERT', 'EDGE', 'WIRE', 'FACE', 'POINT', 'PLINE', 'PGON', 'COLL'];
     static default_ent_type_strs = [EEntType.POSI,
-                                    EEntType.TRI,
+                                    // EEntType.TRI,
                                     EEntType.VERT,
                                     EEntType.EDGE,
                                     EEntType.WIRE,
@@ -259,11 +273,14 @@ export class IDcheckObj {
     // IDs
     // entity types
     // POSI, TRI, VERT, EDGE, WIRE, FACE, POINT, PLINE, PGON, COLL
-    static isID(fn_name: string, arg_name: string, arg: any, ent_type_strs: EEntType[]|null): TEntTypeIdx {
-        let ent_arr;
-        try {
-            ent_arr = idsBreak(arg) as TEntTypeIdx; // split
-        } catch (err) {
+    static isID(fn_name: string, arg_name: string, ent_arr: any, ent_type_strs: EEntType[]|null): void {
+        // let ent_arr;
+        // try {
+        //     ent_arr = getIdxsTOBERELACED(ent_arr) as TEntTypeIdx; // split
+        // } catch (err) {
+        //     throw new Error(fn_name + ': ' + arg_name + ' is not a valid Entity ID'); // check valid id
+        // }
+        if (ent_arr[1] === undefined) {
             throw new Error(fn_name + ': ' + arg_name + ' is not a valid Entity ID'); // check valid id
         }
         if (ent_type_strs === null) {
@@ -280,29 +297,29 @@ export class IDcheckObj {
             throw new Error(fn_name + ': ' + arg_name + ' is not one of the following valid types - ' +
                             ent_type_strs.map((test_ent) => EEntType[test_ent]).toString());
         }
-        return ent_arr;
+        // return ent_arr;
     }
-    static isIDList(fn_name: string, arg_name: string, arg_list: any[], ent_type_strs: EEntType[]|null): TEntTypeIdx[] {
-        isListArg(fn_name, arg_name, arg_list, 'valid Entity IDs');
-        const ret_arr = [];
+    static isIDList(fn_name: string, arg_name: string, ents_arrs: any[], ent_type_strs: EEntType[]|null): void {
+        isListArg(fn_name, arg_name, ents_arrs, 'valid Entity IDs');
+        // const ret_arr = [];
         if (ent_type_strs === null) {
             ent_type_strs = IDcheckObj.default_ent_type_strs;
         }
-        for (let i = 0; i < arg_list.length; i++) {
-            ret_arr.push(IDcheckObj.isID(fn_name, arg_name + '[' + i + ']', arg_list[i], ent_type_strs));
+        for (let i = 0; i < ents_arrs.length; i++) {
+            IDcheckObj.isID(fn_name, arg_name + '[' + i + ']', ents_arrs[i], ent_type_strs);
         }
-        return ret_arr as TEntTypeIdx[];
+        // return ret_arr as TEntTypeIdx[];
     }
-    static isIDList_list(fn_name: string, arg_name: string, arg_list: any, ent_type_strs: EEntType[]|null): TEntTypeIdx[][] {
-        isListArg(fn_name, arg_name, arg_list, 'list of valid Entity IDs');
-        const ret_arr = [];
+    static isIDListOfList(fn_name: string, arg_name: string, ents_arrs: any, ent_type_strs: EEntType[]|null): void {
+        isListArg(fn_name, arg_name, ents_arrs, 'list of valid Entity IDs');
+        // const ret_arr = [];
         if (ent_type_strs === null) {
             ent_type_strs = IDcheckObj.default_ent_type_strs;
         }
-        for (let i = 0; i < arg_list.length; i++) {
-            ret_arr.push(IDcheckObj.isIDList(fn_name, arg_name + '[' + i + ']', arg_list[i], ent_type_strs));
+        for (let i = 0; i < ents_arrs.length; i++) {
+            IDcheckObj.isIDList(fn_name, arg_name + '[' + i + ']', ents_arrs[i], ent_type_strs);
         }
-        return ret_arr as TEntTypeIdx[][];
+        // return ret_arr as TEntTypeIdx[][];
     }
 }
 // =========================================================================================================================================
@@ -329,15 +346,25 @@ export function checkArgTypes(fn_name: string, arg_name: string, arg: any, check
     }
     return ret;
 }
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
 
-export function checkIDs(fn_name: string, arg_name: string, arg: any, check_fns: Function[],
-                         IDchecks: EEntType[]|null): TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
+export function checkIDs(fn_name: string, arg_name: string,
+        ents_arrs: TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][],
+        check_fns: Function[],
+        IDchecks: EEntType[]|null): void { // TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
+    // check the IDs of the entities
     let pass = false;
     const err_arr = [];
-    let ret: TEntTypeIdx|TEntTypeIdx[];
+    // let ret: TEntTypeIdx|TEntTypeIdx[];
     for (let i = 0; i < check_fns.length; i++) {
         try {
-           ret =  check_fns[i](fn_name, arg_name, arg, IDchecks);
+           check_fns[i](fn_name, arg_name, ents_arrs, IDchecks);
         } catch (err) {
             err_arr.push(err.message + '<br>');
             continue;
@@ -349,8 +376,17 @@ export function checkIDs(fn_name: string, arg_name: string, arg: any, check_fns:
         const ret_msg = fn_name + ': ' + arg_name + ' failed the following tests:<br>';
         throw new Error(ret_msg + err_arr.join(''));
     }
-    return ret; // returns TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]; depends on which passes
+    // return ret; // returns TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]; depends on which passes
 }
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+// =========================================================================================================================================
+
 // =========================================================================================================================================
 // Most General Check
 // =========================================================================================================================================

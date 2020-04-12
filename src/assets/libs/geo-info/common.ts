@@ -238,9 +238,91 @@ export enum EAttribPush {
 }
 
 /**
+ * The counts of the highest ID
+ * This is used to generate the nest ID
+ */
+export interface IEntIDCount {
+    posis: number;
+    verts: number;
+    edges: number;
+    wires: number;
+    faces: number;
+    points: number;
+    plines: number;
+    pgons: number;
+    colls: number;
+}
+
+/**
+ * ID Maps
+ */
+export interface IIDMaps {
+    posiID: Map<number, TId>;
+    posiIdx: Map<TId, number>;
+
+    vertID: Map<number, TId>;
+    vertIdx: Map<TId, number>;
+
+    edgeID: Map<number, TId>;
+    edgeIdx: Map<TId, number>;
+
+    wireID: Map<number, TId>;
+    wireIdx: Map<TId, number>;
+
+    faceID: Map<number, TId>;
+    faceIdx: Map<TId, number>;
+
+    pointID: Map<number, TId>;
+    pointIdx: Map<TId, number>;
+
+    plineID: Map<number, TId>;
+    plineIdx: Map<TId, number>;
+
+    pgonID: Map<number, TId>;
+    pgonIdx: Map<TId, number>;
+
+    collID: Map<number, TId>;
+    collIdx: Map<TId, number>;
+}
+
+/**
+ * ID Arrays, for JSON
+ */
+export interface IIDArrays {
+    posiID: [number, TId][];
+    posiIdx: [TId, number][];
+
+    vertID: [number, TId][];
+    vertIdx: [TId, number][];
+
+    edgeID: [number, TId][];
+    edgeIdx: [TId, number][];
+
+    wireID: [number, TId][];
+    wireIdx: [TId, number][];
+
+    faceID: [number, TId][];
+    faceIdx: [TId, number][];
+
+    pointID: [number, TId][];
+    pointIdx: [TId, number][];
+
+    plineID: [number, TId][];
+    plineIdx: [TId, number][];
+
+    pgonID: [number, TId][];
+    pgonIdx: [TId, number][];
+
+    collID: [number, TId][];
+    collIdx: [TId, number][];
+}
+
+/**
  * Geom arrays
  */
 export interface IGeomArrays {
+    id_counts: IEntIDCount;
+    id_maps: IIDMaps;
     // num_posis: number;
     dn_verts_posis: TVert[];
     dn_tris_verts: TTri[];
@@ -308,6 +390,8 @@ export type TModelAttribValuesArr = Array<[string, TAttribDataTypes]>;
 export const RE_SPACES: RegExp = /\s+/g;
 
 export interface IGeomData {
+    id_counts: IEntIDCount;
+    id_arrays: IIDArrays;
     num_positions: number;
     triangles: TTri[];
     vertices: TVert[];

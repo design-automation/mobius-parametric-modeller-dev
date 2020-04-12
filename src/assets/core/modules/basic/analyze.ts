@@ -10,12 +10,10 @@
 
 import { GIModel } from '@libs/geo-info/GIModel';
 import { TId, Txyz, EEntType, TEntTypeIdx, TRay, TPlane, Txy, XYPLANE, EAttribDataTypeStrs } from '@libs/geo-info/common';
-import { isPline, isWire, isEdge, isPgon, isFace, getArrDepth, isVert, isPosi, isPoint, idsMakeFromIndicies } from '@libs/geo-info/id';
+import { getArrDepth } from '@libs/geo-info/id';
 import { distance } from '@libs/geom/distance';
-import { vecSum, vecDiv, vecAdd, vecSub, vecCross, vecMult, vecFromTo, vecLen, vecDot, vecNorm, vecAng2 } from '@libs/geom/vectors';
-import { triangulate } from '@libs/triangulate/triangulate';
-import { area } from '@libs/geom/triangle';
-import { checkIDs, checkArgTypes, IDcheckObj, TypeCheckObj} from '../_check_args';
+import { vecAdd, vecCross, vecMult, vecNorm, vecAng2 } from '@libs/geom/vectors';
+import { checkIDs, IDcheckObj } from '../_check_args';
 import uscore from 'underscore';
 import * as THREE from 'three';
 import { sum } from '@assets/core/inline/_mathjs';
@@ -207,10 +205,11 @@ export function Raytrace(__model__: GIModel, origins: Txyz|Txyz[], directions: T
         entities: TId|TId[]|TId[][], limits: number|[number, number], method: _ERaytraceMethod): number[]|number[][] {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
     const fn_name = 'analyze.Raytrace';
-    const ents_arrs: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
+    checkIDs(fn_name, 'entities', ents_arrs,
         [IDcheckObj.isID, IDcheckObj.isIDList],
-        [EEntType.FACE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        [EEntType.FACE, EEntType.PGON, EEntType.COLL]);
     // TODO
     // TODO
     // --- Error Check ---
@@ -345,10 +344,11 @@ export function Solar(__model__: GIModel, origins: TPlane[], detail: number,
     entities: TId|TId[]|TId[][], limits: number|[number, number], method: _ESolarMethod): number[] {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
     const fn_name = 'analyze.Solar';
-    const ents_arrs: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
+    checkIDs(fn_name, 'entities', ents_arrs,
         [IDcheckObj.isID, IDcheckObj.isIDList],
-        [EEntType.FACE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+        [EEntType.FACE, EEntType.PGON, EEntType.COLL]);
     // TODO
     // TODO
     let latitude: number = null;
@@ -582,7 +582,7 @@ export function SunPath(__model__: GIModel, origin: Txyz|TPlane, detail: number,
         }
         posis_i.push(one_day_posis_i);
     }
-    return idsMakeFromIndicies(EEntType.POSI, posis_i) as TId[];
+    return __model__.geom.id.getID(EEntType.POSI, posis_i) as TId[];
 }
 // ================================================================================================
 export enum _EShortestPathMethod {
@@ -632,13 +632,16 @@ export function ShortestPath(__model__: GIModel, source: TId|TId[]|TId[][][], ta
     target = arrMakeFlat(target) as TId[];
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
+    const source_ents_arrs = __model__.geom.id.getTypeIdxFromID(source) as TEntTypeIdx[];
+    const target_ents_arrs = __model__.geom.id.getTypeIdxFromID(target) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
     const fn_name = 'analyze.ShortestPath';
-    const source_ents_arrs: TEntTypeIdx[] = checkIDs(fn_name, 'origins', source,
-        [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
-    const target_ents_arrs: TEntTypeIdx[] = checkIDs(fn_name, 'destinations', target,
-        [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
-    const ents_arrs: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    checkIDs(fn_name, 'origins', source_ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList], null);
+    checkIDs(fn_name, 'destinations', target_ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList], null);
+    checkIDs(fn_name, 'entities', ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList], null);
     // --- Error Check ---
     const directed: boolean = method === _EShortestPathMethod.DIRECTED ? true : false;
     let return_edges = true;
@@ -725,16 +728,16 @@ export function ShortestPath(__model__: GIModel, source: TId|TId[]|TId[][][], ta
     }
     const dict: { _e?: TId[], ps?: TId[], _e_count?: number[], ps_count?: number[], _e_paths?: TId[][], ps_paths?: TId[][]} = {};
     if (return_edges) {
-        dict['_e'] = idsMakeFromIndicies(EEntType.EDGE, Array.from(map_edges_i.keys())) as TId[];
+        dict['_e'] = __model__.geom.id.getID(EEntType.EDGE, Array.from(map_edges_i.keys())) as TId[];
         dict['_e_count'] = Array.from(map_edges_i.values());
     }
     if (return_posis) {
-        dict['ps'] =  idsMakeFromIndicies(EEntType.POSI, Array.from(map_posis_i.keys())) as TId[];
+        dict['ps'] =  __model__.geom.id.getID(EEntType.POSI, Array.from(map_posis_i.keys())) as TId[];
         dict['ps_count'] =  Array.from(map_posis_i.values());
     }
     if (return_paths) {
-        dict['_e_paths'] =  idsMakeFromIndicies(EEntType.EDGE, edge_paths) as TId[][];
-        dict['ps_paths'] =  idsMakeFromIndicies(EEntType.POSI, posi_paths) as TId[][];
+        dict['_e_paths'] =  __model__.geom.id.getID(EEntType.EDGE, edge_paths) as TId[][];
+        dict['ps_paths'] =  __model__.geom.id.getID(EEntType.POSI, posi_paths) as TId[][];
     }
     return dict;
 }

@@ -1,9 +1,10 @@
 import { GIModel } from './GIModel';
-import { IGeomArrays, TVert, TWire, TColl, TPline, TEdge, TFace, TPgon, TEntTypeIdx, EEntType, TPoint } from './common';
+import { IGeomArrays, TEntTypeIdx } from './common';
 import { GIGeomAdd } from './GIGeomAdd';
 import { GIGeomModify } from './GIGeomModify';
 import { GIGeomQuery } from './GIGeomQuery';
 import { GIGeomThreejs } from './GIGeomThreejs';
+import { GIGeomID } from './GIGeomID';
 import { GIGeomIO } from './GIGeomIO';
 import { GIGeomDel } from './GIGeomDel';
 import { GIGeomCheck } from './GIGeomCheck';
@@ -23,7 +24,40 @@ export class GIGeom {
     public selected: TEntTypeIdx[]; // entities that should become selected
     //  all arrays
     public _geom_arrays: IGeomArrays = {  // TODO this should not be public
-        // num_posis: 0,
+        // counts
+        id_counts: {
+            posis: 0,
+            verts: 0,
+            edges: 0,
+            wires: 0,
+            faces: 0,
+            points: 0,
+            plines: 0,
+            pgons: 0,
+            colls: 0
+        },
+        // maps
+        id_maps: {
+            posiID: new Map(),
+            posiIdx: new Map(),
+            vertID: new Map(),
+            vertIdx: new Map(),
+            edgeID: new Map(),
+            edgeIdx: new Map(),
+            wireID: new Map(),
+            wireIdx: new Map(),
+            faceID: new Map(),
+            faceIdx: new Map(),
+            pointID: new Map(),
+            pointIdx: new Map(),
+            plineID: new Map(),
+            plineIdx: new Map(),
+            pgonID: new Map(),
+            pgonIdx: new Map(),
+            collID: new Map(),
+            collIdx: new Map(),
+        },
+        // down arrays
         dn_verts_posis: [],
         dn_tris_verts: [],
         dn_edges_verts: [],
@@ -33,6 +67,7 @@ export class GIGeom {
         dn_plines_wires: [],
         dn_pgons_faces: [],
         dn_colls_objs: [],
+        // up arrays
         up_posis_verts: [],
         up_tris_faces: [],
         up_verts_edges: [],
@@ -47,6 +82,7 @@ export class GIGeom {
         up_pgons_colls: []
     };
     // sub classes with methods
+    public id: GIGeomID;
     public io: GIGeomIO;
     public add: GIGeomAdd;
     public del: GIGeomDel;
@@ -66,6 +102,7 @@ export class GIGeom {
      */
     constructor(model: GIModel) {
         this.model = model;
+        this.id = new GIGeomID(this, this._geom_arrays);
         this.io = new GIGeomIO(this, this._geom_arrays);
         this.add = new GIGeomAdd(this, this._geom_arrays);
         this.del = new GIGeomDel(this, this._geom_arrays);

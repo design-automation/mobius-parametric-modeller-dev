@@ -8,16 +8,13 @@
 
 import { GIModel } from '@libs/geo-info/GIModel';
 import { importObj, exportPosiBasedObj, exportVertBasedObj } from '@libs/geo-info/io_obj';
-import { importDae, exportDae } from '@libs/geo-info/io_dae';
 import { importGeojson, exportGeojson } from '@libs/geo-info/io_geojson';
 import { download } from '@libs/filesys/download';
 import { TId, EEntType, Txyz, TPlane, TRay, IGeomPack, IModelData, IGeomPackTId, TEntTypeIdx } from '@libs/geo-info/common';
 import { __merge__ } from '../_model';
 import { _model } from '..';
-import { idsMake, idsMakeFromIndicies } from '@libs/geo-info/id';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 import { IDcheckObj, checkIDs, checkArgTypes, TypeCheckObj } from '../_check_args';
-import { ModelCheck } from './util';
 
 // ================================================================================================
 declare global {
@@ -105,7 +102,7 @@ export function Import(__model__: GIModel, model_data: string, data_format: _EIO
         default:
             throw new Error('Import type not recognised');
     }
-    return idsMake([EEntType.COLL, coll_i]) as TId;
+    return __model__.geom.id.getIDFromTypeIdx([EEntType.COLL, coll_i]) as TId;
 }
 function _importGI(__model__: GIModel, model_data: string): number {
     // get number of ents before merge
@@ -212,15 +209,16 @@ export function Export(__model__: GIModel, entities: TId|TId[]|TId[][],
         file_name: string, data_format: _EIOExportDataFormat, data_target: _EIODataTarget): void {
     // --- Error Check ---
     const fn_name = 'io.Export';
-    let ents_arr = null;
+    let ents_arrs = null;
     if (entities !== null) {
         entities = arrMakeFlat(entities) as TId[];
-        ents_arr = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON, EEntType.COLL])  as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
+            [IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON, EEntType.COLL]) ;
     }
     checkArgTypes(fn_name, 'file_name', file_name, [TypeCheckObj.isString, TypeCheckObj.isStringList]);
     // --- Error Check ---
-    _export(__model__, ents_arr, file_name, data_format, data_target);
+    _export(__model__, ents_arrs, file_name, data_format, data_target);
 }
 function _export(__model__: GIModel, ents_arr: TEntTypeIdx[],
     file_name: string, data_format: _EIOExportDataFormat, data_target: _EIODataTarget): boolean {

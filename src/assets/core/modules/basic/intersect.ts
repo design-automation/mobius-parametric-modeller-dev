@@ -36,13 +36,14 @@ export function RayFace(__model__: GIModel, ray: TRay, entities: TId|TId[]): Txy
     // --- Error Check ---
     const fn_name = 'intersect.RayFace';
     checkArgTypes(fn_name, 'ray', ray, [TypeCheckObj.isRay]);
-    const ents_arr: TEntTypeIdx|TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
         [IDcheckObj.isID, IDcheckObj.isIDList],
-        [EEntType.FACE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx|TEntTypeIdx[];
+        [EEntType.FACE, EEntType.PGON, EEntType.COLL]);
     // --- Error Check ---
     // create the threejs entity and calc intersections
     const ray_tjs: THREE.Ray = new THREE.Ray(new THREE.Vector3(...ray[0]), new THREE.Vector3(...ray[1]));
-    return _intersectRay(__model__, ents_arr, ray_tjs);
+    return _intersectRay(__model__, ents_arrs, ray_tjs);
 }
 function _intersectRay(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], ray_tjs: THREE.Ray): Txyz[] {
     if (getArrDepth(ents_arr) === 1) {
@@ -101,15 +102,16 @@ export function PlaneEdge(__model__: GIModel, plane: TRay|TPlane, entities: TId|
     // --- Error Check ---
     const fn_name = 'intersect.PlaneEdge';
     checkArgTypes(fn_name, 'plane', plane, [TypeCheckObj.isPlane]);
-    const ents_arr: TEntTypeIdx|TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
         [IDcheckObj.isID, IDcheckObj.isIDList],
-        [EEntType.EDGE, EEntType.WIRE, EEntType.FACE, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx|TEntTypeIdx[];
+        [EEntType.EDGE, EEntType.WIRE, EEntType.FACE, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
     // --- Error Check ---
     // create the threejs entity and calc intersections
     const plane_normal: Txyz = vecCross(plane[1], plane[2]);
     const plane_tjs: THREE.Plane = new THREE.Plane();
     plane_tjs.setFromNormalAndCoplanarPoint( new THREE.Vector3(...plane_normal), new THREE.Vector3(...plane[0]) );
-    return _intersectPlane(__model__, ents_arr, plane_tjs);
+    return _intersectPlane(__model__, ents_arrs, plane_tjs);
 }
 function _intersectPlane(__model__: GIModel, ents_arr: TEntTypeIdx|TEntTypeIdx[], plane_tjs: THREE.Plane): Txyz[] {
     if (getArrDepth(ents_arr) === 1) {

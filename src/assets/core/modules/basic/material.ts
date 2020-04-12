@@ -109,12 +109,12 @@ export function Set(__model__: GIModel, entities: TId|TId[], material: string): 
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'matrial.Set';
-        const ents_arr: TEntTypeIdx[] =
-            checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list], null) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
+            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDListOfList], null);
         checkArgTypes(fn_name, 'material', material, [TypeCheckObj.isString]);
         // --- Error Check ---
-        _material(__model__, ents_arr, material);
+        _material(__model__, ents_arrs, material);
     }
 }
 function _material(__model__: GIModel, ents_arr: TEntTypeIdx[], material: string): void {

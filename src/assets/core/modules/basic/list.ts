@@ -11,11 +11,21 @@
  */
 
 import { checkArgTypes, TypeCheckObj } from '../_check_args';
-import { idsBreak } from '@libs/geo-info/id';
-import { TEntTypeIdx } from '@libs/geo-info/common';
 
 
 // ================================================================================================
+export enum _EAddMethod {
+    TO_START = 'to_start',
+    TO_END = 'to_end',
+    EXTEND_START = 'extend_start',
+    EXTEND_END = 'extend_end',
+    SORTED_ALPHA = 'alpha_descending',
+    SORTED_REV_ALPHA = 'alpha_ascending',
+    SORTED_NUM = 'numeric_descending',
+    SORTED_REV_NUM = 'numeric_ascending',
+    SORTED_ID = 'ID_descending',
+    SORTED_REV_ID = 'ID_ascending'
+}
 /**
  * Adds an item to a list.
  *
@@ -92,37 +102,25 @@ export function Add(list: any[], item: any|any[], method: _EAddMethod): void {
                 }
             }
             break;
-        case _EAddMethod.SORTED_ID:
-            for (let i = 0; i < list.length + 1; i++) {
-                if (_compareID(item, list[i]) > 0 || i === list.length) {
-                    list.splice(i, 0, item);
-                    break;
-                }
-            }
-            break;
-        case _EAddMethod.SORTED_REV_ID:
-            for (let i = 0; i < list.length + 1; i++) {
-                if (_compareID(item, list[i]) < 0 || i === list.length) {
-                    list.splice(i, 0, item);
-                    break;
-                }
-            }
-            break;
+        // case _EAddMethod.SORTED_ID:
+        //     for (let i = 0; i < list.length + 1; i++) {
+        //         if (_compareID(item, list[i]) > 0 || i === list.length) {
+        //             list.splice(i, 0, item);
+        //             break;
+        //         }
+        //     }
+        //     break;
+        // case _EAddMethod.SORTED_REV_ID:
+        //     for (let i = 0; i < list.length + 1; i++) {
+        //         if (_compareID(item, list[i]) < 0 || i === list.length) {
+        //             list.splice(i, 0, item);
+        //             break;
+        //         }
+        //     }
+        //     break;
         default:
             break;
     }
-}
-export enum _EAddMethod {
-    TO_START = 'to_start',
-    TO_END = 'to_end',
-    EXTEND_START = 'extend_start',
-    EXTEND_END = 'extend_end',
-    SORTED_ALPHA = 'alpha_descending',
-    SORTED_REV_ALPHA = 'alpha_ascending',
-    SORTED_NUM = 'numeric_descending',
-    SORTED_REV_NUM = 'numeric_ascending',
-    SORTED_ID = 'ID_descending',
-    SORTED_REV_ID = 'ID_ascending'
 }
 // ================================================================================================
 /**
@@ -261,19 +259,19 @@ export enum _ESortMethod {
     REV_ALPHA = 'alpha_ascending',
     NUM = 'numeric_descending',
     REV_NUM = 'numeric_ascending',
-    ID = 'ID_descending',
-    REV_ID = 'ID_ascending',
+    // ID = 'ID_descending',
+    // REV_ID = 'ID_ascending',
     SHIFT = 'shift_1',
     REV_SHIFT = 'reverse_shift_1',
     RANDOM = 'random'
 }
-function _compareID(id1: string, id2: string): number {
-    const [ent_type1, index1]: TEntTypeIdx = idsBreak(id1) as TEntTypeIdx;
-    const [ent_type2, index2]: TEntTypeIdx = idsBreak(id2) as TEntTypeIdx;
-    if (ent_type1 !== ent_type2) { return ent_type1 -  ent_type2; }
-    if (index1 !== index2) { return index1 -  index2; }
-    return 0;
-}
+// function _compareID(id1: string, id2: string): number {
+//     const [ent_type1, index1]: TEntTypeIdx = getIdxsTOBERELACED(id1) as TEntTypeIdx;
+//     const [ent_type2, index2]: TEntTypeIdx = getIdxsTOBERELACED(id2) as TEntTypeIdx;
+//     if (ent_type1 !== ent_type2) { return ent_type1 -  ent_type2; }
+//     if (index1 !== index2) { return index1 -  index2; }
+//     return 0;
+// }
 function _sort(list: any[], method: _ESortMethod): void {
     switch (method) {
         case _ESortMethod.REV:
@@ -291,12 +289,12 @@ function _sort(list: any[], method: _ESortMethod): void {
         case _ESortMethod.REV_NUM:
             list.sort((a, b) => a - b);
             break;
-        case _ESortMethod.ID:
-            list.sort(_compareID).reverse();
-            break;
-        case _ESortMethod.REV_ID:
-            list.sort(_compareID);
-            break;
+        // case _ESortMethod.ID:
+        //     list.sort(_compareID).reverse();
+        //     break;
+        // case _ESortMethod.REV_ID:
+        //     list.sort(_compareID);
+        //     break;
         case _ESortMethod.SHIFT:
             const last: any = list.pop();
             list.unshift(last);

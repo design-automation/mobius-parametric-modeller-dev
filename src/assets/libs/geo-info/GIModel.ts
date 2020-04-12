@@ -1,6 +1,6 @@
 import { GIGeom } from './GIGeom';
 import { GIAttribs } from './GIAttribs';
-import { IModelData, IGeomPack, EEntType, Txyz, TEntAttribValuesArr, TAttribDataTypes, TEntity, TEntTypeIdx } from './common';
+import { IModelData, IGeomPack } from './common';
 import { GIModelComparator } from './GIModelComparator';
 import { GIModelThreejs } from './GIModelThreejs';
 
@@ -32,17 +32,17 @@ export class GIModel {
      * For the imported data, deleted entities are also merged.
      * @param model_data The GI model.
      */
-    public merge(model: GIModel): void {
-        const geom_maps: Map<number, number>[] = this.geom.io.merge(model.geom._geom_arrays);
-        this.attribs.io.merge(model.attribs._attribs_maps, geom_maps);
-    }
+    // public merge(model: GIModel): void {
+    //     const geom_maps: Map<number, number>[] = this.geom.io.merge(model.geom._geom_arrays);
+    //     this.attribs.io.merge(model.attribs._attribs_maps, geom_maps);
+    // }
     /**
      * Copys the data from a second model into this model.
      * The existing data in this model is not deleted.
      * For the imported data, deleted entities are filtered out (i.e. not merged).
      * @param model_data The GI model.
      */
-    public mergeAndPurge(model: GIModel): void {
+    public merge(model: GIModel): void {
         const geom_maps: Map<number, number>[] = this.geom.io.mergeAndPurge(model.geom._geom_arrays);
         this.attribs.io.merge(model.attribs._attribs_maps, geom_maps);
     }

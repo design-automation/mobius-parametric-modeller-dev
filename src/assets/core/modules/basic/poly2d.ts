@@ -11,7 +11,7 @@ import { EEntType, TId, TEntTypeIdx, Txyz, Txy, TPlane, TBBox } from '@libs/geo-
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 import { checkIDs, IDcheckObj, TypeCheckObj, checkArgTypes } from '../_check_args';
 import Shape from '@doodle3d/clipper-js';
-import { isEmptyArr, isPgon, idsMake } from '@assets/libs/geo-info/id';
+import { isEmptyArr } from '@assets/libs/geo-info/id';
 import * as d3del from 'd3-delaunay';
 import * as d3poly from 'd3-polygon';
 import * as d3vor from 'd3-voronoi';
@@ -318,17 +318,17 @@ export function Voronoi(__model__: GIModel, pgons: TId|TId[], entities: TId|TId[
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'poly2d.Voronoi';
-    const pgons_ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'pgons', pgons,
-        [IDcheckObj.isIDList], null) as TEntTypeIdx[];
-    const posis_ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const pgons_ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'pgons', pgons_ents_arrs, [IDcheckObj.isIDList], null);
+    const posis_ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', posis_ents_arrs, [IDcheckObj.isIDList], null);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
     // pgons
-    const pgons_i: number[] = _getPgons(__model__, pgons_ents_arr);
+    const pgons_i: number[] = _getPgons(__model__, pgons_ents_arrs);
     if (pgons_i.length === 0) { return []; }
     // posis
-    const posis_i: number[] = _getPosis(__model__, posis_ents_arr);
+    const posis_i: number[] = _getPosis(__model__, posis_ents_arrs);
     if (posis_i.length === 0) { return []; }
     // posis
     const d3_cell_points: [number, number][] = [];
@@ -360,7 +360,7 @@ export function Voronoi(__model__: GIModel, pgons: TId|TId[], entities: TId|TId[
         }
     }
     // return cell pgons
-    return idsMake(all_cells_i.map( cell_i => [EEntType.PGON, cell_i] as TEntTypeIdx )) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(all_cells_i.map( cell_i => [EEntType.PGON, cell_i] as TEntTypeIdx )) as TId[];
 }
 // There is a bug in d3 new voronoi, it produces wrong results...
 // function _voronoi(__model__: GIModel, pgon_shape: Shape, d3_cell_points: [number, number][],
@@ -422,12 +422,12 @@ export function Delaunay(__model__: GIModel, entities: TId|TId[]): TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'poly2d.Delaunay';
-    const posis_ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities1', entities,
-        [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const posis_ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', posis_ents_arrs, [IDcheckObj.isIDList], null);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
     // posis
-    const posis_i: number[] = _getPosis(__model__, posis_ents_arr);
+    const posis_i: number[] = _getPosis(__model__, posis_ents_arrs);
     if (posis_i.length === 0) { return []; }
     // posis
     const d3_tri_coords: [number, number][] = [];
@@ -439,7 +439,7 @@ export function Delaunay(__model__: GIModel, entities: TId|TId[]): TId[] {
     // create delaunay triangulation
     const cells_i: number[] = _delaunay(__model__, d3_tri_coords, posis_map);
     // return cell pgons
-    return idsMake(cells_i.map( cell_i => [EEntType.PGON, cell_i] as TEntTypeIdx )) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(cells_i.map( cell_i => [EEntType.PGON, cell_i] as TEntTypeIdx )) as TId[];
 }
 function _delaunay(__model__: GIModel, d3_tri_coords: [number, number][], posis_map: TPosisMap): number[] {
     const new_pgons_i: number[] = [];
@@ -473,16 +473,16 @@ export function ConvexHull(__model__: GIModel, entities: TId|TId[]): TId {
     if (isEmptyArr(entities)) { return null; }
     // --- Error Check ---
     const fn_name = 'poly2d.ConvexHull';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     // --- Error Check ---
     // posis
-    const posis_i: number[] = _getPosis(__model__, ents_arr);
+    const posis_i: number[] = _getPosis(__model__, ents_arrs);
     if (posis_i.length === 0) { return null; }
     const hull_posis_i: number[] = _convexHull(__model__, posis_i);
     // return cell pgons
     const hull_pgon_i: number = __model__.geom.add.addPgon(hull_posis_i);
-    return idsMake([EEntType.PGON, hull_pgon_i]) as TId;
+    return __model__.geom.id.getIDFromTypeIdx([EEntType.PGON, hull_pgon_i]) as TId;
 }
 function _convexHull(__model__: GIModel, posis_i: number[]): number[] {
     const points: [number, number][] = [];
@@ -524,11 +524,11 @@ export function BBoxPolygon(__model__: GIModel, entities: TId|TId[], method: _EB
     if (isEmptyArr(entities)) { return null; }
     // --- Error Check ---
     const fn_name = 'poly2d.BBoxPolygon';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     // --- Error Check ---
     // posis
-    const posis_i: number[] = _getPosis(__model__, ents_arr);
+    const posis_i: number[] = _getPosis(__model__, ents_arrs);
     if (posis_i.length === 0) { return null; }
     let pgon_i: number;
     switch (method) {
@@ -541,7 +541,7 @@ export function BBoxPolygon(__model__: GIModel, entities: TId|TId[], method: _EB
         default:
             break;
     }
-    return idsMake([EEntType.PGON, pgon_i]) as TId;
+    return __model__.geom.id.getIDFromTypeIdx([EEntType.PGON, pgon_i]) as TId;
 }
 function _bboxAABB(__model__: GIModel, posis_i: number[]): number {
     const bbox: [number, number, number, number] = [Infinity, Infinity, -Infinity, -Infinity];
@@ -633,16 +633,16 @@ export function Union(__model__: GIModel, entities: TId|TId[]): TId[] {
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'poly2d.Union';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
-    const pgons_i: number[] = _getPgons(__model__, ents_arr);
+    const pgons_i: number[] = _getPgons(__model__, ents_arrs);
     if (pgons_i.length === 0) { return []; }
     const result_shape: Shape = _convertPgonsToShapeUnion(__model__, pgons_i, posis_map);
     if (result_shape === null) { return []; }
     const all_new_pgons: number[] = _convertShapesToPgons(__model__, result_shape, posis_map);
-    return idsMake(all_new_pgons.map( pgon_i => [EEntType.PGON, pgon_i] as TEntTypeIdx )) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(all_new_pgons.map( pgon_i => [EEntType.PGON, pgon_i] as TEntTypeIdx )) as TId[];
 }
 // ================================================================================================
 /**
@@ -669,14 +669,14 @@ export function Boolean(__model__: GIModel, a_entities: TId|TId[], b_entities: T
     if (isEmptyArr(b_entities)) { return a_entities; }
     // --- Error Check ---
     const fn_name = 'poly2d.Boolean';
-    const a_ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'a_entities', a_entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
-    const b_ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'b_entities', b_entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], null) as TEntTypeIdx[];
+    const a_ents_arrs = __model__.geom.id.getTypeIdxFromID(a_entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'a_entities', a_ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
+    const b_ents_arrs = __model__.geom.id.getTypeIdxFromID(b_entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'b_entities', b_ents_arrs, [IDcheckObj.isID, IDcheckObj.isIDList], null);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
-    const [a_pgons_i, a_plines_i]: [number[], number[]] = _getPgonsPlines(__model__, a_ents_arr);
-    const b_pgons_i: number[] = _getPgons(__model__, b_ents_arr);
+    const [a_pgons_i, a_plines_i]: [number[], number[]] = _getPgonsPlines(__model__, a_ents_arrs);
+    const b_pgons_i: number[] = _getPgons(__model__, b_ents_arrs);
     if (a_pgons_i.length === 0 && a_plines_i.length === 0) { return []; }
     if (b_pgons_i.length === 0) { return []; }
     // const a_shape: Shape = _convertPgonsToShapeUnion(__model__, a_pgons_i, posis_map);
@@ -686,11 +686,11 @@ export function Boolean(__model__: GIModel, a_entities: TId|TId[], b_entities: T
     const new_plines_i: number[] = _booleanPlines(__model__, a_plines_i, b_shape, method, posis_map);
     // make the list of polylines and polygons
     const result_ents: TId[] = [];
-    const new_pgons: TId[] = idsMake(new_pgons_i.map( pgon_i => [EEntType.PGON, pgon_i] as TEntTypeIdx )) as TId[];
+    const new_pgons: TId[] = __model__.geom.id.getIDFromTypeIdx(new_pgons_i.map( pgon_i => [EEntType.PGON, pgon_i] as TEntTypeIdx )) as TId[];
     for (const new_pgon of new_pgons) {
         result_ents.push(new_pgon);
     }
-    const new_plines: TId[] = idsMake(new_plines_i.map( pline_i => [EEntType.PLINE, pline_i] as TEntTypeIdx )) as TId[];
+    const new_plines: TId[] = __model__.geom.id.getIDFromTypeIdx(new_plines_i.map( pline_i => [EEntType.PLINE, pline_i] as TEntTypeIdx )) as TId[];
     for (const new_pline of new_plines) {
         result_ents.push(new_pline);
     }
@@ -784,8 +784,10 @@ export function OffsetMitre(__model__: GIModel, entities: TId|TId[], dist: numbe
     }
     // --- Error Check ---
     const fn_name = 'poly2d.OffsetMitre';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON]) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList],
+        [EEntType.PLINE, EEntType.PGON]);
     checkArgTypes(fn_name, 'miter_limit', limit, [TypeCheckObj.isNumber]);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
@@ -795,7 +797,7 @@ export function OffsetMitre(__model__: GIModel, entities: TId|TId[], dist: numbe
         endType: MClipOffsetEndType.get(end_type),
         miterLimit: limit / dist
     };
-    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arr);
+    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arrs);
     for (const pgon_i of pgons_i) {
         const new_pgons_i: number[] = _offsetPgon(__model__, pgon_i, dist, options, posis_map);
         for (const new_pgon_i of new_pgons_i) {
@@ -816,7 +818,7 @@ export function OffsetMitre(__model__: GIModel, entities: TId|TId[], dist: numbe
     //         }
     //     }
     // }
-    return idsMake(all_new_pgons) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(all_new_pgons) as TId[];
 }
 /**
  * Offset a polyline or polygon, with chamfered joints.
@@ -835,8 +837,10 @@ export function OffsetChamfer(__model__: GIModel, entities: TId|TId[], dist: num
     }
     // --- Error Check ---
     const fn_name = 'poly2d.OffsetChamfer';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON]) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList], 
+        [EEntType.PLINE, EEntType.PGON]);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
     const all_new_pgons: TEntTypeIdx[] = [];
@@ -844,7 +848,7 @@ export function OffsetChamfer(__model__: GIModel, entities: TId|TId[], dist: num
         jointType: _EClipJointType.SQUARE,
         endType: MClipOffsetEndType.get(end_type)
     };
-    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arr);
+    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arrs);
     for (const pgon_i of pgons_i) {
         const new_pgons_i: number[] = _offsetPgon(__model__, pgon_i, dist, options, posis_map);
         for (const new_pgon_i of new_pgons_i) {
@@ -865,7 +869,7 @@ export function OffsetChamfer(__model__: GIModel, entities: TId|TId[], dist: num
     //         }
     //     }
     // }
-    return idsMake(all_new_pgons) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(all_new_pgons) as TId[];
 }
 /**
  * Offset a polyline or polygon, with round joints.
@@ -885,8 +889,10 @@ export function OffsetRound(__model__: GIModel, entities: TId|TId[], dist: numbe
     }
     // --- Error Check ---
     const fn_name = 'poly2d.OffsetRound';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON]) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList],
+        [EEntType.PLINE, EEntType.PGON]);
     checkArgTypes(fn_name, 'tolerance', tolerance, [TypeCheckObj.isNumber]);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
@@ -896,7 +902,7 @@ export function OffsetRound(__model__: GIModel, entities: TId|TId[], dist: numbe
         endType: MClipOffsetEndType.get(end_type),
         roundPrecision: tolerance * SCALE
     };
-    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arr);
+    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arrs);
     for (const pgon_i of pgons_i) {
         const new_pgons_i: number[] = _offsetPgon(__model__, pgon_i, dist, options, posis_map);
         for (const new_pgon_i of new_pgons_i) {
@@ -909,7 +915,7 @@ export function OffsetRound(__model__: GIModel, entities: TId|TId[], dist: numbe
             all_new_pgons.push([EEntType.PGON, new_pgon_i]);
         }
     }
-    return idsMake(all_new_pgons) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(all_new_pgons) as TId[];
 }
 function _offsetPgon(__model__: GIModel, pgon_i: number, dist: number,
         options: IClipOffsetOptions, posis_map: TPosisMap): number[] {
@@ -948,13 +954,15 @@ export function Clean(__model__: GIModel, entities: TId|TId[], tolerance: number
     if (isEmptyArr(entities)) { return []; }
     // --- Error Check ---
     const fn_name = 'poly2d.Clean';
-    const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList], [EEntType.PLINE, EEntType.PGON]) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList],
+        [EEntType.PLINE, EEntType.PGON]);
     checkArgTypes(fn_name, 'tolerance', tolerance, [TypeCheckObj.isNumber]);
     // --- Error Check ---
     const posis_map: TPosisMap = new Map();
     const all_new_pgons: TEntTypeIdx[] = [];
-    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arr);
+    const [pgons_i, plines_i]: [number[], number[]] = _getPgonsPlines(__model__, ents_arrs);
     for (const pgon_i of pgons_i) {
         const new_pgons_i: number[] = _cleanPgon(__model__, pgon_i, tolerance, posis_map);
         for (const new_pgon_i of new_pgons_i) {
@@ -967,7 +975,7 @@ export function Clean(__model__: GIModel, entities: TId|TId[], tolerance: number
             all_new_pgons.push([EEntType.PLINE, new_pline_i]);
         }
     }
-    return idsMake(all_new_pgons) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(all_new_pgons) as TId[];
 }
 function _cleanPgon(__model__: GIModel, pgon_i: number, tolerance: number, posis_map: TPosisMap): number[] {
     const shape: Shape = _convertPgonToShape(__model__, pgon_i, posis_map);

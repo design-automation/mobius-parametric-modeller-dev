@@ -8,7 +8,7 @@
 
 import { GIModel } from '@libs/geo-info/GIModel';
 import { TId, EEntType, TEntTypeIdx, EFilterOperatorTypes } from '@libs/geo-info/common';
-import { isPoint, isPline, isPgon, isColl, idsMake, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
+import { isPoint, isPline, isPgon, isColl, getArrDepth, isEmptyArr } from '@libs/geo-info/id';
 import { __merge__} from '../_model';
 import { _model } from '..';
 import { checkArgTypes, checkIDs, IDcheckObj, TypeCheckObj } from '../_check_args';
@@ -30,15 +30,16 @@ import { arrMakeFlat, getArrDepth2 } from '@libs/util/arrs';
  * @example collections = collection.Create([[point1,polyine1],[polygon1]], ['coll1', 'coll2'])
  * @example_info Creates two collections, the first containing point1 and polyline1, the second containing polygon1.
  */
-export function Create(__model__: GIModel, entities: TId|TId[]|TId[][], name: string|string[]): TId|TId[] {
+export function Create(__model__: GIModel, entities: TId|TId[], name: string|string[]): TId|TId[] {
     // --- Error Check ---
     const fn_name = 'collection.Create';
-    const ents_arr = checkIDs(fn_name, 'entities', entities,
-        [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list],
-        [EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx|TEntTypeIdx[];
+    checkIDs(fn_name, 'entities', ents_arrs,
+        [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDListOfList],
+        [EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
     checkArgTypes(fn_name, 'name', name, [TypeCheckObj.isString, TypeCheckObj.isStringList]);
     // --- Error Check ---
-    const new_ent_arrs: TEntTypeIdx|TEntTypeIdx[] = _create(__model__, ents_arr);
+    const new_ent_arrs: TEntTypeIdx|TEntTypeIdx[] = _create(__model__, ents_arrs);
     // set the name
     if (name !== null) {
         let colls_i: number[] = [];
@@ -60,7 +61,7 @@ export function Create(__model__: GIModel, entities: TId|TId[]|TId[][], name: st
         }
     }
     // return the collection id
-    return idsMake(new_ent_arrs) as TId|TId[];
+    return __model__.geom.id.getIDFromTypeIdx(new_ent_arrs) as TId|TId[];
 }
 function _create(__model__: GIModel, ents_arr: TEntTypeIdx | TEntTypeIdx[] | TEntTypeIdx[][]): TEntTypeIdx | TEntTypeIdx[] {
     const depth: number = getArrDepth(ents_arr);
@@ -115,9 +116,9 @@ export function Get(__model__: GIModel, names: string|string[]): TId|TId[] {
     if (colls_i.length === 0) {
         return []; // return an empty list
     } else if (colls_i.length === 1) {
-        return idsMake([EEntType.COLL, colls_i[0]]) as TId;
+        return __model__.geom.id.getIDFromTypeIdx([EEntType.COLL, colls_i[0]]) as TId;
     }
-    return idsMake(colls_i.map(coll_i => [EEntType.COLL, coll_i]) as TEntTypeIdx[]) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(colls_i.map(coll_i => [EEntType.COLL, coll_i]) as TEntTypeIdx[]) as TId[];
 }
 function _get(__model__: GIModel, names: string|string[]): number[] {
     if (!Array.isArray(names)) {
@@ -161,12 +162,14 @@ export function Add(__model__: GIModel, coll: TId, entities: TId|TId[]): void {
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'collection.Add';
-        const coll_arr = checkIDs(fn_name, 'coll', coll, [IDcheckObj.isID], [EEntType.COLL]) as TEntTypeIdx;
-        const ents_arr: TEntTypeIdx[] = checkIDs(fn_name, 'entities', entities,
+        const coll_arr = __model__.geom.id.getTypeIdxFromID(coll) as TEntTypeIdx;
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'coll', coll_arr, [IDcheckObj.isID], [EEntType.COLL]);
+        checkIDs(fn_name, 'entities', ents_arrs,
             [IDcheckObj.isID, IDcheckObj.isIDList],
-            [EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+            [EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
         // --- Error Check ---
-        _collectionAdd(__model__, coll_arr[1], ents_arr);
+        _collectionAdd(__model__, coll_arr[1], ents_arrs);
     }
 }
 
@@ -206,22 +209,24 @@ function _collectionAdd(__model__: GIModel, coll_i: number, ents_arr: TEntTypeId
  */
 export function Remove(__model__: GIModel, coll: TId, entities: TId|TId[]): void {
     const fn_name = 'collection.Remove';
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null) {
         entities = arrMakeFlat(entities) as TId[];
         // --- Error Check ---
-        ents_arr = checkIDs(fn_name, 'entities', entities,
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
             [IDcheckObj.isID, IDcheckObj.isIDList],
-            [EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]) as TEntTypeIdx[];
+            [EEntType.POINT, EEntType.PLINE, EEntType.PGON, EEntType.COLL]);
         // --- Error Check ---
     }
     // --- Error Check ---
-    const coll_arr = checkIDs(fn_name, 'coll', coll, [IDcheckObj.isID], [EEntType.COLL]) as TEntTypeIdx;
+    const coll_arr = __model__.geom.id.getTypeIdxFromID(coll) as TEntTypeIdx;
+    checkIDs(fn_name, 'coll', coll_arr, [IDcheckObj.isID], [EEntType.COLL]);
     // --- Error Check ---
-    if (ents_arr === null) {
+    if (ents_arrs === null) {
         _collectionEmpty(__model__, coll_arr[1]);
     } else {
-        _collectionRemove(__model__, coll_arr[1], ents_arr);
+        _collectionRemove(__model__, coll_arr[1], ents_arrs);
     }
 }
 function _collectionRemove(__model__: GIModel, coll_i: number, ents_arr: TEntTypeIdx[]): void {
@@ -274,7 +279,8 @@ export function Delete(__model__: GIModel, coll: TId|TId[]): void {
     coll = arrMakeFlat(coll) as TId[];
     // --- Error Check ---
     const fn_name = 'collection.Delete';
-    const colls_arrs = checkIDs(fn_name, 'coll', coll, [IDcheckObj.isIDList], [EEntType.COLL]) as TEntTypeIdx[];
+    const colls_arrs = __model__.geom.id.getTypeIdxFromID(coll) as TEntTypeIdx[];
+    checkIDs(fn_name, 'coll', colls_arrs, [IDcheckObj.isIDList], [EEntType.COLL]);
     // --- Error Check ---
     const colls_i: number[] = [];
     for (const [ent_type, ent_i] of colls_arrs) {

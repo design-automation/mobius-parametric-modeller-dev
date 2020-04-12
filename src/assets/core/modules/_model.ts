@@ -1,6 +1,5 @@
 import { GIModel } from '@libs/geo-info/GIModel';
-import { EAttribDataTypeStrs, TAttribDataTypes, EAttribNames, EEntType, TId, TEntTypeIdx, EEntTypeStr } from '@libs/geo-info/common';
-import { getArrDepth, idsBreak } from '@libs/geo-info/id';
+import { EAttribDataTypeStrs, EAttribNames, EEntType, TEntTypeIdx } from '@libs/geo-info/common';
 
 //  ===============================================================================================
 //  Functions used by Mobius
@@ -61,11 +60,11 @@ export function __stringify__(__model__: GIModel): string {
  * @param __model__
  */
 export function __select__(__model__: GIModel, ents_id: string|string[]|string[][], var_name: string): void {
-    const start = performance.now();
+    // const start = performance.now();
     __model__.geom.selected = [];
     ents_id = ((Array.isArray(ents_id)) ? ents_id : [ents_id]) as string[];
     const [ents_id_flat, ents_indices] = _flatten(ents_id);
-    const ents_arr: TEntTypeIdx[] = idsBreak(ents_id_flat) as TEntTypeIdx[];
+    const ents_arr: TEntTypeIdx[] = __model__.geom.id.getTypeIdxFromID(ents_id_flat) as TEntTypeIdx[];
     const attrib_name: string = '_' + var_name;
     for (let i = 0; i < ents_arr.length; i++) {
         const ent_arr: TEntTypeIdx = ents_arr[i];

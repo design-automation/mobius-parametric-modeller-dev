@@ -1,5 +1,5 @@
 import { TTri, TVert, TEdge, TWire, TFace,
-    TColl, IGeomData, TPoint, TPline, TPgon, Txyz, IGeomArrays, IGeomCopy, TAttribDataTypes, IGeomPack, TPosi, TPlane } from './common';
+    TColl, IGeomData, TPoint, TPline, TPgon, IGeomArrays, IGeomPack, TPosi, IIDArrays, IIDMaps, TId } from './common';
 import { GIGeom } from './GIGeom';
 import { deepCopy } from '../util/copy';
 
@@ -16,325 +16,325 @@ export class GIGeomIO {
         this._geom = geom;
         this._geom_arrays = geom_arrays;
     }
+    // /**
+    //  * Adds data to this model from another model.
+    //  * The existing data in the model is not deleted.
+    //  * Both models may have deleted items, resulting in null values.
+    //  * @param geom_arrays The geom_arrays of the other model.
+    //  */
+    // public merge(geom_arrays: IGeomArrays): Map<number, number>[] {
+    //     // get lengths of existing entities before we start adding stuff
+    //     // const num_posis: number = this._geom_arrays.num_posis;
+    //     const num_posis: number = this._geom_arrays.up_posis_verts.length;
+    //     const num_verts: number = this._geom_arrays.dn_verts_posis.length;
+    //     const num_tris: number = this._geom_arrays.dn_tris_verts.length;
+    //     const num_edges: number = this._geom_arrays.dn_edges_verts.length;
+    //     const num_wires: number = this._geom_arrays.dn_wires_edges.length;
+    //     const num_faces: number = this._geom_arrays.dn_faces_wirestris.length;
+    //     const num_points: number = this._geom_arrays.dn_points_verts.length;
+    //     const num_plines: number = this._geom_arrays.dn_plines_wires.length;
+    //     const num_pgons: number = this._geom_arrays.dn_pgons_faces.length;
+    //     const num_colls: number = this._geom_arrays.dn_colls_objs.length;
 
-    /**
-     * Adds data to this model from another model.
-     * The existing data in the model is not deleted.
-     * Both models may have deleted items, resulting in null values.
-     * @param geom_arrays The geom_arrays of the other model.
-     */
-    public merge(geom_arrays: IGeomArrays): Map<number, number>[] {
-        // get lengths of existing entities before we start adding stuff
-        // const num_posis: number = this._geom_arrays.num_posis;
-        const num_posis: number = this._geom_arrays.up_posis_verts.length;
-        const num_verts: number = this._geom_arrays.dn_verts_posis.length;
-        const num_tris: number = this._geom_arrays.dn_tris_verts.length;
-        const num_edges: number = this._geom_arrays.dn_edges_verts.length;
-        const num_wires: number = this._geom_arrays.dn_wires_edges.length;
-        const num_faces: number = this._geom_arrays.dn_faces_wirestris.length;
-        const num_points: number = this._geom_arrays.dn_points_verts.length;
-        const num_plines: number = this._geom_arrays.dn_plines_wires.length;
-        const num_pgons: number = this._geom_arrays.dn_pgons_faces.length;
-        const num_colls: number = this._geom_arrays.dn_colls_objs.length;
+    //     // for the down arrays, it is important the values are never undefined
+    //     // undefined cannot be exported as json
+    //     // if anything is deleted, then the value should be null
 
-        // for the down arrays, it is important the values are never undefined
-        // undefined cannot be exported as json
-        // if anything is deleted, then the value should be null
+    //     // ======================================================================
+    //     // update down arrays
+    //     // and at the same time get maps for entities
 
-        // ======================================================================
-        // update down arrays
-        // and at the same time get maps for entities
+    //     // positions
+    //     const posis_map: Map<number, number> = new Map();
+    //     for (let posi_i = 0; posi_i < geom_arrays.up_posis_verts.length; posi_i++) { // posis uses up array
+    //         const new_posi_i: number = posi_i + num_posis;
+    //         posis_map.set(posi_i, new_posi_i);
+    //     }
+    //     // vertices
+    //     const verts_map: Map<number, number> = new Map();
+    //     for (let vert_i = 0; vert_i < geom_arrays.dn_verts_posis.length; vert_i++) {
+    //         const new_vert_i: number = vert_i + num_verts;
+    //         verts_map.set(vert_i, new_vert_i);
+    //         const posi_i: TVert = geom_arrays.dn_verts_posis[vert_i];
+    //         if (posi_i === null) {
+    //             this._geom_arrays.dn_verts_posis[new_vert_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_verts_posis[new_vert_i] = posi_i + num_posis as TPosi;
+    //         }
+    //     }
+    //     // triangles
+    //     const tris_map: Map<number, number> = new Map();
+    //     for (let tri_i = 0; tri_i < geom_arrays.dn_tris_verts.length; tri_i++) {
+    //         const new_tri_i: number = tri_i + num_tris;
+    //         tris_map.set(tri_i, tri_i + num_tris);
+    //         const verts_i: TTri = geom_arrays.dn_tris_verts[tri_i];
+    //         if (verts_i === null) {
+    //             this._geom_arrays.dn_tris_verts[new_tri_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_tris_verts[new_tri_i] = verts_i.map(vert_i => vert_i + num_verts) as TTri;
+    //         }
+    //     }
+    //     // edges
+    //     const edges_map: Map<number, number> = new Map();
+    //     for (let edge_i = 0; edge_i < geom_arrays.dn_edges_verts.length; edge_i++) {
+    //         const new_edge_i: number = edge_i + num_edges;
+    //         edges_map.set(edge_i, new_edge_i);
+    //         const verts_i: TEdge = geom_arrays.dn_edges_verts[edge_i];
+    //         if (verts_i === null) {
+    //             this._geom_arrays.dn_edges_verts[new_edge_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_edges_verts[new_edge_i] = verts_i.map(vert_i => vert_i + num_verts) as TEdge;
+    //         }
+    //     }
+    //     // wires
+    //     const wires_map: Map<number, number> = new Map();
+    //     for (let wire_i = 0; wire_i < geom_arrays.dn_wires_edges.length; wire_i++) {
+    //         const new_wire_i: number = wire_i + num_wires;
+    //         wires_map.set(wire_i, new_wire_i);
+    //         const edges_i: TWire = geom_arrays.dn_wires_edges[wire_i];
+    //         if (edges_i === null) {
+    //             this._geom_arrays.dn_wires_edges[new_wire_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_wires_edges[new_wire_i] = edges_i.map(edge_i => edge_i + num_edges) as TWire;
+    //         }
+    //     }
+    //     // faces
+    //     const faces_map: Map<number, number> = new Map();
+    //     for (let face_i = 0; face_i < geom_arrays.dn_faces_wirestris.length; face_i++) {
+    //         const new_face_i: number = face_i + num_faces;
+    //         faces_map.set(face_i, new_face_i);
+    //         const wires_tris_i: TFace = geom_arrays.dn_faces_wirestris[face_i];
+    //         if (wires_tris_i === null) {
+    //             this._geom_arrays.dn_faces_wirestris[new_face_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_faces_wirestris[new_face_i] = [
+    //                 wires_tris_i[0].map(wire_i => wire_i + num_wires),
+    //                 wires_tris_i[1].map(tri_i => tri_i + num_tris)
+    //             ] as TFace;
+    //         }
+    //     }
+    //     // points
+    //     const points_map: Map<number, number> = new Map();
+    //     for (let point_i = 0; point_i < geom_arrays.dn_points_verts.length; point_i++) {
+    //         const new_point_i: number = point_i + num_points;
+    //         points_map.set(point_i, new_point_i);
+    //         const vert_i: TPoint = geom_arrays.dn_points_verts[point_i];
+    //         if (vert_i === null) {
+    //             this._geom_arrays.dn_points_verts[new_point_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_points_verts[new_point_i] = vert_i + num_verts as TPoint;
+    //         }
+    //     }
+    //     // plines
+    //     const plines_map: Map<number, number> = new Map();
+    //     for (let pline_i = 0; pline_i < geom_arrays.dn_plines_wires.length; pline_i++) {
+    //         const new_pline_i: number = pline_i + num_plines;
+    //         plines_map.set(pline_i, new_pline_i);
 
-        // positions
-        const posis_map: Map<number, number> = new Map();
-        for (let posi_i = 0; posi_i < geom_arrays.up_posis_verts.length; posi_i++) { // posis uses up array
-            posis_map.set(posi_i, posi_i + num_posis);
-        }
-        // vertices
-        const verts_map: Map<number, number> = new Map();
-        for (let vert_i = 0; vert_i < geom_arrays.dn_verts_posis.length; vert_i++) {
-            const new_vert_i: number = vert_i + num_verts;
-            verts_map.set(vert_i, new_vert_i);
-            const posi_i: TVert = geom_arrays.dn_verts_posis[vert_i];
-            if (posi_i === null) {
-                this._geom_arrays.dn_verts_posis[new_vert_i] = null;
-            } else {
-                this._geom_arrays.dn_verts_posis[new_vert_i] = posi_i + num_posis as TPosi;
-            }
-        }
-        // triangles
-        const tris_map: Map<number, number> = new Map();
-        for (let tri_i = 0; tri_i < geom_arrays.dn_tris_verts.length; tri_i++) {
-            const new_tri_i: number = tri_i + num_tris;
-            tris_map.set(tri_i, tri_i + num_tris);
-            const verts_i: TTri = geom_arrays.dn_tris_verts[tri_i];
-            if (verts_i === null) {
-                this._geom_arrays.dn_tris_verts[new_tri_i] = null;
-            } else {
-                this._geom_arrays.dn_tris_verts[new_tri_i] = verts_i.map(vert_i => vert_i + num_verts) as TTri;
-            }
-        }
-        // edges
-        const edges_map: Map<number, number> = new Map();
-        for (let edge_i = 0; edge_i < geom_arrays.dn_edges_verts.length; edge_i++) {
-            const new_edge_i: number = edge_i + num_edges;
-            edges_map.set(edge_i, new_edge_i);
-            const verts_i: TEdge = geom_arrays.dn_edges_verts[edge_i];
-            if (verts_i === null) {
-                this._geom_arrays.dn_edges_verts[new_edge_i] = null;
-            } else {
-                this._geom_arrays.dn_edges_verts[new_edge_i] = verts_i.map(vert_i => vert_i + num_verts) as TEdge;
-            }
-        }
-        // wires
-        const wires_map: Map<number, number> = new Map();
-        for (let wire_i = 0; wire_i < geom_arrays.dn_wires_edges.length; wire_i++) {
-            const new_wire_i: number = wire_i + num_wires;
-            wires_map.set(wire_i, new_wire_i);
-            const edges_i: TWire = geom_arrays.dn_wires_edges[wire_i];
-            if (edges_i === null) {
-                this._geom_arrays.dn_wires_edges[new_wire_i] = null;
-            } else {
-                this._geom_arrays.dn_wires_edges[new_wire_i] = edges_i.map(edge_i => edge_i + num_edges) as TWire;
-            }
-        }
-        // faces
-        const faces_map: Map<number, number> = new Map();
-        for (let face_i = 0; face_i < geom_arrays.dn_faces_wirestris.length; face_i++) {
-            const new_face_i: number = face_i + num_faces;
-            faces_map.set(face_i, new_face_i);
-            const wires_tris_i: TFace = geom_arrays.dn_faces_wirestris[face_i];
-            if (wires_tris_i === null) {
-                this._geom_arrays.dn_faces_wirestris[new_face_i] = null;
-            } else {
-                this._geom_arrays.dn_faces_wirestris[new_face_i] = [
-                    wires_tris_i[0].map(wire_i => wire_i + num_wires),
-                    wires_tris_i[1].map(tri_i => tri_i + num_tris)
-                ] as TFace;
-            }
-        }
-        // points
-        const points_map: Map<number, number> = new Map();
-        for (let point_i = 0; point_i < geom_arrays.dn_points_verts.length; point_i++) {
-            const new_point_i: number = point_i + num_points;
-            points_map.set(point_i, new_point_i);
-            const vert_i: TPoint = geom_arrays.dn_points_verts[point_i];
-            if (vert_i === null) {
-                this._geom_arrays.dn_points_verts[new_point_i] = null;
-            } else {
-                this._geom_arrays.dn_points_verts[new_point_i] = vert_i + num_verts as TPoint;
-            }
-        }
-        // plines
-        const plines_map: Map<number, number> = new Map();
-        for (let pline_i = 0; pline_i < geom_arrays.dn_plines_wires.length; pline_i++) {
-            const new_pline_i: number = pline_i + num_plines;
-            plines_map.set(pline_i, new_pline_i);
+    //         const wire_i: TPline = geom_arrays.dn_plines_wires[pline_i];
+    //         if (wire_i === null) {
+    //             this._geom_arrays.dn_plines_wires[new_pline_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_plines_wires[new_pline_i] = wire_i + num_wires as TPline;
+    //         }
+    //     }
+    //     // pgons
+    //     const pgons_map: Map<number, number> = new Map();
+    //     for (let pgon_i = 0; pgon_i < geom_arrays.dn_pgons_faces.length; pgon_i++) {
+    //         const new_pgon_i: number = pgon_i + num_pgons;
+    //         pgons_map.set(pgon_i, new_pgon_i);
+    //         const face_i: TPgon = geom_arrays.dn_pgons_faces[pgon_i];
+    //         if (face_i === null) {
+    //             this._geom_arrays.dn_pgons_faces[new_pgon_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_pgons_faces[new_pgon_i] = face_i + num_faces as TPgon;
+    //         }
+    //     }
+    //     // colls
+    //     const colls_map: Map<number, number> = new Map();
+    //     for (let coll_i = 0; coll_i < geom_arrays.dn_colls_objs.length; coll_i++) {
+    //         const new_coll_i: number = coll_i + num_colls;
+    //         colls_map.set(coll_i, new_coll_i);
+    //         const objs_i: TColl = geom_arrays.dn_colls_objs[coll_i];
+    //         if (objs_i === null) {
+    //             this._geom_arrays.dn_colls_objs[new_coll_i] = null;
+    //         } else {
+    //             this._geom_arrays.dn_colls_objs[new_coll_i] = [
+    //                 objs_i[0] === -1 ? -1 : objs_i[0] + num_colls,
+    //                 objs_i[1].map(point_i => point_i + num_points),
+    //                 objs_i[2].map(pline_i => pline_i + num_plines),
+    //                 objs_i[3].map(pgon_i => pgon_i + num_pgons)
+    //             ] as TColl;
+    //         }
+    //     }
 
-            const wire_i: TPline = geom_arrays.dn_plines_wires[pline_i];
-            if (wire_i === null) {
-                this._geom_arrays.dn_plines_wires[new_pline_i] = null;
-            } else {
-                this._geom_arrays.dn_plines_wires[new_pline_i] = wire_i + num_wires as TPline;
-            }
-        }
-        // pgons
-        const pgons_map: Map<number, number> = new Map();
-        for (let pgon_i = 0; pgon_i < geom_arrays.dn_pgons_faces.length; pgon_i++) {
-            const new_pgon_i: number = pgon_i + num_pgons;
-            pgons_map.set(pgon_i, new_pgon_i);
-            const face_i: TPgon = geom_arrays.dn_pgons_faces[pgon_i];
-            if (face_i === null) {
-                this._geom_arrays.dn_pgons_faces[new_pgon_i] = null;
-            } else {
-                this._geom_arrays.dn_pgons_faces[new_pgon_i] = face_i + num_faces as TPgon;
-            }
-        }
-        // colls
-        const colls_map: Map<number, number> = new Map();
-        for (let coll_i = 0; coll_i < geom_arrays.dn_colls_objs.length; coll_i++) {
-            const new_coll_i: number = coll_i + num_colls;
-            colls_map.set(coll_i, new_coll_i);
-            const objs_i: TColl = geom_arrays.dn_colls_objs[coll_i];
-            if (objs_i === null) {
-                this._geom_arrays.dn_colls_objs[new_coll_i] = null;
-            } else {
-                this._geom_arrays.dn_colls_objs[new_coll_i] = [
-                    objs_i[0] === -1 ? -1 : objs_i[0] + num_colls,
-                    objs_i[1].map(point_i => point_i + num_points),
-                    objs_i[2].map(pline_i => pline_i + num_plines),
-                    objs_i[3].map(pgon_i => pgon_i + num_pgons)
-                ] as TColl;
-            }
-        }
+    //     // create data to return
+    //     const geom_maps: Map<number, number>[] = [
+    //         posis_map,
+    //         verts_map, edges_map, wires_map, faces_map,
+    //         points_map, plines_map, pgons_map, colls_map
+    //     ];
 
-        // create data to return
-        const geom_maps: Map<number, number>[] = [
-            posis_map,
-            verts_map, edges_map, wires_map, faces_map,
-            points_map, plines_map, pgons_map, colls_map
-        ];
+    //     // ======================================================================
+    //     // update up arrays
 
-        // ======================================================================
-        // update up arrays
+    //     // undefined = no value
+    //     // in typescript, undefined behaves in strange ways, try this
+    //     //     const x = [0, undefined, 2, , 4];
+    //     //     for (const i of x) { console.log("i in for loop:", i);}
+    //     //     x.forEach(i => console.log("i in foreach loop:", i) );
+    //     // for the undefined values, explicitly setting the value to undefined is not the same as not setting it at all
+    //     // with a foreach loop, if there is no value, then it skips it completley
+    //     // in this case, we want to make sure there is no value
 
-        // undefined = no value
-        // in typescript, undefined behaves in strange ways, try this
-        //     const x = [0, undefined, 2, , 4];
-        //     for (const i of x) { console.log("i in for loop:", i);}
-        //     x.forEach(i => console.log("i in foreach loop:", i) );
-        // for the undefined values, explicitly setting the value to undefined is not the same as not setting it at all
-        // with a foreach loop, if there is no value, then it skips it completley
-        // in this case, we want to make sure there is no value
-
-        // update posis to verts (they can be null or [])
-        // this array is used to capture deleted posis
-        for (let posi_i = 0; posi_i < geom_arrays.up_posis_verts.length; posi_i++) {
-            const verts_i: number[] = geom_arrays.up_posis_verts[posi_i];
-            if (verts_i === undefined) {
-                continue;
-            } else if (verts_i === null) {
-                this._geom_arrays.up_posis_verts[posis_map.get(posi_i)] = null;
-            } else {
-                const new_verts_i: number[] = verts_i.map( vert_i => verts_map.get(vert_i));
-                this._geom_arrays.up_posis_verts[posis_map.get(posi_i)] = new_verts_i;
-            }
-        }
-        // update verts to tris
-        for (let vert_i = 0; vert_i < geom_arrays.up_verts_tris.length; vert_i++) {
-            const tris_i: number[] = geom_arrays.up_verts_tris[vert_i];
-            if (tris_i === undefined || tris_i === null) {
-                continue;
-            } else if (tris_i === null) {
-                this._geom_arrays.up_verts_tris[verts_map.get(vert_i)] = null;
-            } else {
-                const new_tris_i: number[] = tris_i.map( tri_i => tris_map.get(tri_i));
-                this._geom_arrays.up_verts_tris[verts_map.get(vert_i)] = new_tris_i;
-            }
-        }
-        // update tris to faces
-        for (let tri_i = 0; tri_i < geom_arrays.up_tris_faces.length; tri_i++) {
-            const face_i: number = geom_arrays.up_tris_faces[tri_i];
-            if (face_i === undefined || face_i === null) {
-                continue;
-            } else if (face_i === null) {
-                this._geom_arrays.up_tris_faces[tris_map.get(tri_i)] = null;
-            } else {
-                const new_face_i: number = faces_map.get(face_i);
-                this._geom_arrays.up_tris_faces[tris_map.get(tri_i)] = new_face_i;
-            }
-        }
-        // update verts to edges
-        for (let vert_i = 0; vert_i < geom_arrays.up_verts_edges.length; vert_i++) {
-            const edges_i: number[] = geom_arrays.up_verts_edges[vert_i];
-            if (edges_i === undefined || edges_i === null) {
-                continue;
-            } else if (edges_i === null) {
-                this._geom_arrays.up_verts_edges[verts_map.get(vert_i)] = null;
-            } else {
-                const new_edges_i: number[] = edges_i.map( edge_i => edges_map.get(edge_i));
-                this._geom_arrays.up_verts_edges[verts_map.get(vert_i)] = new_edges_i;
-            }
-        }
-        // update edges to wires
-        for (let edge_i = 0; edge_i < geom_arrays.up_edges_wires.length; edge_i++) {
-            const wire_i: number = geom_arrays.up_edges_wires[edge_i];
-            if (wire_i === undefined || wire_i === null) {
-                continue;
-            } else if (wire_i === null) {
-                this._geom_arrays.up_edges_wires[edges_map.get(edge_i)] = null;
-            } else {
-                const new_wire_i: number = wires_map.get(wire_i);
-                this._geom_arrays.up_edges_wires[edges_map.get(edge_i)] = new_wire_i;
-            }
-        }
-        // update wires to faces
-        for (let wire_i = 0; wire_i < geom_arrays.up_wires_faces.length; wire_i++) {
-            const face_i: number = geom_arrays.up_wires_faces[wire_i];
-            if (face_i === undefined || face_i === null) {
-                continue;
-            } else if (face_i === null) {
-                this._geom_arrays.up_wires_faces[wires_map.get(wire_i)] = null;
-            } else {
-                const new_face_i: number = faces_map.get(face_i);
-                this._geom_arrays.up_wires_faces[wires_map.get(wire_i)] = new_face_i;
-            }
-        }
-        // update verts to points
-        for (let vert_i = 0; vert_i < geom_arrays.up_verts_points.length; vert_i++) {
-            const point_i: number = geom_arrays.up_verts_points[vert_i];
-            if (point_i === undefined || point_i === null) {
-                continue;
-            } else if (point_i === null) {
-                this._geom_arrays.up_verts_points[verts_map.get(vert_i)] = null;
-            } else {
-                const new_point_i: number = points_map.get(point_i);
-                this._geom_arrays.up_verts_points[verts_map.get(vert_i)] = new_point_i;
-            }
-        }
-        // update wires to plines
-        for (let wire_i = 0; wire_i < geom_arrays.up_wires_plines.length; wire_i++) {
-            const pline_i: number = geom_arrays.up_wires_plines[wire_i];
-            if (pline_i === undefined || pline_i === null) {
-                continue;
-            } else if (pline_i === null) {
-                this._geom_arrays.up_wires_plines[wires_map.get(wire_i)] = null;
-            } else {
-                const new_pline_i: number = plines_map.get(pline_i);
-                this._geom_arrays.up_wires_plines[wires_map.get(wire_i)] = new_pline_i;
-            }
-        }
-        // update faces to pgons
-        for (let face_i = 0; face_i < geom_arrays.up_faces_pgons.length; face_i++) {
-            const pgon_i: number = geom_arrays.up_faces_pgons[face_i];
-            if (pgon_i === undefined || pgon_i === null) {
-                continue;
-            } else if (pgon_i === null) {
-                this._geom_arrays.up_faces_pgons[faces_map.get(face_i)] = null;
-            } else {
-                const new_pgon_i: number = pgons_map.get(pgon_i);
-                this._geom_arrays.up_faces_pgons[faces_map.get(face_i)] = new_pgon_i;
-            }
-        }
-        // update points to colls
-        for (let point_i = 0; point_i < geom_arrays.up_points_colls.length; point_i++) {
-            const colls_i: number[] = geom_arrays.up_points_colls[point_i];
-            if (colls_i === undefined || colls_i === null) {
-                continue;
-            } else if (colls_i === null) {
-                this._geom_arrays.up_points_colls[points_map.get(point_i)] = null;
-            } else {
-                const new_colls_i: number[] = colls_i.map(coll_i => colls_map.get(coll_i));
-                this._geom_arrays.up_points_colls[points_map.get(point_i)] = new_colls_i;
-            }
-        }
-        // update plines to colls
-        for (let pline_i = 0; pline_i < geom_arrays.up_plines_colls.length; pline_i++) {
-            const colls_i: number[] = geom_arrays.up_plines_colls[pline_i];
-            if (colls_i === undefined || colls_i === null) {
-                continue;
-            } else if (colls_i === null) {
-                this._geom_arrays.up_plines_colls[plines_map.get(pline_i)] = null;
-            } else {
-                const new_colls_i: number[] = colls_i.map(coll_i => colls_map.get(coll_i));
-                this._geom_arrays.up_plines_colls[plines_map.get(pline_i)] = new_colls_i;
-            }
-        }
-        // update pgons to colls
-        for (let pgon_i = 0; pgon_i < geom_arrays.up_pgons_colls.length; pgon_i++) {
-            const colls_i: number[] = geom_arrays.up_pgons_colls[pgon_i];
-            if (colls_i === undefined || colls_i === null) {
-                continue;
-            } else if (colls_i === null) {
-                this._geom_arrays.up_pgons_colls[pgons_map.get(pgon_i)] = null;
-            } else {
-                const new_colls_i: number[] = colls_i.map(coll_i => colls_map.get(coll_i));
-                this._geom_arrays.up_pgons_colls[pgons_map.get(pgon_i)] = new_colls_i;
-            }
-        }
-        // return the maps
-        return geom_maps;
-    }
+    //     // update posis to verts (they can be null or [])
+    //     // this array is used to capture deleted posis
+    //     for (let posi_i = 0; posi_i < geom_arrays.up_posis_verts.length; posi_i++) {
+    //         const verts_i: number[] = geom_arrays.up_posis_verts[posi_i];
+    //         if (verts_i === undefined) {
+    //             continue;
+    //         } else if (verts_i === null) {
+    //             this._geom_arrays.up_posis_verts[posis_map.get(posi_i)] = null;
+    //         } else {
+    //             const new_verts_i: number[] = verts_i.map( vert_i => verts_map.get(vert_i));
+    //             this._geom_arrays.up_posis_verts[posis_map.get(posi_i)] = new_verts_i;
+    //         }
+    //     }
+    //     // update verts to tris
+    //     for (let vert_i = 0; vert_i < geom_arrays.up_verts_tris.length; vert_i++) {
+    //         const tris_i: number[] = geom_arrays.up_verts_tris[vert_i];
+    //         if (tris_i === undefined || tris_i === null) {
+    //             continue;
+    //         } else if (tris_i === null) {
+    //             this._geom_arrays.up_verts_tris[verts_map.get(vert_i)] = null;
+    //         } else {
+    //             const new_tris_i: number[] = tris_i.map( tri_i => tris_map.get(tri_i));
+    //             this._geom_arrays.up_verts_tris[verts_map.get(vert_i)] = new_tris_i;
+    //         }
+    //     }
+    //     // update tris to faces
+    //     for (let tri_i = 0; tri_i < geom_arrays.up_tris_faces.length; tri_i++) {
+    //         const face_i: number = geom_arrays.up_tris_faces[tri_i];
+    //         if (face_i === undefined || face_i === null) {
+    //             continue;
+    //         } else if (face_i === null) {
+    //             this._geom_arrays.up_tris_faces[tris_map.get(tri_i)] = null;
+    //         } else {
+    //             const new_face_i: number = faces_map.get(face_i);
+    //             this._geom_arrays.up_tris_faces[tris_map.get(tri_i)] = new_face_i;
+    //         }
+    //     }
+    //     // update verts to edges
+    //     for (let vert_i = 0; vert_i < geom_arrays.up_verts_edges.length; vert_i++) {
+    //         const edges_i: number[] = geom_arrays.up_verts_edges[vert_i];
+    //         if (edges_i === undefined || edges_i === null) {
+    //             continue;
+    //         } else if (edges_i === null) {
+    //             this._geom_arrays.up_verts_edges[verts_map.get(vert_i)] = null;
+    //         } else {
+    //             const new_edges_i: number[] = edges_i.map( edge_i => edges_map.get(edge_i));
+    //             this._geom_arrays.up_verts_edges[verts_map.get(vert_i)] = new_edges_i;
+    //         }
+    //     }
+    //     // update edges to wires
+    //     for (let edge_i = 0; edge_i < geom_arrays.up_edges_wires.length; edge_i++) {
+    //         const wire_i: number = geom_arrays.up_edges_wires[edge_i];
+    //         if (wire_i === undefined || wire_i === null) {
+    //             continue;
+    //         } else if (wire_i === null) {
+    //             this._geom_arrays.up_edges_wires[edges_map.get(edge_i)] = null;
+    //         } else {
+    //             const new_wire_i: number = wires_map.get(wire_i);
+    //             this._geom_arrays.up_edges_wires[edges_map.get(edge_i)] = new_wire_i;
+    //         }
+    //     }
+    //     // update wires to faces
+    //     for (let wire_i = 0; wire_i < geom_arrays.up_wires_faces.length; wire_i++) {
+    //         const face_i: number = geom_arrays.up_wires_faces[wire_i];
+    //         if (face_i === undefined || face_i === null) {
+    //             continue;
+    //         } else if (face_i === null) {
+    //             this._geom_arrays.up_wires_faces[wires_map.get(wire_i)] = null;
+    //         } else {
+    //             const new_face_i: number = faces_map.get(face_i);
+    //             this._geom_arrays.up_wires_faces[wires_map.get(wire_i)] = new_face_i;
+    //         }
+    //     }
+    //     // update verts to points
+    //     for (let vert_i = 0; vert_i < geom_arrays.up_verts_points.length; vert_i++) {
+    //         const point_i: number = geom_arrays.up_verts_points[vert_i];
+    //         if (point_i === undefined || point_i === null) {
+    //             continue;
+    //         } else if (point_i === null) {
+    //             this._geom_arrays.up_verts_points[verts_map.get(vert_i)] = null;
+    //         } else {
+    //             const new_point_i: number = points_map.get(point_i);
+    //             this._geom_arrays.up_verts_points[verts_map.get(vert_i)] = new_point_i;
+    //         }
+    //     }
+    //     // update wires to plines
+    //     for (let wire_i = 0; wire_i < geom_arrays.up_wires_plines.length; wire_i++) {
+    //         const pline_i: number = geom_arrays.up_wires_plines[wire_i];
+    //         if (pline_i === undefined || pline_i === null) {
+    //             continue;
+    //         } else if (pline_i === null) {
+    //             this._geom_arrays.up_wires_plines[wires_map.get(wire_i)] = null;
+    //         } else {
+    //             const new_pline_i: number = plines_map.get(pline_i);
+    //             this._geom_arrays.up_wires_plines[wires_map.get(wire_i)] = new_pline_i;
+    //         }
+    //     }
+    //     // update faces to pgons
+    //     for (let face_i = 0; face_i < geom_arrays.up_faces_pgons.length; face_i++) {
+    //         const pgon_i: number = geom_arrays.up_faces_pgons[face_i];
+    //         if (pgon_i === undefined || pgon_i === null) {
+    //             continue;
+    //         } else if (pgon_i === null) {
+    //             this._geom_arrays.up_faces_pgons[faces_map.get(face_i)] = null;
+    //         } else {
+    //             const new_pgon_i: number = pgons_map.get(pgon_i);
+    //             this._geom_arrays.up_faces_pgons[faces_map.get(face_i)] = new_pgon_i;
+    //         }
+    //     }
+    //     // update points to colls
+    //     for (let point_i = 0; point_i < geom_arrays.up_points_colls.length; point_i++) {
+    //         const colls_i: number[] = geom_arrays.up_points_colls[point_i];
+    //         if (colls_i === undefined || colls_i === null) {
+    //             continue;
+    //         } else if (colls_i === null) {
+    //             this._geom_arrays.up_points_colls[points_map.get(point_i)] = null;
+    //         } else {
+    //             const new_colls_i: number[] = colls_i.map(coll_i => colls_map.get(coll_i));
+    //             this._geom_arrays.up_points_colls[points_map.get(point_i)] = new_colls_i;
+    //         }
+    //     }
+    //     // update plines to colls
+    //     for (let pline_i = 0; pline_i < geom_arrays.up_plines_colls.length; pline_i++) {
+    //         const colls_i: number[] = geom_arrays.up_plines_colls[pline_i];
+    //         if (colls_i === undefined || colls_i === null) {
+    //             continue;
+    //         } else if (colls_i === null) {
+    //             this._geom_arrays.up_plines_colls[plines_map.get(pline_i)] = null;
+    //         } else {
+    //             const new_colls_i: number[] = colls_i.map(coll_i => colls_map.get(coll_i));
+    //             this._geom_arrays.up_plines_colls[plines_map.get(pline_i)] = new_colls_i;
+    //         }
+    //     }
+    //     // update pgons to colls
+    //     for (let pgon_i = 0; pgon_i < geom_arrays.up_pgons_colls.length; pgon_i++) {
+    //         const colls_i: number[] = geom_arrays.up_pgons_colls[pgon_i];
+    //         if (colls_i === undefined || colls_i === null) {
+    //             continue;
+    //         } else if (colls_i === null) {
+    //             this._geom_arrays.up_pgons_colls[pgons_map.get(pgon_i)] = null;
+    //         } else {
+    //             const new_colls_i: number[] = colls_i.map(coll_i => colls_map.get(coll_i));
+    //             this._geom_arrays.up_pgons_colls[pgons_map.get(pgon_i)] = new_colls_i;
+    //         }
+    //     }
+    //     // return the maps
+    //     return geom_maps;
+    // }
 
     /**
      * Adds data to this model from another model.
@@ -344,6 +344,11 @@ export class GIGeomIO {
      * @param geom_arrays The geom_arrays of the other model.
      */
     public mergeAndPurge(geom_arrays: IGeomArrays): Map<number, number>[] {
+        console.log("============CALLING MERGE AND PURGE==================");
+        // console.log("THIS COUNTS", JSON.stringify(this._geom_arrays.id_counts));
+        // console.log("THIS MAPS", this._geom_arrays.id_maps);
+        // console.log("INCOMING COUNTS", JSON.stringify(geom_arrays.id_counts));
+        // console.log("INCOMING MAPS", geom_arrays.id_maps);
         // get lengths of existing entities before we start adding stuff
         // const num_posis: number = this._geom_arrays.num_posis;
         const num_posis: number = this._geom_arrays.up_posis_verts.length;
@@ -356,6 +361,14 @@ export class GIGeomIO {
         const num_plines: number = this._geom_arrays.dn_plines_wires.length;
         const num_pgons: number = this._geom_arrays.dn_pgons_faces.length;
         const num_colls: number = this._geom_arrays.dn_colls_objs.length;
+
+        // update the counts, must be the max of the two models
+        // this means that there can never be a conflict in IDs
+        for (const key of Object.keys(this._geom_arrays.id_counts)) {
+            const a: number = this._geom_arrays.id_counts[key];
+            const b: number = geom_arrays.id_counts[key];
+            this._geom_arrays.id_counts[key] = a > b ? a : b;
+        }
 
         // for the down arrays, it is important the values are never undefined
         // undefined cannot be exported as json
@@ -370,8 +383,11 @@ export class GIGeomIO {
         let posis_count = 0;
         for (let posi_i = 0; posi_i < geom_arrays.up_posis_verts.length; posi_i++) { // posis uses up array
             if (geom_arrays.up_posis_verts[posi_i] !== null) {
-                posis_map.set(posi_i, posis_count + num_posis);
+                const new_posi_i: number = posis_count + num_posis;
+                posis_map.set(posi_i, new_posi_i);
                 posis_count += 1;
+                // update IDs for posis
+                this._geom.id.mergeVertID(new_posi_i, geom_arrays.id_maps.posiID.get(posi_i));
             }
         }
 
@@ -476,10 +492,13 @@ export class GIGeomIO {
         // update down arrays
 
         // add vertices to model
-        for (const posi_i of geom_arrays.dn_verts_posis) {
+        for (let vert_i = 0; vert_i < geom_arrays.dn_verts_posis.length; vert_i++) {
+            const posi_i: number = geom_arrays.dn_verts_posis[vert_i];
             if (posi_i !== null) {
                 const new_vert: TVert = posis_map.get(posi_i) as TVert;
-                this._geom_arrays.dn_verts_posis.push( new_vert );
+                const new_vert_i: number = this._geom_arrays.dn_verts_posis.push( new_vert ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_vert_i, geom_arrays.id_maps.vertID.get(vert_i));
             }
         }
         // add triangles to model
@@ -487,62 +506,84 @@ export class GIGeomIO {
             if (verts_i !== null) {
                 const new_triangle: TTri = verts_i.map(vert_i => verts_map.get(vert_i)) as TTri;
                 this._geom_arrays.dn_tris_verts.push( new_triangle );
+                // no need to add tris to ID maps
             }
         }
         // add edges to model
-        for (const verts_i of geom_arrays.dn_edges_verts) {
+        for (let edge_i = 0; edge_i < geom_arrays.dn_edges_verts.length; edge_i++) {
+            const verts_i: number[] = geom_arrays.dn_edges_verts[edge_i];
             if (verts_i !== null) {
                 const new_edge: TEdge = verts_i.map(vert_i => verts_map.get(vert_i)) as TEdge;
-                this._geom_arrays.dn_edges_verts.push( new_edge );
+                const new_edge_i: number = this._geom_arrays.dn_edges_verts.push( new_edge ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_edge_i, geom_arrays.id_maps.edgeID.get(edge_i));
             }
         }
         // add wires to model
-        for (const edges_i of geom_arrays.dn_wires_edges) {
+        for (let wire_i = 0; wire_i < geom_arrays.dn_wires_edges.length; wire_i++) {
+            const edges_i: number[] = geom_arrays.dn_wires_edges[wire_i];
             if (edges_i !== null) {
                 const new_wire: TWire = edges_i.map(edge_i => edges_map.get(edge_i)) as TWire;
-                this._geom_arrays.dn_wires_edges.push( new_wire );
+                const new_wire_i: number = this._geom_arrays.dn_wires_edges.push( new_wire ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_wire_i, geom_arrays.id_maps.wireID.get(wire_i));
             }
         }
         // add faces to model
-        for (const wires_tris_i of geom_arrays.dn_faces_wirestris) {
+        for (let face_i = 0; face_i < geom_arrays.dn_faces_wirestris.length; face_i++) {
+            const wires_tris_i: TFace = geom_arrays.dn_faces_wirestris[face_i];
             if (wires_tris_i !== null) {
                 const new_face: TFace = [
                     wires_tris_i[0].map( wire_i => wires_map.get(wire_i)),
                     wires_tris_i[1].map( tri_i => tris_map.get(tri_i))
                 ] as TFace;
-                this._geom_arrays.dn_faces_wirestris.push( new_face );
+                const new_face_i: number = this._geom_arrays.dn_faces_wirestris.push( new_face ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_face_i, geom_arrays.id_maps.faceID.get(face_i));
             }
         }
         // add points to model
-        for (const vert_i of geom_arrays.dn_points_verts) {
+        for (let point_i = 0; point_i < geom_arrays.dn_points_verts.length; point_i++) {
+            const vert_i: number = geom_arrays.dn_points_verts[point_i];
             if (vert_i !== null) {
                 const new_point: TPoint = verts_map.get(vert_i) as TPoint;
-                this._geom_arrays.dn_points_verts.push( new_point );
+                const new_point_i: number = this._geom_arrays.dn_points_verts.push( new_point ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_point_i, geom_arrays.id_maps.pointID.get(point_i));
             }
         }
         // add plines to model
-        for (const wire_i of geom_arrays.dn_plines_wires) {
+        for (let pline_i = 0; pline_i < geom_arrays.dn_plines_wires.length; pline_i++) {
+            const wire_i: number = geom_arrays.dn_plines_wires[pline_i];
             if (wire_i !== null) {
                 const new_pline: TPline = wires_map.get(wire_i) as TPline;
-                this._geom_arrays.dn_plines_wires.push( new_pline );
+                const new_pline_i: number = this._geom_arrays.dn_plines_wires.push( new_pline ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_pline_i, geom_arrays.id_maps.plineID.get(pline_i));
             }
         }
         // add pgons to model
-        for (const face_i of geom_arrays.dn_pgons_faces) {
+        for (let pgon_i = 0; pgon_i < geom_arrays.dn_pgons_faces.length; pgon_i++) {
+            const face_i: number = geom_arrays.dn_pgons_faces[pgon_i];
             if (face_i !== null) {
                 const new_pgon: TPgon = faces_map.get(face_i) as TPgon;
-                this._geom_arrays.dn_pgons_faces.push( new_pgon );
+                const new_pgon_i: number = this._geom_arrays.dn_pgons_faces.push( new_pgon ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_pgon_i, geom_arrays.id_maps.pgonID.get(pgon_i));
             }
         }
         // add collections to model
-        for (const coll of geom_arrays.dn_colls_objs) {
+        for (let coll_i = 0; coll_i < geom_arrays.dn_colls_objs.length; coll_i++) {
+            const coll: TColl = geom_arrays.dn_colls_objs[coll_i];
             if (coll !== null) {
                 const parent: number = (coll[0] === -1) ? -1 : colls_map.get(coll[0]);
                 const coll_points_i: number[] = coll[1].map( point_i => points_map.get(point_i));
                 const coll_plines_i: number[] = coll[2].map( pline_i => plines_map.get(pline_i));
                 const coll_pgons_i: number[] = coll[3].map( pgon_i => pgons_map.get(pgon_i));
                 const new_coll: TColl = [parent, coll_points_i, coll_plines_i, coll_pgons_i];
-                this._geom_arrays.dn_colls_objs.push( new_coll );
+                const new_coll_i: number = this._geom_arrays.dn_colls_objs.push( new_coll ) - 1;
+                // update IDs
+                this._geom.id.mergeVertID(new_coll_i, geom_arrays.id_maps.collID.get(coll_i));
             }
         }
 
@@ -679,18 +720,32 @@ export class GIGeomIO {
                 this._geom_arrays.up_pgons_colls[pgons_map.get(pgon_i)] = new_colls_i;
             }
         }
+        console.log("RESULT", this._geom_arrays);
         // return teh maps
         return geom_maps;
     }
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
     /**
      * Sets the data in this model from JSON data.
      * The existing data in the model is deleted.
      * @param geom_data The JSON data
      */
     public setData(geom_data: IGeomData): IGeomPack {
+        // set ID counts
+        this._geom_arrays.id_counts = geom_data.id_counts;
+        // update the ID maps
+        this._geom_arrays.id_maps = this.convertIDArraysToMaps(geom_data.id_arrays);
+
         // update the down arrays
         // these are assumed never to undefined
-
         // add vertices to model
         this._geom_arrays.dn_verts_posis =  geom_data.vertices;
         // add triangles to model
@@ -848,11 +903,22 @@ export class GIGeomIO {
             colls_i:  Array.from(Array(geom_data.collections.length).keys()) // .map(v => v + num_old_colls)
         };
     }
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
     /**
      * Returns the JSON data for this model.
      */
     public getData(make_copy = false): IGeomData {
         const data: IGeomData = {
+            id_counts: this._geom_arrays.id_counts,
+            id_arrays: null, // this.convertIDMapsToArrays(),
             num_positions: this._geom_arrays.up_posis_verts.length,
             triangles: this._geom_arrays.dn_tris_verts,
             vertices: this._geom_arrays.dn_verts_posis,
@@ -868,6 +934,42 @@ export class GIGeomIO {
         if (make_copy) {
             return deepCopy(data) as IGeomData;
         }
+        // set the ID arrays (must be arrays, so that they can be JSON.stringify())
+        data.id_arrays = this.convertIDMapsToArrays();
         return data;
+    }
+    private convertIDMapsToArrays(): IIDArrays {
+        const result: IIDArrays  = {
+            posiID: null, posiIdx: null,
+            vertID: null, vertIdx: null,
+            edgeID: null, edgeIdx: null,
+            wireID: null, wireIdx: null,
+            faceID: null, faceIdx: null,
+            pointID: null, pointIdx: null,
+            plineID: null, plineIdx: null,
+            pgonID: null, pgonIdx: null,
+            collID: null, collIdx: null
+        };
+        for (const [key, value] of Object.entries(this._geom_arrays.id_maps)) {
+            result[key] = Array.from(value);
+        }
+        return result;
+    }
+    private convertIDArraysToMaps(id_arrays: IIDArrays): IIDMaps {
+        const result: IIDMaps  = {
+            posiID: null, posiIdx: null,
+            vertID: null, vertIdx: null,
+            edgeID: null, edgeIdx: null,
+            wireID: null, wireIdx: null,
+            faceID: null, faceIdx: null,
+            pointID: null, pointIdx: null,
+            plineID: null, plineIdx: null,
+            pgonID: null, pgonIdx: null,
+            collID: null, collIdx: null
+        }
+        for (const [key, value] of Object.entries(this._geom_arrays.id_maps)) {
+            result[key] = new Map(value);
+        }
+        return result;
     }
 }

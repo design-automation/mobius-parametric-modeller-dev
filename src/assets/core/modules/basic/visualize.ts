@@ -9,13 +9,12 @@
 
 import { GIModel } from '@libs/geo-info/GIModel';
 import { Txyz, TColor, EAttribNames, EAttribDataTypeStrs, EAttribPush, TRay, TPlane, TBBox, Txy } from '@libs/geo-info/common';
-import { TId, EEntType, ESort, TEntTypeIdx } from '@libs/geo-info/common';
-import { isEmptyArr, getArrDepth, idsMake } from '@libs/geo-info/id';
+import { TId, EEntType, TEntTypeIdx } from '@libs/geo-info/common';
+import { isEmptyArr, getArrDepth } from '@libs/geo-info/id';
 import { checkIDs, IDcheckObj, checkArgTypes, TypeCheckObj } from '../_check_args';
 import { arrMakeFlat } from '@assets/libs/util/arrs';
 import { min, max } from '@assets/core/inline/_math';
-import { colFalse } from '@assets/core/inline/_colors';
-import { vecMult, vecAdd, vecEqual, vecSetLen, vecCross, vecNorm, vecSub, vecDot } from '@assets/libs/geom/vectors';
+import { vecMult, vecAdd, vecSetLen, vecCross, vecNorm, vecSub, vecDot } from '@assets/libs/geom/vectors';
 import * as ch from 'chroma-js';
 // ================================================================================================
 export enum _ESide {
@@ -40,14 +39,15 @@ export function Color(__model__: GIModel, entities: TId|TId[], color: TColor): v
     if (isEmptyArr(entities)) { return; }
     // --- Error Check ---
     const fn_name = 'visualize.Color';
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null) {
-        ents_arr = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list], null) as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
+            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDListOfList], null);
     }
     checkArgTypes(fn_name, 'color', color, [TypeCheckObj.isColor]);
     // --- Error Check ---
-    _color(__model__, ents_arr, color);
+    _color(__model__, ents_arrs, color);
 }
 function _color(__model__: GIModel, ents_arr: TEntTypeIdx[], color: TColor): void {
     if (!__model__.attribs.query.hasAttrib(EEntType.VERT, EAttribNames.COLOR)) {
@@ -92,22 +92,22 @@ export function Gradient(__model__: GIModel, entities: TId|TId[], attrib: string
     if (!isEmptyArr(entities)) {
         // --- Error Check ---
         const fn_name = 'visualize.Gradient';
-        const ents_arr: TEntTypeIdx[] =
-            checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDList_list], null) as TEntTypeIdx[];
+        const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs,
+            [IDcheckObj.isID, IDcheckObj.isIDList, IDcheckObj.isIDListOfList], null);
         checkArgTypes(fn_name, 'attrib', attrib,
             [TypeCheckObj.isString, TypeCheckObj.isStringStringList, TypeCheckObj.isStringNumberList]);
         checkArgTypes(fn_name, 'range', range, [TypeCheckObj.isNull, TypeCheckObj.isNumber, TypeCheckObj.isNumberList]);
         const attrib_name: string = Array.isArray(attrib) ? attrib[0] : attrib;
         const attrib_idx_or_key: number|string = Array.isArray(attrib) ? attrib[1] : null;
-        if (!__model__.attribs.query.hasAttrib(ents_arr[0][0], attrib_name)) {
+        if (!__model__.attribs.query.hasAttrib(ents_arrs[0][0], attrib_name)) {
             throw new Error(fn_name + ': The attribute with name "' + attrib + '" does not exist on these entities.');
         } else {
             let data_type = null;
             if (attrib_idx_or_key === null) {
-                data_type = __model__.attribs.query.getAttribDataType(ents_arr[0][0], attrib_name);
+                data_type = __model__.attribs.query.getAttribDataType(ents_arrs[0][0], attrib_name);
             } else {
-                const first_val = __model__.attribs.query.getAttribValAny(ents_arr[0][0], attrib_name, ents_arr[0][1], attrib_idx_or_key);
+                const first_val = __model__.attribs.query.getAttribValAny(ents_arrs[0][0], attrib_name, ents_arrs[0][1], attrib_idx_or_key);
             }
             if (data_type !== EAttribDataTypeStrs.NUMBER) {
                 throw new Error(fn_name + ': The attribute with name "' + attrib_name + '" is not a number data type.' +
@@ -119,7 +119,7 @@ export function Gradient(__model__: GIModel, entities: TId|TId[], attrib: string
             range = [null, null];
         }
         range = Array.isArray(range) ? range : [0, range];
-        _gradient(__model__, ents_arr, attrib_name, attrib_idx_or_key, range as [number, number], method);
+        _gradient(__model__, ents_arrs, attrib_name, attrib_idx_or_key, range as [number, number], method);
     }
 }
 // https://codesandbox.io/s/5w573r54w4
@@ -268,10 +268,10 @@ export function Edge(__model__: GIModel, entities: TId|TId[], method: _EEdgeMeth
     if (isEmptyArr(entities)) { return; }
     // --- Error Check ---
     const fn_name = 'visualize.Edge';
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null) {
-        ents_arr = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     }
     // --- Error Check ---
     if (!__model__.attribs.query.hasAttrib(EEntType.EDGE, EAttribNames.VISIBILITY)) {
@@ -283,9 +283,9 @@ export function Edge(__model__: GIModel, entities: TId|TId[], method: _EEdgeMeth
     }
     // Get the unique edges
     let edges_i: number[] = [];
-    if (ents_arr !== null) {
+    if (ents_arrs !== null) {
         const set_edges_i: Set<number> = new Set();
-        for (const [ent_type, ent_i] of ents_arr) {
+        for (const [ent_type, ent_i] of ents_arrs) {
             if (ent_type === EEntType.EDGE) {
                 set_edges_i.add(ent_i);
             } else {
@@ -324,17 +324,17 @@ export function Mesh(__model__: GIModel, entities: TId|TId[], method: _EMeshMeth
     if (isEmptyArr(entities)) { return; }
     // --- Error Check ---
     const fn_name = 'visualize.Mesh';
-    let ents_arr: TEntTypeIdx[] = null;
+    let ents_arrs: TEntTypeIdx[] = null;
     if (entities !== null) {
-        ents_arr = checkIDs(fn_name, 'entities', entities,
-            [IDcheckObj.isIDList], null) as TEntTypeIdx[];
+        ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+        checkIDs(fn_name, 'entities', ents_arrs, [IDcheckObj.isIDList], null);
     }
     // --- Error Check ---
     // Get the unique verts that belong to pgons
     let verts_i: number[] = [];
-    if (ents_arr !== null) {
+    if (ents_arrs !== null) {
         const set_verts_i: Set<number> = new Set();
-        for (const [ent_type, ent_i] of ents_arr) {
+        for (const [ent_type, ent_i] of ents_arrs) {
             if (ent_type === EEntType.VERT) {
                 if (__model__.geom.query.getTopoObjType(EEntType.VERT, ent_i) === EEntType.PGON) {
                     set_verts_i.add(ent_i);
@@ -466,7 +466,7 @@ export function Ray(__model__: GIModel, rays: TRay|TRay[], scale: number): TId[]
     checkArgTypes(fn_name, 'ray', rays, [TypeCheckObj.isRay, TypeCheckObj.isRayList]);
     checkArgTypes(fn_name, 'scale', scale, [TypeCheckObj.isNumber]);
     // --- Error Check ---
-   return idsMake(_visRay(__model__, rays, scale)) as TId[];
+   return __model__.geom.id.getIDFromTypeIdx(_visRay(__model__, rays, scale)) as TId[];
 }
 function _visRay(__model__: GIModel, rays: TRay|TRay[], scale: number): TEntTypeIdx[] {
     if (getArrDepth(rays) === 2) {
@@ -533,7 +533,7 @@ export function Plane(__model__: GIModel, planes: TPlane|TPlane[], scale: number
         [TypeCheckObj.isPlane, TypeCheckObj.isPlaneList]);
     checkArgTypes(fn_name, 'scale', scale, [TypeCheckObj.isNumber]);
     // --- Error Check ---
-    return idsMake(_visPlane(__model__, planes, scale)) as TId[];
+    return __model__.geom.id.getIDFromTypeIdx(_visPlane(__model__, planes, scale)) as TId[];
 }
 function _visPlane(__model__: GIModel, planes: TPlane|TPlane[], scale: number): TEntTypeIdx[] {
     if (getArrDepth(planes) === 2) {
@@ -608,7 +608,7 @@ export function BBox(__model__: GIModel, bboxes: TBBox|TBBox): TId[] {
     const fn_name = 'visualize.BBox';
     checkArgTypes(fn_name, 'bbox', bboxes, [TypeCheckObj.isBBox]); // TODO bboxs can be a list // add isBBoxList to enable check
     // --- Error Check ---
-    return  idsMake(_visBBox(__model__, bboxes)) as TId[];
+    return  __model__.geom.id.getIDFromTypeIdx(_visBBox(__model__, bboxes)) as TId[];
 }
 function _visBBox(__model__: GIModel, bboxs: TBBox|TBBox[]): TEntTypeIdx[] {
     if (getArrDepth(bboxs) === 2) {

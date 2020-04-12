@@ -81,12 +81,13 @@ export function EntityInfo(__model__: GIModel, entities: TId|TId[]): string {
     entities = arrMakeFlat(entities) as TId[];
     // --- Error Check ---
     const fn_name = 'collection.Info';
-    const ents_arr = checkIDs(fn_name, 'coll', entities,
+    const ents_arrs = __model__.geom.id.getTypeIdxFromID(entities) as TEntTypeIdx[];
+    checkIDs(fn_name, 'coll', ents_arrs,
         [IDcheckObj.isID, IDcheckObj.isIDList],
-        [EEntType.COLL, EEntType.PGON, EEntType.PLINE, EEntType.POINT]) as TEntTypeIdx[];
+        [EEntType.COLL, EEntType.PGON, EEntType.PLINE, EEntType.POINT]);
     // --- Error Check ---
     let result = '<h4>Entity Information:</h4>';
-    for (const ent_arr of ents_arr) {
+    for (const ent_arr of ents_arrs) {
         const [ent_type, ent_i] = ent_arr;
         switch (ent_type) {
             case EEntType.COLL:
