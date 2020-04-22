@@ -351,6 +351,35 @@ export function checkIDs(fn_name: string, arg_name: string, arg: any, check_fns:
     }
     return ret; // returns TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]; depends on which passes
 }
+export function splitArgTypes(fn_name: string, arg_name: string, arg: any, split_fns: Function[]): void|TEntTypeIdx|
+                               TEntTypeIdx[]|TEntTypeIdx[][] {
+    let ret;
+    for (let i = 0; i < split_fns.length; i++) {
+        try {
+           ret = split_fns[i](fn_name, arg_name, arg);
+        } catch (err) {
+            continue;
+        }
+        break; // passed
+    }
+    return ret;
+}
+
+export function splitIDs(fn_name: string, arg_name: string, arg: any, split_fns: Function[],
+                         IDchecks: EEntType[]|null): TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][] {
+    let ret: TEntTypeIdx|TEntTypeIdx[];
+    for (let i = 0; i < split_fns.length; i++) {
+        try {
+           ret =  split_fns[i](fn_name, arg_name, arg, IDchecks);
+        } catch (err) {
+            continue;
+        }
+        break; // passed
+    }
+    return ret; // returns TEntTypeIdx|TEntTypeIdx[]|TEntTypeIdx[][]; depends on which passes
+}
+
+
 // =========================================================================================================================================
 // Most General Check
 // =========================================================================================================================================
